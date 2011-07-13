@@ -169,8 +169,8 @@ static const char source_file[] = __FILE__;
 #include "glob.h"
 
 static void Init_Remove_Dead_LRA_Stores(BS **bs, MEM_POOL *pool);
-static void Mark_LRA_Spill_Reference(OP *op, BS **bs, MEM_POOL *pool);
-static BOOL Delete_Dead_LRA_Spill(OP *op, BS **bs);
+static void Mark_LRA_LCL_Spill_Reference(OP *op, BS **bs, MEM_POOL *pool);
+static BOOL Delete_Dead_LRA_LCL_Spill(OP *op, BS **bs);
 #endif
 #include "config_opt.h" // [HK] for Finite_Math
 
@@ -3073,11 +3073,11 @@ Find_BB_TNs (BB *bb)
 finish:
 
 #ifdef TARG_X8664
-    // If OP is a memory OP that references a spilled LRA value, mark it so.
+    // If OP is a memory OP that references a spilled LRA/LCL value, mark it so.
     // Later we will delete dead LRA spills.
     if (EBO_in_peep &&
 	!op_replaced) {
-      Mark_LRA_Spill_Reference(op, &LRA_spilled_value_is_used, &MEM_local_pool);
+      Mark_LRA_LCL_Spill_Reference(op, &LRA_spilled_value_is_used, &MEM_local_pool);
     }
 #endif
 
@@ -3093,13 +3093,13 @@ finish:
   }
 
 #ifdef TARG_X8664
-  // Remove dead LRA stores.  A LRA store becomes dead when all the restores
+  // Remove dead LRA/LCL stores.  A LRA/LCL store becomes dead when all the restores
   // are eliminated by EBO, which can happen when the spilled register is
   // unused between the store and the load, which can happen when intervening
   // instructions are changed from load/use to load-exe.
   if (EBO_in_peep) {
     FOR_ALL_BB_OPs (bb, op) {
-      Delete_Dead_LRA_Spill(op, &LRA_spilled_value_is_used);
+      Delete_Dead_LRA_LCL_Spill(op, &LRA_spilled_value_is_used);
     }
   }
 #endif
@@ -3915,10 +3915,10 @@ EBO_Post_Process_Region_2 ( RID *rid )
 }
 
 #ifdef TARG_X8664
-// If OP references a symbol called lra_spill_temp_xxx, return xxx; else return
+// If OP references a symbol called [lra|lcl]_spill_temp_xxx, return xxx; else return
 // -1.
 static int
-Get_LRA_Spill_Temp_Number(OP *op)
+Get_LRA_LCL_Spill_Temp_Number(OP *op)
 {
   int base_idx, offset_idx;
 
@@ -3932,7 +3932,8 @@ Get_LRA_Spill_Temp_Number(OP *op)
 	  TN_is_symbol(offset_tn)) {
 	ST *st = TN_var(offset_tn);
 	char *name = ST_name(st);
-	if (strstr(name, "lra_spill_temp_") != NULL) {
+	if (strstr(name, "lra_spill_temp_") != NULL ||
+            strstr(name, "lcl_spill_temp_") != NULL) {
 	  char *p = name + 15;	// get the number part
 	  int id = atoi(p);
 	  return id;
@@ -3952,12 +3953,12 @@ Init_Remove_Dead_LRA_Stores(BS **bs, MEM_POOL *pool)
 }
 
 static BOOL
-Delete_Dead_LRA_Spill(OP *op, BS **bs)
+Delete_Dead_LRA_LCL_Spill(OP *op, BS **bs)
 {
   if (!OP_store(op))
     return FALSE;
 
-  int id = Get_LRA_Spill_Temp_Number(op);
+  int id = Get_LRA_LCL_Spill_Temp_Number(op);
 
   // Delete store if the stored value was never used.
   if (id > 0 &&
@@ -3968,16 +3969,16 @@ Delete_Dead_LRA_Spill(OP *op, BS **bs)
   return FALSE;
 }
 
-// If a memory OP loads from lra_spill_temp_xxx, then mark the spilled value
+// If a memory OP loads from [lra|lcl]_spill_temp_xxx, then mark the spilled value
 // used.  Delete stores whose spilled value is never used.
 static void
-Mark_LRA_Spill_Reference(OP *op, BS **bs, MEM_POOL *pool)
+Mark_LRA_LCL_Spill_Reference(OP *op, BS **bs, MEM_POOL *pool)
 {
   if (OP_store(op))
     return;
 
   // The spilled value is used.  Mark it so.
-  int id = Get_LRA_Spill_Temp_Number(op);
+  int id = Get_LRA_LCL_Spill_Temp_Number(op);
   if (id > 0) {
     *bs = BS_Union1D(*bs, id, pool);
   }
