@@ -1399,6 +1399,12 @@ Unroll_Loop_By_Trip_Count(WN* outerloop, INT u)
     LWN_Update_Def_Use_Delete_Tree(WN_end(unroll_body[i]));
     LWN_Update_Def_Use_Delete_Tree(WN_step(unroll_body[i]));
   }
+
+  for (i = 1; i < u; i++) {
+    BOOL all_internal = WN_Rename_Duplicate_Labels(WN_do_body(outerloop),
+                          unroll_body[i], Current_Func_Node, &LNO_local_pool);
+    Is_True(all_internal, ("external labels renamed"));
+  }
   
   for (i = 1; i < u; i++) {
     LWN_Insert_Block_After(WN_do_body(outerloop), 
