@@ -3693,8 +3693,13 @@ static void Simd_Copy_Def_Use_For_Loop_Stmt(WN* vloop, WN *ploop)
 
     for (vstmt=WN_first(vbody), pstmt=WN_first(pbody);
          vstmt != NULL && pstmt != NULL;
-         vstmt=WN_next(vstmt), pstmt=WN_next(pstmt))
-       LWN_Copy_Def_Use(WN_kid0(vstmt),WN_kid0(pstmt), Du_Mgr);
+         vstmt=WN_next(vstmt), pstmt=WN_next(pstmt)) {
+        if (WN_kid_count(vstmt) > 0) {
+            FmtAssert(WN_kid_count(pstmt) > 0,
+                      ("invalid copy of loop body in Simd_Copy_Def_Use_For_Loop_Stmt"));
+            LWN_Copy_Def_Use(WN_kid0(vstmt),WN_kid0(pstmt), Du_Mgr);
+        }
+    }
 
     for (vstmt=WN_first(vbody), pstmt=WN_first(pbody);
          vstmt != NULL && pstmt != NULL;
@@ -3813,9 +3818,13 @@ static WN *Simd_Create_Remainder_Loop(WN *innerloop)
       // remainder loop
   Copy_Def_Use(WN_end(innerloop), WN_end(remainderloop),
                WN_index(innerloop), FALSE /* synch */);
-   Simd_Copy_Def_Use_For_Loop_Stmt(innerloop, remainderloop);
+  Simd_Copy_Def_Use_For_Loop_Stmt(innerloop, remainderloop);
+
+  BOOL all_internal = WN_Rename_Duplicate_Labels(innerloop, remainderloop,
+    Current_Func_Node, &LNO_local_pool);
+  Is_True(all_internal, ("external labels renamed"));
   
- return remainderloop; 
+  return remainderloop; 
 } 
 
 //handle negative loop coefficient
