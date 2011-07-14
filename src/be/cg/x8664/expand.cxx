@@ -7739,9 +7739,26 @@ Exp_Intrinsic_Op (INTRINSIC id, TN *result, TN *op0, TN *op1, TN *op2, TN *op3, 
 	 }
    case INTRN_EXTRACTPS:
 	 {
-		TN *tn = Gen_Register_TN(ISA_REGISTER_CLASS_integer, 4);
-   	Expand_Intrinsic_Imm_Param(TOP_extractps, result, tn, op0, op1, ops, 4);
-    break;
+	 	FmtAssert(TN_is_constant(op1),("INTRN_EXTRACTPS should be constant!"));
+		INT32 imm = TN_value(op1);
+		switch(imm){
+		  case 0:
+		  	Build_OP(TOP_movaps, result, op0,ops);
+		  break;
+		  case 1:
+		  	Build_OP(TOP_shufps, result, op0, op0, Gen_Literal_TN(0x55,1), ops);
+		  break;
+		  case 2:
+		  	Build_OP(TOP_unpckhps, result, op0, op0, ops);
+		  break;
+		  case 3:
+		  	Build_OP(TOP_shufps, result, op0, op0, Gen_Literal_TN(0xff,1), ops);
+		  break;
+		  default:
+		  	FmtAssert(FALSE,("extractps imm parameter should be 0-3"));
+		  break;
+		}
+		break;
 	 }
 	 case INTRN_PINSRB:
    	Expand_Intrinsic_Imm_Param(TOP_pinsrb, result, op0, op1, op2, ops, 5);
