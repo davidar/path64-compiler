@@ -185,6 +185,7 @@ static	kwd_type		kwd[] = {
 				"FUNCTION",	     Tok_Kwd_Function,
 				"FORALL",	     Tok_Kwd_Forall,
 				"FORMAT",	     Tok_Kwd_Format,
+				"FLUSH",	     Tok_Kwd_Flush,
 				"FILE",		     Tok_Kwd_File,
 
 				"GO",		     Tok_Kwd_Go,

@@ -146,6 +146,7 @@ enum	token_values {
 		Tok_Kwd_Exit,		/* EXIT				      */
 		Tok_Kwd_External,	/* EXTERNAL			      */
 		Tok_Kwd_File,		/* FILE	     ENDFILE		      */
+		Tok_Kwd_Flush,		/* FLUSH			      */
 		Tok_Kwd_Forall,		/* FORALL			      */
 		Tok_Kwd_Format,		/* FORMAT			      */
 		Tok_Kwd_Function,	/* FUNCTION  ENDFUNCTION	      */

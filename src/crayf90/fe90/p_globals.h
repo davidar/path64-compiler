@@ -443,6 +443,7 @@ extern	void parse_entry_stmt (void);
 extern	void parse_equivalence_stmt (void);
 extern	void parse_exit_stmt (void);
 extern	void parse_external_stmt (void);
+extern  void parse_flush_stmt (void);
 extern	void parse_forall (void);
 extern	void parse_format_stmt (void);
 extern	void parse_function_stmt (void);

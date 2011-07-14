@@ -247,6 +247,7 @@ static stmt_type_type		token_to_stmt_type [] = {
 				Exit_Stmt,	      /* Tok_Kwd_Exit	      */
 				External_Stmt,	      /* Tok_Kwd_External     */
 				Assignment_Stmt,      /* Tok_Kwd_File	      */
+				Flush_Stmt,           /* Tok_Kwd_Flush	      */
 				Forall_Cstrct_Stmt,   /* Tok_Kwd_Forall	      */
 				Format_Stmt,	      /* Tok_Kwd_Format	      */
 				Function_Stmt,	      /* Tok_Kwd_Function     */
@@ -415,6 +416,7 @@ void		(*stmt_parsers[]) () = {
 				parse_endfile_stmt,	/* Endfile_Stmt	      */
 				parse_entry_stmt,	/* Entry_Stmt	      */
 				parse_exit_stmt,	/* Exit_Stmt	      */
+				parse_flush_stmt,	/* Flush_Stmt	      */
 				parse_goto_stmt,	/* Goto_Stmt	      */
 				parse_if_stmt,		/* If_Cstrct_Stmt     */
 				parse_if_stmt,		/* If_Stmt	      */
@@ -3487,6 +3489,24 @@ long long     stmt_in_blk [] = {
 				(ONE << Subroutine_Blk) |
 				(ONE << Internal_Blk) |
 				(ONE << Module_Proc_Blk) |
+				(ONE << Interface_Body_Blk) |
+				(ONE << Forall_Blk) |
+				(ONE << If_Blk) |
+				(ONE << Where_Then_Blk) |
+				(ONE << Where_Else_Blk) |
+				(ONE << Where_Else_Mask_Blk) |
+				(ONE << SGI_Psection_Blk) |
+				(ONE << Select_Blk) |
+				(ONE << Contains_Blk) |
+				(ONE << Interface_Blk) |
+				(ONE << Derived_Type_Blk) | 
+				(ONE << Enum_Blk)),
+
+			/*****  Flush_Stmt  ****/
+
+			       ((ONE << Unknown_Blk) |
+				(ONE << Blockdata_Blk) |
+				(ONE << Module_Blk) |
 				(ONE << Interface_Body_Blk) |
 				(ONE << Forall_Blk) |
 				(ONE << If_Blk) |

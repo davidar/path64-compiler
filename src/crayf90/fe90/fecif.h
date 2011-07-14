@@ -162,6 +162,7 @@ cif_stmt_type	mapped_stmt_type[] =
                         CIF_Endfile_Stmt,		/* Endfile_Stmt       */
                         CIF_Entry_Stmt,			/* Entry_Stmt         */
                         CIF_Exit_Stmt,			/* Exit_Stmt          */
+			CIF_Flush_Stmt,			/* Flush_Stmt	      */
                         CIF_Not_Exact,			/* Goto_Stmt          */
                         CIF_Not_Exact,			/* If_Cstrct_Stmt     */
                         CIF_Not_Exact,			/* If_Stmt	      */

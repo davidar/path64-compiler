@@ -72,6 +72,7 @@ extern  void end_subroutine_semantics (void);
 extern  void end_where_semantics (void);
 extern  void endfile_stmt_semantics (void);
 extern  void entry_stmt_semantics (void);
+extern  void flush_stmt_semantics (void);
 extern  void forall_semantics (void);
 extern  void function_stmt_semantics (void);
 extern  void goto_stmt_semantics (void);

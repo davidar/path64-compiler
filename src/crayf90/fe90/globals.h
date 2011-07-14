@@ -164,6 +164,7 @@ enum	glb_tbl_idx_values	{Allocate_Attr_Idx,
 #ifdef KEY /* Bug 6845 */
                                  Assign_Allocatable_Idx,
 #endif /* KEY Bug 6845 */
+				 Flush_Attr_Idx,
 				 Num_Glb_Tbl_Idxs
 				};
 
@@ -1657,6 +1658,7 @@ enum stmt_type_values           {Null_Stmt,
                                  Endfile_Stmt,
                                  Entry_Stmt,
                                  Exit_Stmt,
+				 Flush_Stmt,
                                  Goto_Stmt,
                                  If_Cstrct_Stmt,
                                  If_Stmt,
@@ -2647,6 +2649,7 @@ enum    cif_stmt_values
 		CIF_End_Forall_Stmt, 	/* CIF_F90_TP_END_FORALL   */
 		CIF_Proc_Pointer,
 		CIF_Abstract_Stmt,
+		CIF_Flush_Stmt,
                };
 
 typedef enum	cif_directive_code_values	cif_directive_code_type;
@@ -3252,6 +3255,7 @@ extern	long			true_value;
 extern	int			where_ir_idx;
 extern  int			where_dealloc_stmt_idx;
 extern  int                     type_alignment_tbl[Num_Linear_Types];
+extern  int			linear_to_kind_type[];
 
 
 /*********************************\
@@ -3266,9 +3270,10 @@ enum  io_stmt_entry   {Backspace,
                        Read,
                        Rewind,
                        Write,
+		       Flush,
                        Print,
                        Decode,
-                       Encode
+                       Encode,
                       };
 
 
@@ -3276,7 +3281,8 @@ enum exp_form_entry   {Exp_Form,
                        Format_Form,
                        Label_Form,
                        Namelist_Form,
-                       Var_Only_Form
+                       Var_Only_Form,
+		       Nondefault_Var_Form
                       };
 
 typedef enum		exp_form_entry		exp_form_type;

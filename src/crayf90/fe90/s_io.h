@@ -35,6 +35,7 @@ static int		err_list_idx;
 static int		eor_list_idx;
 
 static boolean		have_iostat;
+static boolean		have_iomsg;
 
 /***********************************************\
 |* flag for io stmt loop expansion.            *|
@@ -55,8 +56,8 @@ static boolean		list_directed;
 \****************************************************************/
 
 extern	char		io_stmt_str[11][16];
-extern	int		arg_idx_tbl[8][26];
-extern	ciitem_tbl_type	ciitem_tbl[NUM_IO_STMT_TYPES];
+extern	int		arg_idx_tbl[9][26];
+extern	ciitem_tbl_type	ciitem_tbl[];
 
 /**************************************************************************\
 |* extern to expr_semantics flags.                                        *|

@@ -28,6 +28,7 @@
 
 static char USMID[] = "@(#) libf/fio/flush.c	92.3	11/16/99 15:43:33";
 
+#include <string.h>
 #include <stdio.h>
 #include <errno.h>
 #include <liberrno.h>
@@ -324,5 +325,46 @@ pathf90_flush(_f_int *unump, _f_int *istat)
 }
 
 #endif /* KEY Bug 1683 */
+
+
+/* _flush08()-- Interface to FLUSH statement. */
+
+int _flush08(int unit0, void *iostat, int iostat_kind,
+	     char *iomsg, int iomsg_len) {
+_f_int status;
+unum_t unit;
+char *p;
+
+    unit = unit0;
+    __flush_f90(&unit, &status);
+
+    switch(iostat_kind) {
+    case 1:  *((char *)      iostat) = status;  break;
+    case 2:  *((short *)     iostat) = status;  break;
+    case 4:  *((int *)       iostat) = status;  break;
+    case 8:  *((long long *) iostat) = status;  break;
+    default:
+	break;
+    }
+
+    if (status == 0)
+	return 0;
+
+    p = (status < 0)
+	? "Unit does not support FLUSH"
+	: strerror(errno);
+
+    while(*p != '\0' && iomsg_len > 0) {
+	*iomsg++ = *p++;
+	iomsg_len--;
+    }
+
+    while(iomsg_len > 0)
+	*iomsg++ = ' ';
+
+    return 1;
+}
+
+
 
 #endif	/* __mips  or _LITTLE_ENDIAN */

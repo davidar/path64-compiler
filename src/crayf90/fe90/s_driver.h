@@ -149,6 +149,7 @@
                           endfile_stmt_semantics,       /* Endfile_Stmt       */
                           entry_stmt_semantics,         /* Entry_Stmt         */
                           no_semantics_routine,         /* Exit_Stmt          */
+			  flush_stmt_semantics,		/* Flush_Stmt	      */
                           goto_stmt_semantics,          /* Goto_Stmt          */
                           if_stmt_semantics,            /* If_Cstrct_Stmt     */
                           if_stmt_semantics,            /* If_Stmt            */

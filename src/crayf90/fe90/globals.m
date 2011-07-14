@@ -352,7 +352,6 @@
 # define MAX_NUM_EXP_FORMS              2
 # define MAX_NUM_ALLOWED_TYPES          3
 # define MAX_NUM_CONST_OPTS             5
-# define NUM_IO_STMT_TYPES              8
 # define MAX_NUM_CIITEM                 25
 
 

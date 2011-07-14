@@ -1506,6 +1506,7 @@ char		*token_value_str[Tok_LAST+1]	= {
 			"Tok_Kwd_Exit",		/* Tok_Kwd_Exit		*/
 			"Tok_Kwd_External",	/* Tok_Kwd_External	*/
 			"Tok_Kwd_File",		/* Tok_Kwd_File		*/
+			"Tok_Kwd_Flush",	/* Tok_Kwd_Flush	*/
 			"Tok_Kwd_Forall",	/* Tok_Kwd_Forall       */
 			"Tok_Kwd_Format",	/* Tok_Kwd_Format	*/
 			"Tok_Kwd_Function",	/* Tok_Kwd_Function	*/

@@ -2785,6 +2785,7 @@ static boolean  parse_io_control_list (opnd_type   *result_opnd,
                break;
 
             case Var_Only_Form :
+	    case Nondefault_Var_Form:
 
                parsed_ok = parse_expr(&opnd) && parsed_ok;
                COPY_OPND(IL_OPND(arg_array[arg_idx]), opnd);
@@ -3538,3 +3539,114 @@ static int translate_pp_format(fmt_type		*old_const,
 }  /* translate_pp_format */
 # endif
 # endif
+
+
+
+/******************************************************************************\
+|*									      *|
+|* Description:								      *|
+|*	Parse a FLUSH statment						      *|
+|*									      *|
+|* Input parameters:							      *|
+|*	NONE								      *|
+|*									      *|
+|* Output parameters:							      *|
+|*	NONE								      *|
+|*									      *|
+|* Returns:								      *|
+|*	NOTHING								      *|
+|*									      *|
+\******************************************************************************/
+
+void parse_flush_stmt(void)
+{
+char *flush_name = "_flush08";
+int i, call_idx, flush_idx, result_idx, arg[4];
+opnd_type result;
+boolean flag;
+
+    if (!CURR_BLK_NO_EXEC || !iss_blk_stk_err()) {
+	curr_stmt_category = Executable_Stmt_Cat;
+    }
+
+    INSERT_IO_START;
+
+    if (LA_CH_VALUE == LPAREN) {
+	if (!parse_io_control_list(&result, Flush))
+	    return;
+
+    } else {   /* Parse the naked unit number form */
+	if (!parse_expr(&result)) {
+	    parse_err_flush(Find_EOS, "Unit number");
+	    return;
+	}
+
+	/* Convert the single expression to the argument list */
+
+	for(i=0; i<4; i++) {
+	    NTR_IR_LIST_TBL(arg[i]);
+
+	    IL_LINE_NUM(arg[i]) = OPND_LINE_NUM(result);
+	    IL_COL_NUM(arg[i])  = OPND_COL_NUM(result);
+	}
+
+	IL_PREV_LIST_IDX(arg[0]) = NULL_IDX;
+
+	for(i=0; i<3; i++)
+	    IL_NEXT_LIST_IDX(arg[i]) = arg[i+1];
+
+	for(i=1; i<4; i++) {
+	    IL_FLD(arg[i])      = NO_Tbl_Idx;
+	    IL_PREV_LIST_IDX(arg[i]) = arg[i-1];
+	}
+
+	IL_NEXT_LIST_IDX(arg[3]) = NULL_IDX;
+
+	IL_FLD(arg[0]) = OPND_FLD(result);
+	IL_IDX(arg[0]) = OPND_IDX(result);
+
+	OPND_FLD(result) = IL_Tbl_Idx;
+	OPND_IDX(result) = arg[0];
+	OPND_LIST_CNT(result) = 4;
+    }
+
+    NTR_IR_TBL(call_idx);
+    SH_IR_IDX(curr_stmt_sh_idx) = call_idx;
+
+    IR_OPR(call_idx)      = Call_Opr;
+    IR_TYPE_IDX(call_idx) = TYPELESS_DEFAULT_TYPE;
+    IR_COL_NUM(call_idx)  = TOKEN_COLUMN(token);
+    IR_LINE_NUM(call_idx) = TOKEN_LINE(token);
+
+    if (glb_tbl_idx[Flush_Attr_Idx] == NULL_IDX) {
+	flush_idx = create_lib_entry_attr(flush_name, strlen(flush_name),
+					  TOKEN_LINE(token),
+					  TOKEN_COLUMN(token));
+
+	glb_tbl_idx[Flush_Attr_Idx] = flush_idx;
+
+	NTR_ATTR_TBL(result_idx);
+	ATP_PGM_UNIT(flush_idx) = Function;
+	ATP_RSLT_IDX(flush_idx) = result_idx;
+
+	AT_OBJ_CLASS(result_idx) = Data_Obj;
+	ATD_CLASS(result_idx)    = Function_Result;
+       	ATD_TYPE_IDX(result_idx) = INTEGER_DEFAULT_TYPE;
+    }
+
+    ADD_ATTR_TO_LOCAL_LIST(glb_tbl_idx[Flush_Attr_Idx]);
+
+    IR_FLD_L(call_idx)      = AT_Tbl_Idx;
+    IR_IDX_L(call_idx)      = glb_tbl_idx[Flush_Attr_Idx];
+    IR_COL_NUM_L(call_idx)  = TOKEN_COLUMN(token);
+    IR_LINE_NUM_L(call_idx) = TOKEN_LINE(token);
+
+    COPY_OPND(IR_OPND_R(call_idx), result);
+
+    if (LA_CH_VALUE != EOS)
+	parse_err_flush(Find_EOS, EOS_STR);
+
+    matched_specific_token(Tok_EOS, Tok_Class_Punct);
+
+    INSERT_IO_END;
+}

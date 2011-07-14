@@ -96,20 +96,21 @@ static boolean  ignore_trailing_chars = FALSE;
 |* Interface table for IO stmt control list arguments.          *|
 \****************************************************************/
 
-char io_stmt_str[11][16] = {	{"BACKSPACE"},
-					{"CLOSE"},
-					{"ENDFILE"},
-					{"INQUIRE"},
-					{"OPEN"},
-					{"READ"},
-					{"REWIND"},
-					{"WRITE"},
-                                        {"PRINT"},
-					{"DECODE"},
-					{"ENCODE"}
+char io_stmt_str[12][16] = {	"BACKSPACE",
+				"CLOSE",
+				"ENDFILE",
+				"INQUIRE",
+				"OPEN",
+				"READ",
+				"REWIND",
+				"WRITE",
+				"FLUSH",
+				"PRINT",
+				"DECODE",
+				"ENCODE",
 				};
 
-int arg_idx_tbl[8][26] = {
+int arg_idx_tbl[9][26] = {
                 /*BACKSPACE   */        {  0,  2,  1,  0},
                 /*CLOSE       */        {  0,  3,  1,  0,  2},
                 /*ENDFILE     */        {  0,  2,  1,  0},
@@ -126,11 +127,12 @@ int arg_idx_tbl[8][26] = {
                                            5,  7,  0,  8,  2},
                 /*REWIND      */        {  0,  2,  1,  0},
                 /*WRITE       */        {  0,  9,  4,  3,  1,
-                                           5,  7,  0,  8,  2}
+                                           5,  7,  0,  8,  2},
+		/*FLUSH       */        {  0,  3,  0,  1,  2 },
                                 };
 
 
-ciitem_tbl_type	ciitem_tbl[NUM_IO_STMT_TYPES] = 
+ciitem_tbl_type	ciitem_tbl[] = 
 
 				{
 /* Backspace */
@@ -1171,7 +1173,73 @@ ciitem_tbl_type	ciitem_tbl[NUM_IO_STMT_TYPES] =
 		/* const_opts     */			{""}
 						}
 					    }
-					}
+				       },
+/* Flush */
+
+
+        /* num_ciitems */		{	4,
+
+	/* num_diff_ciitems */			4,
+
+	/* num_without_kwd  */			1,
+					    {
+
+	/* ciitem_entry # 0 */
+		/* name           */		{"ERR",
+		/* name_length    */		 3,
+		/* allowed_forms  */		 Label_Form,
+		/* num_types      */		 0,
+		/* allowed_types  */			{Typeless},
+		/* arg_position   */		 2,
+		/* has_const_opts */		 FALSE,
+		/* scalar         */		 FALSE,
+		/* num_const_opts */		 0,
+		/* const_opts     */			{""}
+						},
+
+
+	/* ciitem_entry # 1 */
+		/* name           */		{"IOMSG",
+		/* name_length    */		 5,
+		/* allowed_forms  */		 Var_Only_Form,
+		/* num_types      */		 1,
+		/* allowed_types  */			{Character},
+		/* arg_position   */		 3,
+		/* has_const_opts */		 FALSE,
+		/* scalar         */		 TRUE,
+		/* num_const_opts */		 0,
+		/* const_opts     */			{""}
+						},
+
+	/* ciitem_entry # 2 */
+		/* name           */		{"IOSTAT",
+		/* name_length    */		 6,
+		/* allowed_forms  */		 Nondefault_Var_Form,
+		/* num_types      */		 1,
+		/* allowed_types  */			{Integer},
+		/* arg_position   */		 4,
+		/* has_const_opts */		 FALSE,
+		/* scalar         */		 TRUE,
+		/* num_const_opts */		 0,
+		/* const_opts     */			{""}
+						},
+
+
+	/* ciitem_entry #3 */
+		/* name           */		{"UNIT",
+		/* name_length    */		 4,
+		/* allowed_forms  */		 Exp_Form,
+		/* num_types      */		 2,
+		/* allowed_types  */			{Integer,
+							 Typeless},
+		/* arg_position   */		 1,
+		/* has_const_opts */		 FALSE,
+		/* scalar         */		 FALSE,
+		/* num_const_opts */		 0,
+		/* const_opts     */			{""}
+						}
+					    }
+				    }
 				};
 
 /**************************************************************************\

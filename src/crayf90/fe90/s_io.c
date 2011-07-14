@@ -747,6 +747,197 @@ void close_stmt_semantics (void)
 /******************************************************************************\
 |*									      *|
 |* Description:								      *|
+|*	FLUSH statement semantics					      *|
+|*									      *|
+|* Input parameters:							      *|
+|*	NONE								      *|
+|*									      *|
+|* Output parameters:							      *|
+|*	NONE								      *|
+|*									      *|
+|* Returns:								      *|
+|*	NONE								      *|
+|*									      *|
+\******************************************************************************/
+
+void flush_stmt_semantics(void)
+
+{
+int save_arg_info_list_base, line, col, ir_idx, err_idx, null_idx;
+int save_curr_stmt_sh_idx, type_idx, type, kind_idx, m;
+int unit_idx, iomsg_idx, iostat_idx, iostat_kind_idx;
+int addr_idx, call_idx;
+opnd_type err_opnd, iomsg_opnd, iostat_opnd, opnd_unit;
+
+
+    SCP_DOES_IO(curr_scp_idx) = TRUE;
+
+    ir_idx = SH_IR_IDX(curr_stmt_sh_idx);
+
+   /* do memory management stuff to make sure the call tables are big enough */
+
+    if (max_call_list_size >= arg_list_size) {
+	enlarge_call_list_tables();
+    }
+
+    save_curr_stmt_sh_idx   = curr_stmt_sh_idx;
+    save_arg_info_list_base = arg_info_list_base;
+    arg_info_list_base      = arg_info_list_top;
+    arg_info_list_top       = arg_info_list_base + IR_LIST_CNT_R(ir_idx);
+
+    if (arg_info_list_top >= arg_info_list_size) {
+	enlarge_info_list_table();
+    }
+
+    /* Turn the variant flag on for the the io_ctl_list_semantics */
+
+    m = IR_IDX_R(ir_idx);
+    while(m != NULL_IDX) {
+	IL_ARG_DESC_VARIANT(m) = TRUE;
+	m = IL_NEXT_LIST_IDX(m);
+    }
+
+    io_ctl_list_semantics(&IR_OPND_R(ir_idx), Flush, TRUE);
+
+    line = IR_LINE_NUM(ir_idx);
+    col  = IR_COL_NUM(ir_idx);
+
+    /* restore arg_info_list to previous "stack frame" */
+
+    arg_info_list_top  = arg_info_list_base;
+    arg_info_list_base = save_arg_info_list_base;
+    curr_stmt_sh_idx   = save_curr_stmt_sh_idx;
+
+    /* Massage the attribute list into a call argument list.  Right
+     * now we have
+     *
+     *   UNIT   ERR   IOMSG   IOSTAT
+     *
+     * Which must be transformed to
+     *
+     *   int unit, void *iostat, int iostat_kind, char *iomsg, int iomsg_len
+     *
+     * The subroutine returns nonzero on error.  We generate code to
+     * branch to the ERR tag if it is present. */
+
+    unit_idx   = IR_IDX_R(ir_idx);
+    err_idx    = IL_NEXT_LIST_IDX(unit_idx);
+    iomsg_idx  = IL_NEXT_LIST_IDX(err_idx);
+    iostat_idx = IL_NEXT_LIST_IDX(iomsg_idx);
+
+    NTR_IR_LIST_TBL(iostat_kind_idx);
+    IL_LINE_NUM(iostat_kind_idx) = line;
+    IL_COL_NUM(iostat_kind_idx)  = col;
+
+    /* Turn the variant flags off to relink the list */
+
+    IL_ARG_DESC_VARIANT(err_idx)    = FALSE;
+    IL_ARG_DESC_VARIANT(iomsg_idx)  = FALSE;
+    IL_ARG_DESC_VARIANT(iostat_idx) = FALSE;
+    IL_ARG_DESC_VARIANT(unit_idx)   = FALSE;
+
+    /* Relink new arglist */
+
+    IR_IDX_R(ir_idx) = unit_idx;
+
+    IL_PREV_LIST_IDX(unit_idx) = NULL_IDX;
+    IL_NEXT_LIST_IDX(unit_idx) = iostat_idx;
+
+    IL_PREV_LIST_IDX(iostat_idx) = unit_idx;
+    IL_NEXT_LIST_IDX(iostat_idx) = iostat_kind_idx;
+
+    IL_PREV_LIST_IDX(iostat_kind_idx) = iostat_idx;
+    IL_NEXT_LIST_IDX(iostat_kind_idx) = iomsg_idx;
+
+    IL_PREV_LIST_IDX(iomsg_idx) = iostat_kind_idx;
+    IL_NEXT_LIST_IDX(iomsg_idx) = NULL_IDX;
+
+    /* iostat is guaranteed to be a variable */
+
+    NTR_IR_TBL(addr_idx);
+
+    IR_OPR(addr_idx)      = Aloc_Opr;
+    IR_TYPE_IDX(addr_idx) = CRI_Ptr_8;
+    IR_LINE_NUM(addr_idx) = line;
+    IR_COL_NUM(addr_idx)  = col;
+
+    if (OPND_FLD(IL_OPND(iostat_idx)) == NO_Tbl_Idx) {
+	IR_FLD_L(addr_idx)      = CN_Tbl_Idx;
+	IR_IDX_L(addr_idx)      = CN_INTEGER_ZERO_IDX;
+
+	type = 0;
+
+    } else {
+	IR_FLD_L(addr_idx)   =  OPND_FLD(IL_OPND(iostat_idx));
+	IR_IDX_L(addr_idx)   =  OPND_IDX(IL_OPND(iostat_idx));
+
+	type_idx = TYP_LINEAR(ATD_TYPE_IDX(OPND_IDX(IL_OPND(iostat_idx))));
+	type = linear_to_kind_type[type_idx];
+    }
+
+    IR_LINE_NUM_L(addr_idx) = line;
+    IR_COL_NUM_L(addr_idx)  = col;
+
+    OPND_FLD(IL_OPND(iostat_idx)) = IR_Tbl_Idx;
+    OPND_IDX(IL_OPND(iostat_idx)) = addr_idx;
+
+    /* Massage iomsg */
+
+    if (OPND_FLD(IL_OPND(iomsg_idx)) == NO_Tbl_Idx) {
+	NTR_IR_TBL(null_idx);
+
+	IR_OPR(null_idx)      = Aloc_Opr;
+	IR_TYPE_IDX(null_idx) = CRI_Ptr_8;
+	IR_LINE_NUM(null_idx) = line;
+	IR_COL_NUM(null_idx)  = col;
+
+	IR_FLD_L(null_idx)      = CN_Tbl_Idx;
+	IR_IDX_L(null_idx)      = CN_INTEGER_ZERO_IDX;
+	IR_LINE_NUM_L(null_idx) = line;
+	IR_COL_NUM_L(null_idx)  = col;
+
+	OPND_FLD(IL_OPND(iomsg_idx)) = IR_Tbl_Idx;
+	OPND_IDX(IL_OPND(iomsg_idx)) = null_idx;
+    }
+
+    kind_idx = C_INT_TO_CN(CG_INTEGER_DEFAULT_TYPE, type);
+
+    OPND_FLD(IL_OPND(iostat_kind_idx)) = CN_Tbl_Idx;
+    OPND_IDX(IL_OPND(iostat_kind_idx)) = kind_idx;
+
+    /* If there is an ERR=x tag, build some IR that looks like
+     *    if (_flush08(...)) then
+     *       goto x
+     *    endif
+     */
+
+    if (OPND_FLD(IL_OPND(err_idx)) != NO_Tbl_Idx) {
+	/* The call node is at ir_idx right now.  Move it to the
+	 * call_idx node. */
+
+	NTR_IR_TBL(call_idx);
+	ir_tbl[call_idx] = ir_tbl[ir_idx];
+
+	/* ir_idx now becomes an IF-node */
+
+	IR_OPR(ir_idx) = Br_True_Opr;
+
+	IR_FLD_L(ir_idx)      = IR_Tbl_Idx;
+	IR_IDX_L(ir_idx)      = call_idx;
+	IR_COL_NUM_L(ir_idx)  = col;
+	IR_LINE_NUM_L(ir_idx) = line;
+
+	IR_FLD_R(ir_idx)      = IL_FLD(err_idx);
+	IR_IDX_R(ir_idx)      = IL_IDX(err_idx);
+	IR_COL_NUM_R(ir_idx)  = col;
+	IR_LINE_NUM_R(ir_idx) = line;
+    }
+}
+
+
+/******************************************************************************\
+|*									      *|
+|* Description:								      *|
 |*	Process the decode stmt. It is transformed into an internal Read.     *|
 |*	Process the encode stmt. It is transformed into an internal Write.    *|
 |*									      *|
@@ -2910,6 +3101,7 @@ static boolean io_ctl_list_semantics(opnd_type     *list_opnd,
    int		 pp_tmp = NULL_IDX;
    boolean	 semantically_correct = TRUE;
    int		 tmp_idx;
+   int		 form;
 
 # if ! (defined(_TARGET_OS_IRIX) || defined(_TARGET_OS_LINUX) || defined(_TARGET_OS_DARWIN))
    int		 ir_idx;
@@ -2928,6 +3120,7 @@ static boolean io_ctl_list_semantics(opnd_type     *list_opnd,
    err_attr_idx = NULL_IDX;
    eor_list_idx = NULL_IDX;
    have_iostat  = FALSE;
+   have_iomsg   = FALSE;
 
    if (io_type == Print) {
       io_type = Write;
@@ -2935,6 +3128,9 @@ static boolean io_ctl_list_semantics(opnd_type     *list_opnd,
 
    if (io_type == Inquire) {
       err_idx = INQ_ERR_IDX;
+   }
+   else if (io_type == Flush) {
+      err_idx = 0;
    }
    else {
       err_idx = ERR_IDX;
@@ -3016,8 +3212,9 @@ static boolean io_ctl_list_semantics(opnd_type     *list_opnd,
 
       io_item_must_flatten = FALSE;
 
-      if (ciitem_tbl[io_type].ciitem_list[ciitem_idx].allowed_form
-                                                    == Var_Only_Form) {
+      form = ciitem_tbl[io_type].ciitem_list[ciitem_idx].allowed_form;
+
+      if (form == Nondefault_Var_Form || form == Var_Only_Form) {
          xref_state = CIF_Symbol_Modification;
       }
       else if (i                              == FMT_IDX    &&
@@ -3096,7 +3293,8 @@ static boolean io_ctl_list_semantics(opnd_type     *list_opnd,
          semantically_correct = FALSE;
       }
 
-      switch (ciitem_tbl[io_type].ciitem_list[ciitem_idx].allowed_form) {
+      form = ciitem_tbl[io_type].ciitem_list[ciitem_idx].allowed_form;
+      switch (form) {
          case Exp_Form      :
 
             match = FALSE;
@@ -3261,6 +3459,7 @@ static boolean io_ctl_list_semantics(opnd_type     *list_opnd,
             break;
 
          case Var_Only_Form :
+         case Nondefault_Var_Form:
 
             find_opnd_line_and_column(&opnd, &line, &col);
 
@@ -3299,7 +3498,7 @@ static boolean io_ctl_list_semantics(opnd_type     *list_opnd,
 
                   semantically_correct = FALSE;
                }
-               else if (!default_kind) {
+               else if (form == Var_Only_Form && !default_kind) {
                   PRINTMSG(line, 461, Error, col,
                            ciitem_tbl[io_type].ciitem_list[ciitem_idx].name,
                            io_type_string);
