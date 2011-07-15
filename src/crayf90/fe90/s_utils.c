@@ -11184,9 +11184,11 @@ boolean check_for_legal_assignment_define(opnd_type *top_opnd,
       }
       else if (ATD_CLASS(attr_idx) == Dummy_Argument   &&
 #ifdef KEY /* Bug 14150 */
-	       /* "l = expr" is ok, "l => expr" is not */
+	       /* "l = expr" is ok, "l => expr" is not, "l%p => expr" is ok */
                ((!ATD_POINTER(attr_idx)) || pointer_assign) &&
 #endif /* KEY Bug 14150 */
+	       (OPND_FLD(*top_opnd) != IR_Tbl_Idx ||
+		IR_OPR(OPND_IDX(*top_opnd)) != Dv_Deref_Opr || !pointer_assign) &&
                ATD_INTENT(attr_idx) == Intent_In) {
          PRINTMSG(line, 890, Error, col,
                   AT_OBJ_NAME_PTR(attr_idx));
