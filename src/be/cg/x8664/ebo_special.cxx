@@ -2187,6 +2187,9 @@ Fold_Constant_Expression (OP *op,
   if (opcode == TOP_shl32 || opcode == TOP_shli32 )
   {
     result_val = TRUNC_32(tn0_uval << tn1_uval);
+	if(opcode == TOP_shli32 
+		&& (result_val & 0x80000000))//ldc32's operand range is from  0xffffffff80000000 to 0x7fffffff
+	 return FALSE;
     goto Constant_Created;
   }
 
