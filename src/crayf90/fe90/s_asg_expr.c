@@ -454,7 +454,10 @@ static void procedure_pointer_semantics(int ir_idx)
     } else if (r_opnd.fld != AT_Tbl_Idx)
 	ok = 0;
 
-    else
+    else {
+	if (AT_ATTR_LINK(rhs_idx) && !AT_IGNORE_ATTR_LINK(rhs_idx))
+	    OPND_IDX(r_opnd) = rhs_idx = AT_ATTR_LINK(rhs_idx);
+
 	switch(AT_OBJ_CLASS(rhs_idx)) {
 	case Interface:
 	    ok = 1;
@@ -482,6 +485,7 @@ static void procedure_pointer_semantics(int ir_idx)
 	default:
 	    ok = 0;
 	}
+    }
 
     if (!ok)
 	PRINTMSG(IR_LINE_NUM(ir_idx), 1562, Error, IR_COL_NUM(ir_idx));
