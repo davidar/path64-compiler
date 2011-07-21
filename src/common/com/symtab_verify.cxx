@@ -681,6 +681,7 @@ void ARB::Verify (mUINT16 dim) const
 
   Is_True (unused == 0, (msg, "Unused filler fields"));
 
+#ifndef _LP64
   if (!(flags & ARB_CONST_LBND) && Lbnd_var() != 0) {
       Is_True (u1.var.unused == 0, (msg, "Unused filler fields"));
   }
@@ -692,6 +693,7 @@ void ARB::Verify (mUINT16 dim) const
   if ( ! (flags & ARB_CONST_STRIDE) && Stride_var() != 0) {
      Is_True( u3.var.unused == 0, (msg, "Unused filler fields"));
   }
+#endif // !_LP64
 
   if (dim == 1)
       Is_True (flags & ARB_LAST_DIMEN, (msg, "missing ARB_LAST_DIMEN bit"));

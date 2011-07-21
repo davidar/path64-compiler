@@ -86,10 +86,16 @@ operator== (const TY& ty1, const TY& ty2)
     const UINT64* p1 = reinterpret_cast<const UINT64*> (&ty1);
     const UINT64* p2 = reinterpret_cast<const UINT64*> (&ty2);
 
+    // compare all fields in TY class
     return (p1 == p2 || (p1[0] == p2[0] &&
 			 p1[1] == p2[1] &&
 			 p1[2] == p2[2] &&
-			 ty1.Pu_flags() == ty2.Pu_flags()));
+#ifdef _LP64
+                         p1[3] == p2[3]
+#else // !_LP64
+                         ty1.Pu_flags() == ty2.Pu_flags()
+#endif // !_LP64
+           ));
 }
 
 
@@ -109,7 +115,15 @@ namespace
     struct TY_HASH {
 	size_t operator() (const TY& key) const {
 	    const UINT64 *p = reinterpret_cast<const UINT64*> (&key);
-	    UINT64 tmp = (p[0] ^ p[1]) + p[2] + key.Pu_flags();
+
+            // hash = (size ^ [u1:flags:mtype:kind]) + name_idx + u2
+	    UINT64 tmp = (p[0] ^ p[1]) + p[2] +
+#ifdef _LP64
+                          p[3]
+#else // !_LP64
+                          key.Pu_flags();
+#endif // !_LP64
+                          ;
 	    return (size_t) (tmp ^ (tmp >> 32));
 	}
     };
@@ -210,7 +224,14 @@ namespace
 		const UINT64* p2 =
 		    reinterpret_cast<const UINT64*> (merged_fld.Entry ());
 
-		if (p1[1] != p2[1] || p1[2] != p2[2])
+                // compare ofst, bsize, bofst, flags, st
+		if (p1[1] != p2[1] ||
+#ifdef _LP64
+                    p1[2] != p2[2] || p1[4] != p2[4]
+#else // !_LP64
+                    p1[3] != p2[3] || new_fld->st != FLD_st(merged_fld)
+#endif // !_LP64
+                   )
 		    return FALSE;
 
 		++fld_iter;
@@ -299,6 +320,7 @@ namespace
 		const UINT64* p2 =
 		    reinterpret_cast<const UINT64*> (merged_arb.Entry ());
 
+                // compare all ARB fields
 		if (p1[0] != p2[0] ||
 		    p1[1] != p2[1] ||
 		    p1[2] != p2[2] ||
@@ -405,8 +427,15 @@ Partial_Compare_Fld (FLD_HANDLE merged_fld, const FLD* new_fld)
 	const UINT64* p1 = reinterpret_cast<const UINT64*> (&(*fld_iter));
 	const UINT64* p2 = reinterpret_cast<const UINT64*> (new_fld);
 
-	if (p1[1] != p2[1] || p1[2] != p2[2])
-	    return FALSE;
+        // compare ofst, bsize, bofst, flags, st
+	if (p1[1] != p2[1] ||
+#ifdef _LP64
+            p1[2] != p2[2] || p1[4] != p2[4]
+#else // !_LP64
+            p1[3] != p2[3] || new_fld->st != FLD_st(merged_fld)
+#endif // !_LP64
+        )
+		    return FALSE;
 	++fld_iter;
     } while ((new_fld++->flags & FLD_LAST_FIELD) == 0);
 
@@ -419,6 +448,7 @@ ARB_equal (const ARB_HANDLE merged_arb, const ARB& new_arb)
     const UINT64* p1 =  reinterpret_cast<const UINT64*> (merged_arb.Entry ());
     const UINT64* p2 =  reinterpret_cast<const UINT64*> (&new_arb);
 
+    // compare all ARB fields
     return (p1[0] == p2[0] &&
 	    p1[1] == p2[1] &&
 	    p1[2] == p2[2] &&
@@ -451,6 +481,9 @@ namespace
 		ty_table[Get_Idx (idx)] : Ty_Table[make_TY_IDX (idx)];
 
 	    const UINT32* p = reinterpret_cast<const UINT32*> (&ty);
+
+            // p[0] + p[1] + p[2] = size[0-31bits] + size[31-63bits] + [flags:mtype:kind]
+
 	    size_t value = p[0] + p[1] + p[2];
 
 	    switch (TY_kind (ty)) {
@@ -563,6 +596,7 @@ namespace
 	    const UINT32* p1 = reinterpret_cast<const UINT32*> (&new_ty);
 	    const UINT32* p2 = reinterpret_cast<const UINT32*> (&merged_ty);
 
+            // compare kind, mtype, flags
 	    if (p1[2] != p2[2])
 		return FALSE;
 	    
@@ -620,10 +654,22 @@ void
 Initialize_Type_Merging_Hash_Tables (MEM_POOL* pool)
 {
     // check if the assumption used by fast comparision of structs are valid
+#ifdef _LP64
+
+    Is_True (sizeof(TY)  == 32 && __alignof__(TY)  == 8 &&
+	     sizeof(FLD) == 40 && __alignof__(FLD) == 8 &&
+	     sizeof(ARB) == 32 && __alignof__(ARB) == 8,
+	     ("Invalid size/alignment assumption:"
+	      " TY sz %d al %d, FLD sz%d al %d, ARB sz %d al %d",
+	      sizeof(TY), __alignof__(TY), sizeof(FLD),
+	      __alignof__(FLD), sizeof(ARB), __alignof__(ARB)));
+
+#else // !_LP64
+
 #ifdef __GNUC__
 #ifndef ARCH_MIPS
     Is_True (sizeof(TY)  == 28 && __alignof__(TY)  == 4 &&
-	     sizeof(FLD) == 28 && __alignof__(FLD) == 4 &&
+	     sizeof(FLD) == 32 && __alignof__(FLD) == 4 &&
 	     sizeof(ARB) == 32 && __alignof__(ARB) == 4,
 	     ("Invalid size/alignment assumption:"
 	      " TY sz %d al %d, FLD sz%d al %d, ARB sz %d al %d",
@@ -649,6 +695,8 @@ Initialize_Type_Merging_Hash_Tables (MEM_POOL* pool)
 	      sizeof(TY), __builtin_alignof(TY), sizeof(FLD),
 	      __builtin_alignof(FLD), sizeof(ARB), __builtin_alignof(ARB)));
 #endif
+
+#endif // !_LP64
 
     ty_hash_table = CXX_NEW (TY_HASH_TABLE (1000, TY_HASH (), equal_to<TY>(), 
 					    TY_EXTRACT_KEY (), pool),

@@ -253,14 +253,15 @@ struct FLD
 
     mUINT64 ofst;			// offset within the struct in bytes
 
+    ST_IDX st;				// used if an st exists for this fld
+
+    TY_IDX type;
+
     mUINT8 bsize;			// bit field size in bits
     mUINT8 bofst;			// bit field offset starting at
 					// byte specified by ofst
     mUINT16 flags;			// misc. attributes
-
-    ST_IDX st;				// used if an st exists for this fld
-
-    TY_IDX type;
+    mUINT32 unused;                     // padding
 
     // operations
 
@@ -301,7 +302,9 @@ struct ARB
 	struct {
 	    ST_IDX lbnd_var;		// variable that stores the
 					// non-constant lower bound
+#ifndef _LP64
 	    mINT32 unused;		// filler, must be zero'ed
+#endif // !_LP64
 	} var;
     } u1;
 
@@ -310,7 +313,9 @@ struct ARB
 	struct {
 	    ST_IDX ubnd_var;		// variable that stores the
 					// non-constant upper bound
+#ifndef _LP64
 	    mINT32 unused;		// filler, must be zero'ed
+#endif // !_LP64
 	} var;
     } u2;
 
@@ -319,7 +324,9 @@ struct ARB
 	struct {
 	    ST_IDX stride_var;		// variable that stores the
 					// non-constant stride
+#ifndef _LP64
 	    mINT32 unused;		// filler, must be zero'ed
+#endif // !_LP64
 	} var;
     } u3;
 
@@ -330,7 +337,9 @@ struct ARB
     ST_IDX Lbnd_var () const		{ return u1.var.lbnd_var; }
     void Set_lbnd_var (ST_IDX st) {
 	u1.var.lbnd_var = st;
+#ifndef _LP64
 	u1.var.unused = 0;
+#endif // !_LP64
     }
     
     INT64 Ubnd_val () const		{ return u2.ubnd_val; }
@@ -339,7 +348,9 @@ struct ARB
     ST_IDX Ubnd_var () const		{ return u2.var.ubnd_var; }
     void Set_ubnd_var (ST_IDX st) {
 	u2.var.ubnd_var = st;
+#ifndef _LP64
 	u2.var.unused = 0;
+#endif // !_LP64
     }
     
     INT64 Stride_val () const		{ return u3.stride_val; }
@@ -348,7 +359,9 @@ struct ARB
     ST_IDX Stride_var () const		{ return u3.var.stride_var; }
     void Set_stride_var (ST_IDX st) {
 	u3.var.stride_var = st;
+#ifndef _LP64
 	u3.var.unused = 0;
+#endif // _LP64
     }
     
 	
@@ -560,7 +573,12 @@ public:
     union {
 	TY_IDX etype;			// type of array element (array only)
 	TY_IDX pointed;			// pointed-to type (pointers only)
-	mUINT32 pu_flags;		// attributes for KIND_FUNCTION
+        struct {
+	    mUINT32 pu_flags;		// attributes for KIND_FUNCTION
+#ifdef _LP64
+            mUINT32 unused;             // padding
+#endif // _LP64
+        } flags;
 #ifdef KEY
 	ST_IDX copy_constructor;	// copy constructor X(X&) (record only)
 #endif
@@ -603,9 +621,23 @@ public:
     void Set_copy_constructor (ST_IDX idx)	{ u2.copy_constructor = idx; }
 #endif	// KEY
 
-    PU_IDX Pu_flags () const		{ return u2.pu_flags; }
-    void Set_pu_flag (TY_PU_FLAGS f)	{ u2.pu_flags |= f; }
-    void Clear_pu_flag (TY_PU_FLAGS f)	{ u2.pu_flags &= ~f; }
+    PU_IDX Pu_flags () const		{ return u2.flags.pu_flags; }
+
+    void Set_pu_flag (TY_PU_FLAGS f)
+      {
+        u2.flags.pu_flags |= f;
+#ifdef _LP64
+        u2.flags.unused = 0;
+#endif // _LP64
+      }
+
+    void Clear_pu_flag (TY_PU_FLAGS f)
+      {
+        u2.flags.pu_flags &= ~f;
+#ifndef _LP64
+        u2.flags.unused = 0;
+#endif // _LP64
+      }
 
     // operations
 

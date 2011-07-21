@@ -412,6 +412,7 @@ FLD_Init (FLD_HANDLE f, STR_IDX _name, TY_IDX _type, UINT64 _ofst)
     fld->flags = 0;
     fld->bsize = fld->bofst = 0;
     fld->st = 0;
+    fld->unused = 0;
 } // FLD::Init
 
 inline UINT
