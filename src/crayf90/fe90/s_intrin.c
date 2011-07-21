@@ -8032,6 +8032,13 @@ void    huge_intrinsic(opnd_type     *result_opnd,
    int            info_idx1;
    int            ir_idx;
 
+#if LITTLE_ENDIAN
+   static unsigned huge4[]  = { 0x7F7FFFFF };
+   static unsigned huge8[]  = { 0xFFFFFFFF, 0x7FEFFFFF };
+   static unsigned huge16[] = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x7FFFFFFF };
+#else
+#error Need big-endian HUGE
+#endif
 
    TRACE (Func_Entry, "huge_intrinsic", NULL);
 
@@ -8051,18 +8058,18 @@ void    huge_intrinsic(opnd_type     *result_opnd,
 
    switch (arg_info_list[info_idx1].ed.linear_type) {
       case Real_4:
-           cn_idx = cvrt_str_to_cn(HUGE_REAL4_F90,
-                                   arg_info_list[info_idx1].ed.linear_type);
+	   cn_idx = ntr_const_tbl(arg_info_list[info_idx1].ed.linear_type,
+				  FALSE, (void *) huge4);
            break;
 
       case Real_8:
-           cn_idx = cvrt_str_to_cn(HUGE_REAL8_F90,
-                                   arg_info_list[info_idx1].ed.linear_type);
+	   cn_idx = ntr_const_tbl(arg_info_list[info_idx1].ed.linear_type,
+				  FALSE, (void *) huge8);
            break;
 
       case Real_16:
-           cn_idx = cvrt_str_to_cn(HUGE_REAL16_F90,
-                                   arg_info_list[info_idx1].ed.linear_type);
+	   cn_idx = ntr_const_tbl(arg_info_list[info_idx1].ed.linear_type,
+				  FALSE, (void *) huge16);
            break;
 
       case Integer_1:
@@ -11400,6 +11407,13 @@ void    tiny_intrinsic(opnd_type     *result_opnd,
    int            info_idx1;
    int            ir_idx;
 
+#if LITTLE_ENDIAN
+   static unsigned tiny4[]  = { 0x00800000 };
+   static unsigned tiny8[]  = { 0, 0x00100000 };
+   static unsigned tiny16[] = { 0, 0, 0, 0x00008000 };
+#else
+#error Need big-endian tiny
+#endif   
 
    TRACE (Func_Entry, "tiny_intrinsic", NULL);
 
@@ -11419,19 +11433,19 @@ void    tiny_intrinsic(opnd_type     *result_opnd,
 
    switch (arg_info_list[info_idx1].ed.linear_type) {
       case Real_4:
-           cn_idx = cvrt_str_to_cn(TINY_REAL4_F90,
-                                   arg_info_list[info_idx1].ed.linear_type);
-           break;
+	  cn_idx = ntr_const_tbl(arg_info_list[info_idx1].ed.linear_type,
+				 FALSE, (void *) tiny4);
+	  break;
 
       case Real_8:
-           cn_idx = cvrt_str_to_cn(TINY_REAL8_F90,
-                                   arg_info_list[info_idx1].ed.linear_type);
-           break;
+	  cn_idx = ntr_const_tbl(arg_info_list[info_idx1].ed.linear_type,
+				 FALSE, (void *) tiny8);
+	  break;
 
       case Real_16:
-           cn_idx = cvrt_str_to_cn(TINY_REAL16_F90,
-                                   arg_info_list[info_idx1].ed.linear_type);
-           break;
+	  cn_idx = ntr_const_tbl(arg_info_list[info_idx1].ed.linear_type,
+				 FALSE, (void *) tiny16);
+	  break;
    }
 
 

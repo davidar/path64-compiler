@@ -149,21 +149,11 @@
 #define HUGE_INT2_F90_Y            "32767"
 #define HUGE_INT4_F90_Y       "2147483647"
 #define HUGE_INT8_F90_Y   "9223372036854775807"
-#define HUGE_REAL4_F90_Y  "0.13634350882572e+2466"
-#define HUGE_REAL8_F90_Y  "0.136343516952426e+2466"
-#define HUGE_REAL16_F90_Y "0.1363435169524269911828730305882e+2466"
 /* IEEE: */
 #define HUGE_INT1_F90_IEEE                  "127"
 #define HUGE_INT2_F90_IEEE                "32767"
 #define HUGE_INT4_F90_IEEE           "2147483647"
 #define HUGE_INT8_F90_IEEE  "9223372036854775807"
-#define HUGE_REAL4_F90_IEEE   "3.4028234663852886E+38"
-#define HUGE_REAL8_F90_IEEE   "1.7976931348623158E+308"
-#if (defined(_TARGET_OS_IRIX) || defined(_TARGET_OS_LINUX) || defined(_TARGET_OS_DARWIN))
-#define HUGE_REAL16_F90_IEEE  "8.98846567431157953864652595394506827E+307"
-#else
-#define HUGE_REAL16_F90_IEEE  "1.189731495357231765085759326628007016E+4932"
-#endif
 
 #define HUGE_INT1_F90		(target_ieee ?                                 \
 				HUGE_INT1_F90_IEEE : HUGE_INT1_F90_Y)
@@ -173,12 +163,6 @@
 				HUGE_INT4_F90_IEEE : HUGE_INT4_F90_Y)
 #define HUGE_INT8_F90		(target_ieee ?                                 \
 				HUGE_INT8_F90_IEEE : HUGE_INT8_F90_Y)
-#define HUGE_REAL4_F90		(target_ieee ?                                 \
-				HUGE_REAL4_F90_IEEE : HUGE_REAL4_F90_Y)
-#define HUGE_REAL8_F90		(target_ieee ?                                 \
-				HUGE_REAL8_F90_IEEE : HUGE_REAL8_F90_Y)
-#define HUGE_REAL16_F90		(target_ieee ?                                 \
-				HUGE_REAL16_F90_IEEE : HUGE_REAL16_F90_Y)
 
 /* MAXEXPONENT = emax of real and double precision in the model */
 /* YMP: */
@@ -298,37 +282,3 @@
 #define RANGE_REAL16_F90	(target_ieee ?                                 \
 			RANGE_REAL16_F90_IEEE : RANGE_REAL16_F90_Y)
 
-/* BHJ JBL All TINY values are stored here as strings. They must be converted */
-/* to constants using the routine cvrt_str_to_cn in lex.c. This is because of */
-/* cross compiler problems with the use of these as "c" constants.            */
-
-/* TINY for real and double precision is the smallest number in the model.
- * Result is b**(emin-1)
- */
-/* YMP: */
-#if defined(_HOST_OS_UNICOS)
-#define TINY_REAL4_F90_Y  "0.73344154702194e-2465"
-#define TINY_REAL8_F90_Y  "0.73344154702194e-2465"
-#define TINY_REAL16_F90_Y "0.733441547021938866248564956819e-2465"
-#else
-#define TINY_REAL4_F90_Y  "0.0"
-#define TINY_REAL8_F90_Y  "0.0"
-#define TINY_REAL16_F90_Y "0.0"
-#endif
-/* IEEE: */
-#define TINY_REAL4_F90_IEEE   "1.175494350822287508E-38"
-#define TINY_REAL8_F90_IEEE   "2.225073858507201383E-308"
-
-/* until REAL16 is ready on Cray ieee, this must be the same as REAL8 */
-#if (defined(_TARGET_OS_IRIX) || defined(_TARGET_OS_LINUX) || defined(_TARGET_OS_DARWIN))
-#define TINY_REAL16_F90_IEEE  "0.1805194375864829576069262081173747E-275"
-#else
-#define TINY_REAL16_F90_IEEE  "3.362103143112093506262677817321752603E-4932"
-#endif
-
-#define TINY_REAL4_F90	(target_ieee ?                                         \
-			TINY_REAL4_F90_IEEE : TINY_REAL4_F90_Y)
-#define TINY_REAL8_F90	(target_ieee ?                                         \
-			TINY_REAL8_F90_IEEE : TINY_REAL8_F90_Y)
-#define TINY_REAL16_F90	(target_ieee ?                                         \
-			TINY_REAL16_F90_IEEE : TINY_REAL16_F90_Y)
