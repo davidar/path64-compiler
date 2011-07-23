@@ -160,6 +160,8 @@ static bfd_boolean notice
 #ifdef IPA_LINK
 bfd_boolean is_ipa = FALSE;
 
+extern void cleanup_symtab_for_ipa(void);
+
     /* I have to call this through ld because otherwise
        ipa_ld.o will get pulled in whether it is wanted
        or not. */

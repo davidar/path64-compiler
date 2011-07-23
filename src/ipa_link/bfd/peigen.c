@@ -56,6 +56,7 @@
    depending on whether we're compiling for straight PE or PE+.  */
 #define COFF_WITH_pe
 
+#include <time.h>
 #include "bfd.h"
 #include "sysdep.h"
 #include "libbfd.h"

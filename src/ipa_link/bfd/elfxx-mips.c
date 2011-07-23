@@ -27,6 +27,7 @@
 
 /* This file handles functionality common to the different MIPS ABI's.  */
 
+#include <time.h>
 #include "bfd.h"
 #include "sysdep.h"
 #include "libbfd.h"
