@@ -4279,7 +4279,10 @@ BOOL EBO_Merge_Memory_Addr( OP* op,
     * consider when base_tn == 0xffffffff and scale_tn ==1, then base_tn + scale_tn = 0x100000000
     * but this will happend when Allow_wrap_around_opt = OFF
     */
-  if(Is_Target_64bit() && !(TN_size(base_tn) == 8) && !Allow_wrap_around_opt)
+  if( Is_Target_64bit()
+  	&& base_tn
+  	&& !(TN_size(base_tn) == 8) 
+  	&& !Allow_wrap_around_opt)
   	return FALSE;
 
   OP* new_op = Compose_Mem_Op_And_Copy_Info(op, index_tn, offset_tn, scale_tn,
