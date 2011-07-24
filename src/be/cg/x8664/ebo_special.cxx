@@ -4275,6 +4275,13 @@ BOOL EBO_Merge_Memory_Addr( OP* op,
   if ( index_tn == rip || base_tn == rip )
     return FALSE;
 
+  /* when Size_TN(base_tn) is 4 bytes, convert base_tn to 8 bytes might not be safe 
+    * consider when base_tn == 0xffffffff and scale_tn ==1, then base_tn + scale_tn = 0x100000000
+    * but this will happend when Allow_wrap_around_opt = OFF
+    */
+  if(Is_Target_64bit() && !(TN_size(base_tn) == 8) && !Allow_wrap_around_opt)
+  	return FALSE;
+
   OP* new_op = Compose_Mem_Op_And_Copy_Info(op, index_tn, offset_tn, scale_tn,
 					    base_tn, actual_tninfo);
 
@@ -5926,10 +5933,23 @@ EBO_Lea_Insertion( OP* op, TN** opnd_tn, EBO_TN_INFO** actual_tninfo )
         new_op = Mk_OP ((code == TOP_add32)?TOP_leax32:TOP_leax64, 
 	  	      OP_result(op, 0), OP_opnd(op, 1), OP_opnd(op, 0), 
 		      Gen_Literal_TN(1, 4), Gen_Literal_TN(0, 4));
-      } else 
-        new_op = Mk_OP ((code == TOP_add32)?TOP_leax32:TOP_leax64, 
-	  	      OP_result(op, 0), OP_opnd(op, 0), OP_opnd(op, 1), 
-		      Gen_Literal_TN(1, 4), Gen_Literal_TN(0, 4));
+      } else {
+        if(code == TOP_add32)
+			new_op = Mk_OP(TOP_leax32, OP_result(op, 0), OP_opnd(op, 0), OP_opnd(op,1),
+                      Gen_Literal_TN(1, 4), Gen_Literal_TN(0, 4));
+		else{
+		  /*code must be TOP_add64
+		    * original op: tn_r = tn_0 + tn_1;
+		    * if TN_size(tn_0) == 4 and tn_0 == 0xffffffff, then tn_0+1 will be 0x100000000 instead of 0 after expanding tn_0 to 8 bytes
+		    * this bug will happen only when wrap_around_unsafe_opt=OFF
+		    */
+		  if(Allow_wrap_around_opt || (TN_size(OP_opnd(op,0)) == 8)){
+		  	new_op = Mk_OP(TOP_leax64, OP_result(op, 0), OP_opnd(op, 0), OP_opnd(op, 1),
+				     Gen_Literal_TN(1, 4), Gen_Literal_TN(0, 4));
+		  }else
+		    return FALSE;
+		}
+      }
 
       if (rflags_read && 
 	  ((TOP_is_change_rflags( OP_code(new_op) ) &&
