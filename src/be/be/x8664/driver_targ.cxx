@@ -90,6 +90,9 @@ void Initialize_Targ_Info(void)
   case TARGET_wolfdale:
     proc = PROCESSOR_wolfdale;
     break;
+  case TARGET_sandy:
+  	proc = PROCESSOR_sandy;
+	break;
   default:
     FmtAssert(FALSE, ("targinfo doesn't handle target: %s\n", Targ_Name(Target)));
     /*NOTREACHED*/

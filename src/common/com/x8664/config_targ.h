@@ -148,7 +148,7 @@ extern TARGET_PROCESSOR Target;		/* -Tc */
 extern const char *Targ_Name (TARGET_PROCESSOR target);
 
 // NOTE: for this definition, all processors are treated x86-64!
-#define Is_Target_x86_64()	(Target >= TARGET_opteron && Target <= TARGET_xeon)
+#define Is_Target_x86_64()	(Target >= TARGET_opteron && Target <= TARGET_sandy)
 #define Is_Target_64bit()       (Target_ABI == ABI_n64)
 #define Is_Target_32bit()       (Target_ABI == ABI_n32)
 #define Is_Target_SSE()         (Target_SSE == TRUE)

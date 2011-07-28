@@ -100,8 +100,12 @@ int proc = UNDEFINED;
 static int target_supported_abi = UNDEFINED;
 static boolean target_supports_sse2 = FALSE;
 static boolean target_prefers_sse3 = FALSE;
+static boolean target_supports_ssse3 = FALSE;
 static boolean target_supports_3dnow = FALSE;
 static boolean target_supports_sse4a = FALSE;
+static boolean target_supports_sse41 = FALSE;
+static boolean target_supports_sse42 = FALSE;
+static boolean target_supports_avx = FALSE;
 #endif
 
 extern boolean parsing_default_options;
@@ -2266,6 +2270,9 @@ get_x86_auto_cpu_name ()
       case 28: // Intel Atom processor. All processors are manufactured using
                // the 45 nm process
         return "any_64bit_x86";
+	  case 30: // Intel i7
+	  case 42: // Intel i5
+	    return "sandy";
 
       default: return "i686";
       }
@@ -2431,6 +2438,12 @@ Get_x86_ISA ()
       target_prefers_sse3 = supported_cpu_types[i].prefers_sse3;
       target_supports_3dnow = supported_cpu_types[i].supports_3dnow;
       target_supports_sse4a = supported_cpu_types[i].supports_sse4a;
+	  if(strcmp(name, "sandy")){
+	  	target_supports_ssse3 = TRUE;
+	  	target_supports_sse41 = TRUE;
+		target_supports_sse42 = TRUE;
+		target_supports_avx = TRUE;
+	  }
       break;
     }
   }
@@ -2485,6 +2498,16 @@ Get_x86_ISA_extensions ()
     sse2 = TRUE;
     sse3 = TRUE;
   }
+  
+  if(ssse3 == UNDEFINED && (target_supports_ssse3))
+  	ssse3 = TRUE;
+
+  if(sse4_1 == UNDEFINED && target_supports_sse41)
+  	sse4_1 = TRUE;
+
+  if(sse4_2 == UNDEFINED && target_supports_sse42)
+  	sse4_2 = TRUE;
+
 
 #if 0 //temporarily disable it until we have assembler and linker support for
       //sse4a instructions

@@ -511,6 +511,7 @@ Prepare_Target ( void )
     }
     else if (strcasecmp ( Processor_Name, "sandy") == 0){
       targ = TARGET_sandy;
+	  // TODO: here to add Tareget sse?
     }
     else {
       ErrMsg ( EC_Inv_TARG, "processor", Processor_Name );
@@ -528,7 +529,7 @@ Prepare_Target ( void )
   /* Now make sure ABI/ISA and Target are consistent if both specified,
    * and if one is default the other:
    */
-  if ( Is_Target_x86_64() ) {
+  if ( Is_Target_x86_64()) {
     if( Target_ABI == ABI_UNDEF ){
       Target_ABI = ABI_n64;
     }

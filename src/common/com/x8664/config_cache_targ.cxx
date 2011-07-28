@@ -205,6 +205,22 @@ void MHD::Initialize()
                      0.4,		// Load_OP_Overlap_2 ?
                      50);		// Pct_Excess_Writes_Nonhidable ?
     break;
+  case TARGET_sandy:
+  	L[0] = MHD_LEVEL(MHD_TYPE_CACHE, 	// Type
+                     32*1024, 		// Size
+                     64,		// Line Size ?
+                     11,		// Clean Miss Penalty ?
+                     11,		// Dirty Miss Penalty ?
+                     2,			// Associativity ?
+		     32,		// TLB Entries ?
+                     4*1024,		// Page Size ?
+                     50,		// TLB Clean Miss Penalty ?
+                     50,		// TLB Dirty Miss Penalty ?
+                     6.0,		// Typical Outstanding Loads ?
+                     0.8,		// Load_OP_Overlap_1 ?
+                     0.4,		// Load_OP_Overlap_2 ?
+                     50);		// Pct_Excess_Writes_Nonhidable ?
+    break;
   default:
     FmtAssert(FALSE, ("Cannot handle L1 for %s in MHD::Initialize\n",
 		      Targ_Name(Target)));
@@ -336,6 +352,22 @@ void MHD::Initialize()
                      LNO_Run_Prefetch ? 25 : 50);  // ?
     break;
   case TARGET_wolfdale:
+    L[1] = MHD_LEVEL(MHD_TYPE_CACHE, 
+                     6*1024*1024, 
+                     64, // ?
+                     150, // ?
+                     200, // ? 
+                     16, // ?
+                     512, // ?
+                     4*1024, // ?
+                     50, // ?
+                     50, // ?
+                     LNO_Run_Prefetch ? 1.8: 1.0,  // ?
+                     LNO_Run_Prefetch ? 0.7 : 0.1,  // ?
+                     LNO_Run_Prefetch ? 0.3 : 0.05, // ?
+                     LNO_Run_Prefetch ? 25 : 50);  // ?
+    break;
+   case TARGET_sandy:
     L[1] = MHD_LEVEL(MHD_TYPE_CACHE, 
                      6*1024*1024, 
                      64, // ?
