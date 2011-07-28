@@ -8032,7 +8032,7 @@ void    huge_intrinsic(opnd_type     *result_opnd,
    int            info_idx1;
    int            ir_idx;
 
-#if LITTLE_ENDIAN
+#ifdef _LITTLE_ENDIAN
    static unsigned huge4[]  = { 0x7F7FFFFF };
    static unsigned huge8[]  = { 0xFFFFFFFF, 0x7FEFFFFF };
    static unsigned huge16[] = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x7FFFFFFF };
@@ -11407,7 +11407,7 @@ void    tiny_intrinsic(opnd_type     *result_opnd,
    int            info_idx1;
    int            ir_idx;
 
-#if LITTLE_ENDIAN
+#ifdef _LITTLE_ENDIAN
    static unsigned tiny4[]  = { 0x00800000 };
    static unsigned tiny8[]  = { 0, 0x00100000 };
    static unsigned tiny16[] = { 0, 0, 0, 0x00008000 };
