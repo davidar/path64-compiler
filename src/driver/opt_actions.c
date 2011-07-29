@@ -2442,7 +2442,7 @@ Get_x86_ISA ()
 	  	target_supports_ssse3 = TRUE;
 	  	target_supports_sse41 = TRUE;
 		target_supports_sse42 = TRUE;
-		target_supports_avx = TRUE;
+		target_supports_avx = FALSE;
 	  }
       break;
     }
