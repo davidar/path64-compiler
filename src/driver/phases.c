@@ -1099,6 +1099,10 @@ add_file_args (string_list_t *args, phases_t index)
 #endif // !PATH64_ENABLE_PSCRUNTIME
 		}
 
+		if (pic == TRUE) {
+			add_string(args, "-fpic");
+		}
+
 #ifdef PATH64_ENABLE_PSCRUNTIME
 		if (source_lang == L_CC) {
 			add_string(args, "-D_GNU_SOURCE");
