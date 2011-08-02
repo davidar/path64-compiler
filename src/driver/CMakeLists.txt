@@ -315,6 +315,11 @@ add_driver("" ${hash_style_supported})
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
 
     # deb configuration - for debian based distros
+    set(PSC_CRT_PATH_x86_64 "/usr/lib/x86_64-linux-gnu")
+    set(PSC_CRT_PATH_x86_32 "/usr/lib32")
+    add_driver("deb_multiarch" "TRUE")
+
+    # deb configuration - for debian based distros
     set(PSC_CRT_PATH_x86_64 "/usr/lib")
     set(PSC_CRT_PATH_x86_32 "/usr/lib32")
     add_driver("deb_hash_style" "TRUE")
