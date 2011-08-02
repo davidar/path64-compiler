@@ -41,6 +41,8 @@
 #include <limits.h>
 #include <elf.h>
 #include <dlfcn.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "version.h"
 #include "hugetlbfs.h"
