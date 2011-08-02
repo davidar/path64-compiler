@@ -94,8 +94,6 @@ else()
     path64_set_multitarget_property_(mv LINK_FLAGS "${BOOTSTRAP_HACK_FLAG} -nodefaultlibs")
 endif()
 
-path64_multitarget_link_libraries(mv m c)
-
 path64_add_multitarget_library(mv SHARED)
 path64_add_multitarget_multitarget_dependencies(mv pscrt-static)
 if(PATH64_ENABLE_PSCRUNTIME)

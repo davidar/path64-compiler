@@ -142,6 +142,7 @@ static void add_command_line_arg(string_list_t *args, char *sourcefile);
 static void do_f90_common_args(string_list_t *args) ;
 static void set_f90_source_form(string_list_t *args,boolean set_line_length) ;
 static void set_stack_size();
+static boolean add_instr_archive (string_list_t* args);
 
 static phases_t
 post_fe_phase (void);
@@ -2064,10 +2065,32 @@ void add_crtend(string_list_t *args) {
 }
 
 
+static boolean is_huge_lib_needed()
+{
+    HUGEPAGE_DESC desc;
+
+    if (!option_was_seen(O_HP))
+        return FALSE;
+
+    if(instrumentation_invoked == TRUE)
+        return FALSE;
+
+    for (desc = hugepage_desc; desc != NULL; desc = desc->next) {
+        if (desc->alloc == ALLOC_BDT || desc->alloc == ALLOC_HEAP) {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+
 static void
 add_final_ld_args (string_list_t *args)
 {
 	char *temp;
+    boolean instr_used = FALSE;
+    boolean huge_lib_used = FALSE;
 
     if(ipa == TRUE) {
         if(option_was_seen(O_static_libgcc)) {
@@ -2113,8 +2136,17 @@ add_final_ld_args (string_list_t *args)
         if( ! option_was_seen(O_nostartfiles)) add_crtend(args);
         return;
     }
+
+    instr_used = add_instr_archive(args);
+
+    huge_lib_used = is_huge_lib_needed();
+
+    if(huge_lib_used) {
+        add_library(args, "hugetlbfs-psc");
+    }
+
 #ifdef PATH64_ENABLE_PSCRUNTIME
-    if(source_lang == L_CC &&
+    if((source_lang == L_CC || instr_used) &&
        !option_was_seen(O_nodefaultlibs) &&
        !option_was_seen(O_nostdlib) &&
        !option_was_seen(O_nostdlib__)) {
@@ -2153,6 +2185,7 @@ add_final_ld_args (string_list_t *args)
     // staic libc also depends on libeh
     if(option_was_seen(O_static) ||
        source_lang == L_CC ||
+       instr_used ||
        option_was_seen(O_fexceptions)) {
         add_library(args, "eh");
     }
@@ -2167,7 +2200,7 @@ add_final_ld_args (string_list_t *args)
         add_arg(args, "--end-group");
     }
 #else
-    if(source_lang == L_CC) {
+    if(source_lang == L_CC || instr_used) {
         add_arg(args, "-L%s", current_target->libstdcpp_path);
         add_library(args, "stdc++");
     }
@@ -2185,7 +2218,7 @@ add_final_ld_args (string_list_t *args)
 
         add_arg(args, "--end-group");
          
-        if(invoked_lang == L_CC){
+        if(invoked_lang == L_CC || instr_used) {
             add_arg(args, "-L%s", current_target->libsupcpp_path);
             add_library(args, "supc++");
         }
@@ -2450,10 +2483,6 @@ postprocess_ld_args (string_list_t *args, phases_t phase)
 #endif // !PATH64_ENABLE_PSCRUNTIME
             }
 	}
-    }
-
-    if (add_huge_lib) {
-        add_library(args, "hugetlbfs-psc");
     }
 #endif /* defined(BUILD_OS_DARWIN) */
 }
@@ -2880,7 +2909,7 @@ check_existence_of_phases (void)
     }
 }
 
-static void
+static boolean
 add_instr_archive (string_list_t* args)
 {
   extern int profile_type;
@@ -2903,10 +2932,14 @@ add_instr_archive (string_list_t* args)
 	add_library(args, "gcc_s");
       }
 #endif // PATH64_ENABLE_PSCRUNTIME
+
+      return TRUE;
     } else {
       fprintf (stderr, "Unknown profile types %#lx\n", profile_type & ~f);
     }
   }
+
+  return FALSE;
 }
 
 
@@ -3204,8 +3237,6 @@ run_ld (void)
     if (is_target_arch_MIPS())
         add_string(args, "-mips64");	// call gcc with -mips64
 #endif
-
-	add_instr_archive (args);
 
 	add_final_ld_args (args);
 	postprocess_ld_args (args, ldphase);
