@@ -53,14 +53,43 @@ set(_PATH64_ARCH_FLAGS_rsk6 "-DTARG_RSK6")     # TODO: fix it
 set(_PATH64_ARCH_FLAGS_arm "-DTARG_ST -DTARG_ARM -DBE_EXPORTED= -DTARGINFO_EXPORTED= -DSUPPORTS_SELECT -DMUMBLE_ARM_BSP")     # TODO: fix it
 
 
-# Checking that target architectures are specified
+# Returns the Path64 canonical name for specified architecture
+function(path64_canonical_arch ret arch)
+    if    (${arch} MATCHES "x86.*64|amd64")
+        set(${ret} "x86_64" PARENT_SCOPE)
+    elseif(${arch} MATCHES "x86|i[3-6]86")
+        set(${ret} "x86_32" PARENT_SCOPE)
+    elseif(${arch} MATCHES "mips.*64")
+        set(${ret} "mips_64" PARENT_SCOPE)
+    elseif(${arch} MATCHES "mips.*32")
+        set(${ret} "mips_32" PARENT_SCOPE)
+    elseif(${arch} MATCHES "rsk6.*64")
+        set(${ret} "rsk6_64" PARENT_SCOPE)
+    elseif(${arch} MATCHES "rsk6.*32")
+        set(${ret} "rsk6_32" PARENT_SCOPE)
+    elseif(${arch} MATCHES "arm")
+        set(${ret} "arm" PARENT_SCOPE)
+    else()
+        set(${ret} "${arch}" PARENT_SCOPE)
+    endif()
+endfunction()
+
+
+# Returns target for host system
+function(path64_get_host_target res_var)
+    if(NOT "${PATH64_HOST_TARGET}" STREQUAL "")
+        set(${res_var} "${PATH64_HOST_TARGET}" PARENT_SCOPE)
+    else()
+        path64_canonical_arch(arch ${CMAKE_SYSTEM_PROCESSOR})
+        set(${res_var} ${arch} PARENT_SCOPE)
+    endif()
+endfunction()
+
+
+# Defaulting to host target if PATH64_ENABLE_TARGETS is not specified
 if(NOT PATH64_ENABLE_TARGETS)
-    message( FATAL_ERROR "Must specify at least one target architecture.
-${_PATH64_SUPPORTED_TARGETS_STRING}
-Please add -DPATH64_ENABLE_TARGETS=x86_64 to your cmake ../Path64 line
-Multiple targets can be specified with
-  \"-DPATH64_ENABLE_TARGETS=x86_32;mips_64\"
-on the command line.")
+    path64_get_host_target(PATH64_ENABLE_TARGETS)
+    message(STATUS "Defaulting to ${PATH64_ENABLE_TARGETS} target")
 endif()
 
 
@@ -177,37 +206,6 @@ endfunction()
 # Returns target bits
 function(path64_get_target_bits res_var targ)
    set(${res_var} ${_PATH64_TARGET_BITS_${targ}} PARENT_SCOPE)
-endfunction()
-
-# Returns the Path64 canonical name for specified architecture
-function(path64_canonical_arch ret arch)
-    if    (${arch} MATCHES "x86.*64|amd64")
-        set(${ret} "x86_64" PARENT_SCOPE)
-    elseif(${arch} MATCHES "x86|i[3-6]86")
-        set(${ret} "x86_32" PARENT_SCOPE)
-    elseif(${arch} MATCHES "mips.*64")
-        set(${ret} "mips_64" PARENT_SCOPE)
-    elseif(${arch} MATCHES "mips.*32")
-        set(${ret} "mips_32" PARENT_SCOPE)
-    elseif(${arch} MATCHES "rsk6.*64")
-        set(${ret} "rsk6_64" PARENT_SCOPE)
-    elseif(${arch} MATCHES "rsk6.*32")
-        set(${ret} "rsk6_32" PARENT_SCOPE)
-    elseif(${arch} MATCHES "arm")
-        set(${ret} "arm" PARENT_SCOPE)
-    else()
-        set(${ret} "${arch}" PARENT_SCOPE)
-    endif()
-endfunction()
-
-# Returns target for host system
-function(path64_get_host_target res_var)
-    if(NOT "${PATH64_HOST_TARGET}" STREQUAL "")
-        set(${res_var} "${PATH64_HOST_TARGET}" PARENT_SCOPE)
-    else()
-        path64_canonical_arch(arch ${CMAKE_SYSTEM_PROCESSOR})
-        set(${res_var} ${arch} PARENT_SCOPE)
-    endif()
 endfunction()
 
 
