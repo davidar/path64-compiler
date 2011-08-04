@@ -471,8 +471,6 @@ main()
 		     TOP_movzwq,
 		     TOP_movslq,
 		     TOP_movzlq,
-			 TOP_popcntl,
-			 TOP_popcntq,
                      TOP_UNDEFINED );
 
   /* ===== Memory load operator ====== */
