@@ -1658,6 +1658,9 @@ print_file_path (char *fname, int exe)
   if(res)
     return;
 
+  // initialize targets before searching in runtime path
+  init_targets();
+
   {
     char *path;
     asprintf(&path, "%s/%s", target_runtime_path(), fname);
