@@ -26,7 +26,6 @@ Dependencies:
       -DPATH64_ENABLE_TARGETS=<targets>  e.g. "x86_64"
       -DCMAKE_BUILD_TYPE=<Debug|Release>
       -DCMAKE_Fortran_COMPILER=<compiler>
-      -DPATH64_ENABLE_MATHLIBS=<ON|OFF>
       -DPATH64_ENABLE_HUGEPAGES=<ON|OFF>
 
    Options that should be specified for each target in <targets>:
@@ -41,7 +40,6 @@ Dependencies:
    Example for x86_64 target:
    cmake -DCMAKE_BUILD_TYPE=Debug \
          -DPATH64_ENABLE_TARGETS="x86_64" \
-         -DPATH64_ENABLE_MATHLIBS=ON \
          -DPATH64_ENABLE_FORTRAN=ON \
          -DPSC_CRT_PATH_x86_64=/usr/lib64 \
          -DPSC_DYNAMIC_LINKER_x86_64=/lib/ld-linux-x86-64.so.2 \

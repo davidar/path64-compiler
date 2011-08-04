@@ -87,7 +87,6 @@ $run cmake -DCMAKE_INSTALL_PREFIX=$prefix                    \
            ${PATH64_DEFS}                                    \
            -DPATH64_ENABLE_PROFILING=OFF                     \
            -DPATH64_ENABLE_FORTRAN=OFF                       \
-           -DPATH64_ENABLE_MATHLIBS=ON                       \
            -DPSC_FULL_VERSION=$version                       \
            $src
 

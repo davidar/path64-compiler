@@ -201,14 +201,6 @@ ELSE()
 	MESSAGE(STATUS "Not building with huge pages support")
 ENDIF()
 
-# Do we build the optimized math libraries
-OPTION(PATH64_ENABLE_MATHLIBS "Building optimized math libraries" OFF)
-IF(PATH64_ENABLE_MATHLIBS)
-	MESSAGE(STATUS "Optimized math libraries enabled")
-ELSE()
-	MESSAGE(STATUS "Optimized math libraries disabled")
-ENDIF()
-
 # Use X86 elf file format for whirl objects
 OPTION(X86_WHIRL_OBJECTS "Use x86 elf file format for whirl object files" ON)
 IF(X86_WHIRL_OBJECTS)

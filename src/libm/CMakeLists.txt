@@ -69,8 +69,6 @@ INCLUDE_DIRECTORIES(
 # Should always build with a higher level of optimization
 set(compile_flags "-O3 -LNO:vintr=0 -std=gnu99")
 
-IF(PATH64_ENABLE_MATHLIBS)
-
 set_source_files_properties(${PATHSCALE_MV_SRCS} PROPERTIES LANGUAGE C)
 
 path64_set_multitarget_sources(mv-static COMMON ${PATHSCALE_MV_SRCS})
@@ -115,4 +113,3 @@ if(PATH64_ENABLE_PROFILING)
     path64_add_dependencies_from_multitarget(compiler-stage-libs-C mv_p)
 endif(PATH64_ENABLE_PROFILING)
 
-ENDIF(PATH64_ENABLE_MATHLIBS)

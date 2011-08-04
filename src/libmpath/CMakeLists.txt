@@ -91,7 +91,6 @@ ADD_DEFINITIONS(
 	-D_HDW_SQRT
 	-D_libm_weak=1)
 
-IF(PATH64_ENABLE_MATHLIBS)
 
 set_source_files_properties("amd/w_log2.c" "amd/w_log2f.c" PROPERTIES
                             COMPILE_DEFINITIONS "COMPILING_LOG2")
@@ -144,5 +143,4 @@ if(PATH64_ENABLE_PROFILING)
     path64_add_dependencies_from_multitarget(compiler-stage-libs-C mpath_p)
 endif(PATH64_ENABLE_PROFILING)
 
-ENDIF(PATH64_ENABLE_MATHLIBS)
 

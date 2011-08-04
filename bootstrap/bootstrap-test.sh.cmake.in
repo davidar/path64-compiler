@@ -29,7 +29,6 @@ while [ $stage -lt $num_stages ]; do
                      -D PATH64_ENABLE_MULTILIB=${PATH64_ENABLE_MULTILIB} \
                      -D PATH64_ENABLE_VALGRIND=${PATH64_ENABLE_VALGRIND} \
                      -D PATH64_ENABLE_HUGEPAGES=${PATH64_ENABLE_HUGEPAGES} \
-                     -D PATH64_ENABLE_MATHLIBS=${PATH64_ENABLE_MATHLIBS} \
                      -D X86_WHIRL_OBJECTS=${X86_WHIRL_OBJECTS} \
                      -D FAT_WHIRL_OBJECTS=${FAT_WHIRL_OBJECTS} \
                      -D PATH64_ENABLE_PSCRUNTIME=${PATH64_ENABLE_PSCRUNTIME} \
