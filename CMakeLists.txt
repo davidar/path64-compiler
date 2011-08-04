@@ -171,12 +171,6 @@ ENDIF()
 
 # Checking that CRT paths are specified for all targets
 FOREACH(targ ${PATH64_ENABLE_TARGETS})
-    IF(PSC_CRT_PATH_${targ})
-        MESSAGE(STATUS "CRT path for ${targ} target: ${PSC_CRT_PATH_${targ}}")
-    ELSE()
-        MESSAGE(FATAL_ERROR "CRT path for ${targ} target is not specified. Please specify PSC_CRT_PATH_${targ} variable")
-    ENDIF()
-
     if(PSC_CRTBEGIN_PATH_${targ})
         message(STATUS "crtbegin/crtend path for ${targ} target: ${PSC_CRTBEGIN_PATH_${targ}}")
     else()

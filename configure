@@ -64,7 +64,6 @@ for t in $targets; do
             awk '/-dynamic-linker/ { match($0, "-dynamic-linker +[^ ]+");
                                      print substr($0, RSTART+16, RLENGTH-16) }')
     PATH64_DEFS="$PATH64_DEFS
-      -DPSC_CRT_PATH_${name}=${gcccrt}
       -DPSC_CRTBEGIN_PATH_${name}=${gcclib}
       -DPSC_LIBSUPCPP_PATH_${name}=${gcclib}
       -DPSC_LIBSTDCPP_PATH_${name}=${gcclib}

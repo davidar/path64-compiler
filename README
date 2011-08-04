@@ -29,7 +29,6 @@ Dependencies:
       -DPATH64_ENABLE_HUGEPAGES=<ON|OFF>
 
    Options that should be specified for each target in <targets>:
-      -DPSC_CRT_PATH_<target>=<path to crt1.o, crti.o, crtn.o>
       -DPSC_LIBSUPCPP_PATH_<target>=<path to libsupc++ library>
       -DPSC_LIBSTDCPP_PATH_<target>=<path to libstdc++ library>
       -DPSC_LIBGCC_PATH_<target>=<path to libgcc library>
@@ -40,7 +39,6 @@ Dependencies:
    cmake -DCMAKE_BUILD_TYPE=Debug \
          -DPATH64_ENABLE_TARGETS="x86_64" \
          -DPATH64_ENABLE_FORTRAN=ON \
-         -DPSC_CRT_PATH_x86_64=/usr/lib64 \
          -DPSC_LIBSUPCPP_PATH_x86_64=/usr/lib/gcc/x86_64-linux-gnu/4.4 \
          -DPSC_LIBSTDCPP_PATH_x86_64=/usr/lib/gcc/x86_64-linux-gnu/4.4 \
          -DPSC_LIBGCC_PATH_x86_64=/usr/lib/gcc/x86_64-linux-gnu/4.4 \

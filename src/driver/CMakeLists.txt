@@ -10,7 +10,32 @@ function(generate_targ_info output)
         set(abi ${_PATH64_TARGET_ABI_${targ}})
         set(crt_path ${PSC_CRT_PATH_${targ}})
         set(crtbegin_path ${PSC_CRTBEGIN_PATH_${targ}})
+
+        # checking CRT path
+
+        if("${crt_path}" STREQUAL "")
+            message(FATAL_ERROR "CRT path for target '${targ}' is not specified. Please set PSC_CRT_PATH_${targ} variable")
+        endif()
+
+        if(NOT IS_ABSOLUTE "${crt_path}")
+            message(FATAL_ERROR "CRT path for target '${targ}' must be absolute. Specified value: '${crt_path}'")
+        endif()
+
+        if(NOT EXISTS "${crt_path}/crt1.o")
+            message(FATAL_ERROR "file '${crt_path}/crt1.o' does not exist. Please check CRT path for target '${targ}'")
+        endif()
+
+        if(NOT EXISTS "${crt_path}/crti.o")
+            message(FATAL_ERROR "file '${crt_path}/crti.o' does not exist. Please check CRT path for target '${targ}'")
+        endif()
+
+        if(NOT EXISTS "${crt_path}/crtn.o")
+            message(FATAL_ERROR "file '${crt_path}/crtn.o' does not exist. Please check CRT path for target '${targ}'")
+        endif()
+
     
+        # checking dynamic linker
+
         if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
             set(dyn_linker ${PSC_DYNAMIC_LINKER_${targ}})
             if(NOT dyn_linker)
@@ -315,8 +340,30 @@ add_custom_target(driver_gen_sources
 
 # Driver for host system
 
+# detecting CRT paths for all targets
+foreach(targ ${PATH64_ENABLE_TARGETS})
+    set(crt_path_name "PSC_CRT_PATH_${targ}")
+    set(crt_path "${${crt_path_name}}")
+
+    if("${crt_path}" STREQUAL "")
+        execute_process(COMMAND "${CMAKE_C_COMPILER}" "${_PATH64_TARGET_FLAG_${targ}}" "-print-file-name=libc.so"
+                        RESULT_VARIABLE res
+                        OUTPUT_VARIABLE crt_path)
+        string(REPLACE "\n" "" crt_path "${crt_path}")
+        if(res EQUAL 0 AND NOT "${crt_path}" STREQUAL "")
+            get_filename_component(crt_path "${crt_path}" ABSOLUTE)
+            if(EXISTS "${crt_path}")
+                get_filename_component(crt_path "${crt_path}" PATH)
+                set(${crt_path_name} "${crt_path}")
+            endif()
+        endif()
+    endif()
+endforeach()
 
 add_driver("" ${hash_style_supported})
+
+
+# Drivers for various linux distros
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
 
