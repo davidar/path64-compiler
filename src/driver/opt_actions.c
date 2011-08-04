@@ -2438,7 +2438,7 @@ Get_x86_ISA ()
       target_prefers_sse3 = supported_cpu_types[i].prefers_sse3;
       target_supports_3dnow = supported_cpu_types[i].supports_3dnow;
       target_supports_sse4a = supported_cpu_types[i].supports_sse4a;
-	  if(strcmp(name, "sandy")){
+	  if(strcmp(name, "sandy") == 0) {
 	  	target_supports_ssse3 = TRUE;
 	  	target_supports_sse41 = TRUE;
 		target_supports_sse42 = TRUE;
