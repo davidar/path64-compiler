@@ -1,7 +1,7 @@
 
 
 # Generates target info
-function(generate_targ_info output)
+function(generate_targ_info config_name output)
     set(TARGET_DEFINITIONS "")
     set(first true)
     foreach(targ ${PATH64_ENABLE_TARGETS})
@@ -21,16 +21,21 @@ function(generate_targ_info output)
             message(FATAL_ERROR "CRT path for target '${targ}' must be absolute. Specified value: '${crt_path}'")
         endif()
 
-        if(NOT EXISTS "${crt_path}/crt1.o")
-            message(FATAL_ERROR "file '${crt_path}/crt1.o' does not exist. Please check CRT path for target '${targ}'")
-        endif()
+        # check files only for native config
+        if("${config_name}" STREQUAL "")
 
-        if(NOT EXISTS "${crt_path}/crti.o")
-            message(FATAL_ERROR "file '${crt_path}/crti.o' does not exist. Please check CRT path for target '${targ}'")
-        endif()
+            if(NOT EXISTS "${crt_path}/crt1.o")
+                message(FATAL_ERROR "file '${crt_path}/crt1.o' does not exist. Please check CRT path for target '${targ}'")
+            endif()
 
-        if(NOT EXISTS "${crt_path}/crtn.o")
-            message(FATAL_ERROR "file '${crt_path}/crtn.o' does not exist. Please check CRT path for target '${targ}'")
+            if(NOT EXISTS "${crt_path}/crti.o")
+                message(FATAL_ERROR "file '${crt_path}/crti.o' does not exist. Please check CRT path for target '${targ}'")
+            endif()
+
+            if(NOT EXISTS "${crt_path}/crtn.o")
+                message(FATAL_ERROR "file '${crt_path}/crtn.o' does not exist. Please check CRT path for target '${targ}'")
+            endif()
+
         endif()
 
     
@@ -141,7 +146,7 @@ function(add_driver config_name
     
     # generating target info
     set(targ_info_source "${CMAKE_CURRENT_BINARY_DIR}/targ_info${suffix}.c")
-    generate_targ_info("${targ_info_source}")
+    generate_targ_info("${config_name}" "${targ_info_source}")
     
     add_executable(pathcc${suffix} ${PATHSCALE_DRIVER_SRCS} "${targ_info_source}")
     set_property(TARGET pathcc${suffix} PROPERTY COMPILE_FLAGS "-I${include_dir}")
@@ -346,7 +351,7 @@ foreach(targ ${PATH64_ENABLE_TARGETS})
     set(crt_path "${${crt_path_name}}")
 
     if("${crt_path}" STREQUAL "")
-        execute_process(COMMAND "${CMAKE_C_COMPILER}" "${_PATH64_TARGET_FLAG_${targ}}" "-print-file-name=libc.so"
+        execute_process(COMMAND "${CMAKE_C_COMPILER}" "${_PATH64_TARGET_FLAG_${targ}}" "-print-file-name=crt1.o"
                         RESULT_VARIABLE res
                         OUTPUT_VARIABLE crt_path)
         string(REPLACE "\n" "" crt_path "${crt_path}")
