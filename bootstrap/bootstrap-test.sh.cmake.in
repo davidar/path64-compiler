@@ -36,7 +36,6 @@ while [ $stage -lt $num_stages ]; do
                      -D CMAKE_SKIP_RPATH=${CMAKE_SKIP_RPATH} \
                      -D PATH64_ENABLE_TARGETS=x86_64 \
                      -D PSC_CRT_PATH_x86_64=${PSC_CRT_PATH_x86_64} \
-                     -D PSC_DYNAMIC_LINKER_x86_64=${PSC_DYNAMIC_LINKER_x86_64} \
                      -D CMAKE_SKIP_RPATH=ON \
                      -D CMAKE_C_COMPILER=$CC \
                      -D CMAKE_CXX_COMPILER=$CXX \

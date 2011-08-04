@@ -66,7 +66,6 @@ for t in $targets; do
     PATH64_DEFS="$PATH64_DEFS
       -DPSC_CRT_PATH_${name}=${gcccrt}
       -DPSC_CRTBEGIN_PATH_${name}=${gcclib}
-      -DPSC_DYNAMIC_LINKER_${name}=${ld_so}
       -DPSC_LIBSUPCPP_PATH_${name}=${gcclib}
       -DPSC_LIBSTDCPP_PATH_${name}=${gcclib}
       -DPSC_LIBGCC_PATH_${name}=${gcclib}

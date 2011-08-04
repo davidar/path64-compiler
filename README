@@ -30,7 +30,6 @@ Dependencies:
 
    Options that should be specified for each target in <targets>:
       -DPSC_CRT_PATH_<target>=<path to crt1.o, crti.o, crtn.o>
-      -DPSC_DYNAMIC_LINKER_<target>=<path to dynamic linker>
       -DPSC_LIBSUPCPP_PATH_<target>=<path to libsupc++ library>
       -DPSC_LIBSTDCPP_PATH_<target>=<path to libstdc++ library>
       -DPSC_LIBGCC_PATH_<target>=<path to libgcc library>
@@ -42,7 +41,6 @@ Dependencies:
          -DPATH64_ENABLE_TARGETS="x86_64" \
          -DPATH64_ENABLE_FORTRAN=ON \
          -DPSC_CRT_PATH_x86_64=/usr/lib64 \
-         -DPSC_DYNAMIC_LINKER_x86_64=/lib/ld-linux-x86-64.so.2 \
          -DPSC_LIBSUPCPP_PATH_x86_64=/usr/lib/gcc/x86_64-linux-gnu/4.4 \
          -DPSC_LIBSTDCPP_PATH_x86_64=/usr/lib/gcc/x86_64-linux-gnu/4.4 \
          -DPSC_LIBGCC_PATH_x86_64=/usr/lib/gcc/x86_64-linux-gnu/4.4 \
