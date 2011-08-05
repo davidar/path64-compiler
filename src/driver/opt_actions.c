@@ -1665,12 +1665,13 @@ print_file_path (char *fname, int exe)
     char *path;
     asprintf(&path, "%s/%s", target_runtime_path(), fname);
 
-    if(file_exists) {
+    if(file_exists(path)) {
       puts(path);
+      free(path);
+      return;
     }
 
     free(path);
-    return;
   }
 
   if (print_phase_path(P_be, fname))
