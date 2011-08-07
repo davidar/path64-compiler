@@ -167,7 +167,7 @@ add_custom_command(
 path64_set_multiarch_sources(mfef95_sources COMMON ${PATHSCALE_MFEF95_SRCS})
 path64_add_multiarch_executable(mfef95 mfef95_sources)
 path64_multiarch_link_multiarch_libraries(mfef95 comutil fe90)
-path64_multiarch_link_libraries(mfef95 arith cif pathfortran-host m)
+path64_multiarch_link_libraries(mfef95 arith cif pathfortran-mfef95 m)
 path64_set_multiarch_property(mfef95 COMPILE_FLAGS
                               "-I${CMAKE_CURRENT_SOURCE_DIR}/../../common/com/@ARCH@")
 path64_install_multiarch(mfef95)

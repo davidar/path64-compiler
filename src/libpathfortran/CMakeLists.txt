@@ -1022,6 +1022,21 @@ path64_add_library_for_arch(pathfortran-host ${host_arch} STATIC
                             ${PATHSCALE_PATHFORTRAN_F_SRCS}
                             ${Path64_BINARY_DIR}/src/include/ftn_lib_messages.h
                             ${Path64_BINARY_DIR}/src/include/ieee_cpp_macros.h)
+path64_add_library_for_arch(pathfortran-mfef95 ${host_arch} STATIC
+                            "../libcsup/gen/strnrstrn.c"
+                            "../libcsup/gen/strnstrn.c"
+                            "../libcsup/msgnew/catgetmsg.c"
+                            "../libcsup/msgnew/catmsgfmt.c"
+                            "../libf/fio/fmtparse.c"
+                            "../libfi/array/reshape_gen.c"
+                            "../libfi/array/transfer_gen.c"
+                            "../libfi/char/f90_index.c"
+                            "../libfi/char/f90_scan.c"
+                            "../libfi/char/f90_verify.c"
+                            "../libfi/char/index.c"
+                            "../libfi/char/scan.c"
+                            "../libfi/char/verify.c"
+                           )
 
 add_custom_command(
     OUTPUT massage.c
