@@ -2146,6 +2146,13 @@ add_final_ld_args (string_list_t *args)
     }
 
 #ifdef PATH64_ENABLE_PSCRUNTIME
+#ifdef __sun
+    add_arg(args, "-z");
+    add_arg(args, "ignore");
+#else // !__sun
+    add_arg(args, "--as-needed");
+#endif // !__sun
+
     if((source_lang == L_CC || instr_used) &&
        !option_was_seen(O_nodefaultlibs) &&
        !option_was_seen(O_nostdlib) &&
@@ -2163,10 +2170,6 @@ add_final_ld_args (string_list_t *args)
 #ifndef  __FreeBSD__
         add_library(args, "dl");
 #endif // !__FreeBSD__
-
-        // always link C++ programs with math library
-        add_library(args, "m");
-
     }
 
     // static libc should be grouped with libgcc and libeh
@@ -2199,6 +2202,19 @@ add_final_ld_args (string_list_t *args)
     if (option_was_seen(O_static) || option_was_seen(O__static)) {
         add_arg(args, "--end-group");
     }
+
+    // always link with math library (libgcc depends on libm)
+    add_library(args, "mv");
+    add_library(args, "mpath");
+    add_library(args, "m");
+
+#ifdef __sun
+    add_arg(args, "-z");
+    add_arg(args, "record");
+#else // !__sun
+    add_arg(args, "--no-as-needed");
+#endif // !__sun
+
 #else
     if(source_lang == L_CC || instr_used) {
         add_arg(args, "-L%s", current_target->libstdcpp_path);
@@ -2320,6 +2336,7 @@ add_final_ld_args (string_list_t *args)
 #endif 
 
 
+#ifndef PATH64_ENABLE_PSCRUNTIME
 	if (shared != RELOCATABLE) {
 	  if ( fbuiltin != 0 && ! option_was_seen(O_fbootstrap_hack) ) {
 	    /* Once -fbuiltin is used, some functions, i.e., __sincos, are only
@@ -2343,6 +2360,7 @@ add_final_ld_args (string_list_t *args)
 	    }
 	  }
 	}
+#endif // !PATH64_ENABLE_PSCRUNTIME
 }
 
 
