@@ -7857,8 +7857,6 @@ WGEN_Expand_Expr (gs_t exp,
 #endif // FE_GNU_4_2_0
 #endif
 	      default:
-		DevWarn ("Encountered BUILT_IN: %d at line %d\n",
-			 gs_decl_function_code (func), lineno);
 		break;
             }
 	  }
