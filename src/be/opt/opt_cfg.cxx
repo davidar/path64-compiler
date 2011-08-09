@@ -5596,6 +5596,8 @@ CFG::Verify_cfg(void)
 void 
 CFG::Print(FILE *fp, BOOL rpo, IDTYPE bb_id)
 {
+  fprintf(fp, "\n================= CFG BEGIN =================\n");
+
   // Should we instead always print in source order (i.e. in order of 
   // basic block numbers)? 
   //
@@ -5619,6 +5621,29 @@ CFG::Print(FILE *fp, BOOL rpo, IDTYPE bb_id)
 	tmp->Print(fp);
     }
   }
+
+  fprintf(fp, "================= CFG REGIONS ===============\n");
+
+  {
+    std::set<BB_REGION*> printed_regions;
+    CFG_ITER it(this);
+    BB_NODE *bb;
+    FOR_ALL_NODE(bb, it, Init()) {
+      if (bb->Kind() == BB_REGIONSTART || bb->Kind() == BB_REGIONEXIT) {
+        BB_REGION *reg = bb->Regioninfo();
+        if (reg != NULL && printed_regions.count(reg) == 0) {
+          printed_regions.insert(reg);
+          fprintf(fp, "REGION %d: start %" PRIdPTR ", end %" PRIdPTR "\n",
+                  RID_id(reg->Rid()),
+                  reg->Region_start()->Id(),
+                  reg->Region_end()->Id());
+        }
+      }
+    }
+  }
+  
+
+  fprintf(fp, "================= CFG END ===================\n\n");
 }
 
 void

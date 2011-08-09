@@ -1166,7 +1166,7 @@ void
 BB_NODE::Print_head (FILE *fp) const
 {
   // print the bb structure
-  fprintf(fp, "---- BB%" PRIdPTR " (RPO %" PRIdPTR ")", Id(),Rpo_id());
+  fprintf(fp, "\n---- BB%" PRIdPTR " (RPO %" PRIdPTR ")", Id(),Rpo_id());
   if (Labnam())
     fprintf(fp, " (Lab%d)", Labnam());
   if (Kind() == BB_REGIONSTART || Kind() == BB_REGIONEXIT) {
