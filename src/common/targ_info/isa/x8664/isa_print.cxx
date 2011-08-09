@@ -300,6 +300,8 @@ main()
 				 TOP_pavgb128,
 				 TOP_pavgw128,
 				 TOP_psadbw128,
+				 TOP_pmuludq,
+				 TOP_pmuludq128,
 				 TOP_pmuldq,
 				 TOP_pmulld,
 			   TOP_add32,

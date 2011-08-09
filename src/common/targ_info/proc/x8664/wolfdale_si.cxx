@@ -1606,6 +1606,7 @@ int main (int argc, char *argv[])
 				TOP_pabsd,
 				TOP_pmaddubsw128,
 				TOP_pmaddubsw,
+				TOP_pmuludq128,
 				TOP_pmulhrsw128,
 				TOP_pmulhrsw,
 				 TOP_palignr128,
@@ -1778,6 +1779,7 @@ int main (int argc, char *argv[])
   Resource_Requirement(res_fmul, 0);
 
   Instruction_Group("float-alu for mmx int mpy vector",
+		    TOP_pmuludq,
 		    TOP_pmullw,
 		    TOP_pmulhw,
 		    TOP_pmulhuw,

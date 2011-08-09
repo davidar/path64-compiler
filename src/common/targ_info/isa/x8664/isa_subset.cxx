@@ -1125,6 +1125,8 @@ main()
 		    TOP_paddusw,
 		    TOP_psubusb,
 		    TOP_psubusw,
+		    TOP_pmuludq,
+		    TOP_pmuludq128,
 		    TOP_pmullw,
 		    TOP_pmulhw,
 		    TOP_pcmpeqb,

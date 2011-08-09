@@ -912,6 +912,8 @@ main ()
 	      "fminx128v64",
 	      "fminxx128v64",
 	      "fminxxx128v64",
+              "pmuludq",
+              "pmuludq128",
 	      "movx2g64",
 	      "movx2g",
 	      "movg2x64",

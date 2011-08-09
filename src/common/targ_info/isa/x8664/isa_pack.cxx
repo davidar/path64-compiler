@@ -1100,6 +1100,8 @@ main()
 		    TOP_psubusw, 0x000000ff,
 		    TOP_pmullw, 0x000000ff,
 		    TOP_pmulhw, 0x000000ff,
+		    TOP_pmuludq, 0x000000ff,
+		    TOP_pmuludq128, 0x000000ff,
 		    TOP_pcmpeqb, 0x000000ff,
 		    TOP_pcmpeqw, 0x000000ff,
 		    TOP_pcmpeqd, 0x000000ff,
