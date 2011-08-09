@@ -4393,6 +4393,30 @@ DCE::Find_required_statements( void ) const
     fprintf( TFile, "\n" );
   }
 
+
+  if ( Tracing() ) {
+    fprintf( TFile, "Required statements:\n" );
+
+    FOR_ALL_NODE( bb, cfg_iter, Init() ) {
+      fprintf ( TFile, "BB %" PRIdPTR ": ", bb->Id() );
+
+      if ( bb->Reached() ) {
+          fprintf ( TFile, "live" );
+      }
+
+      fprintf ( TFile, "\n" );
+
+      STMTREP_ITER stmt_iter(bb->Stmtlist());
+      STMTREP *stmt;
+
+      FOR_ALL_NODE(stmt, stmt_iter, Init()) {
+        if ( stmt->Live_stmt() ) {
+          stmt->Print( TFile );
+        }
+      }
+    }
+  }
+
   // do copy-propagation to get return vsym correct
   if ( Enable_dce_global() ) {
     Propagate_return_vsym_bb( _cfg->Entry_bb() );
