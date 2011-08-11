@@ -10013,7 +10013,9 @@ static WN *lower_call(WN *block, WN *tree, LOWER_ACTIONS actions)
       */
       TYPE_ID  type = Mtype_comparison( Fix_TY_mtype(ty));
 
-      if (parmType != type)
+      // we need check size of types because VHO can optimize
+      // MPARM operation
+      if (parmType != type && TY_size(parmType) != TY_size(type))
       {
 	DevWarn("lower_call(): line %d, parm #%d type mismatch (WN_rtype(parm)"
 		" = %s) (cannonical TY_mtype(parm))) %s)",
