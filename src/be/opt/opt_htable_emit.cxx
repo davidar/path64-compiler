@@ -456,15 +456,15 @@ ML_WHIRL_EMITTER::Emit(void)
       }
 
       bb->Set_wngend();
+    }
 
-      // was this block the end of a region?
-      while (_region_stack.Elements() > 0 &&
-	     _region_stack.Top()->Region_end() == bb) {
-	Is_Trace(Trace(),(TFile,"Pop_region(RGN %d), prev_wn = 0x%p\n",
-	    RID_id(_region_stack.Top()->Region_start()->Regioninfo()->Rid()),
-		  _region_stack.Top()->Prev_wn()));
-        Pop_region();
-      }
+    // was this block the end of a region?
+    while (_region_stack.Elements() > 0 &&
+           _region_stack.Top()->Region_end() == bb) {
+      Is_Trace(Trace(),(TFile,"Pop_region(RGN %d), prev_wn = 0x%p\n",
+          RID_id(_region_stack.Top()->Region_start()->Regioninfo()->Rid()),
+      	  _region_stack.Top()->Prev_wn()));
+      Pop_region();
     }
   }
 
