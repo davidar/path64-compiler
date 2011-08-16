@@ -308,6 +308,13 @@ static BOOL is_vectorizable_op (OPERATOR opr, TYPE_ID rtype, TYPE_ID desc) {
 
   case OPR_PARM:
     return TRUE;
+  case OPR_BAND:
+  case OPR_BIOR:
+  case OPR_BXOR:
+  	if(MTYPE_is_integral(rtype))
+	  return TRUE;
+	else
+  	  return FALSE;
   default:
     return FALSE;
   }  
