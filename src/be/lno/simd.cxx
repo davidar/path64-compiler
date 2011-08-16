@@ -4257,6 +4257,28 @@ static void Simd_Unroll_Statement( INT unroll_times, INT add_to_base,
             Create_Unroll_Copy(WN_kid(WN_kid0(copy), k), add_to_base,
                            WN_kid(WN_kid0(istore), k), index_type,
                            vec_index_preg_store, innerloop);
+		else{// iload_copy is NULL
+		/*
+		 case here also need to unroll copy index
+		  V16I4V16I4LDID 65 <1,28,.preg_V16I4> T<4,.predef_I4,4> # _i_0
+		 V16F4V16I4CVT
+		  U8LDA 0 <1,53,a> T<54,anon_ptr.,8>
+		  U4INTCONST 1000 (0x3e8)
+		   I4I4LDID 54 <1,4,.preg_I4> T<4,.predef_I4,4> # _i_0
+		  I8I4CVT
+		 U8ARRAY 1 4
+		V16F4ISTORE 0 T<66,anon_ptr.,1>
+		*/
+		  WN *cvtload = WN_kid(WN_kid0(copy),k);
+		  WN *cvt_origA = WN_kid(WN_kid0(istore), k);
+		  if(WN_operator(copy_simd_op) == OPR_CVT && 
+		  	 vec_index_preg_store &&
+		  	 WN_operator(cvtload) == OPR_LDID &&
+		  	 WN_has_sym(cvtload) &&
+		  	 SYMBOL(vec_index_preg_store) == SYMBOL(cvtload)){
+		  	 Create_Unroll_Copy(cvtload, add_to_base,cvt_origA, index_type, vec_index_preg_store,innerloop);
+		  }
+		}
      }//END kid handling
        
       //Now handle ISTORE's array
