@@ -1,14 +1,9 @@
-/**************************************************************
-/**************************************************************
+WARNING!
+If you plan on building the path64 compiler, do not rely on the
+following instructions.
 
-/** New users do not try to build using the directions below **
-/** clone https://github.com/pathscale/path64-suite and *******
-/** follow the instructions in the README *********************
-
-/**************************************************************
-/**************************************************************
-
-
+Instead clone https://github.com/pathscale/path64-suite and follow the
+README file in that repository.
 
 
 Dependencies:
