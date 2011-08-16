@@ -126,6 +126,7 @@ else()
     path64_set_multitarget_property_(mpath LINK_FLAGS "${BOOTSTRAP_HACK_FLAG} -nodefaultlibs")
 endif()
 
+path64_multitarget_link_libraries(mpath m)
 path64_add_multitarget_library(mpath SHARED)
 path64_add_multitarget_multitarget_dependencies(mpath pscrt-static)
 path64_add_dependencies_from_multitarget(compiler-stage-libs-C mpath)
