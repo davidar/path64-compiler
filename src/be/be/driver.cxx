@@ -169,35 +169,6 @@ extern void EH_Generate_Range_List (WN *);
 
 #endif // USE_WEAK_REFERENCES
 
-// symbols defined in wopt.so
-#ifndef USE_WEAK_REFERENCES
-
-extern void wopt_main (INT argc, char **argv, INT, char **);
-extern void Wopt_Init ();
-extern void Wopt_Fini ();
-extern WN* Perform_Preopt_Optimization (WN *, WN *);
-extern WN* Perform_Global_Optimization (WN *, WN *, ALIAS_MANAGER *);
-extern WN* Pre_Optimizer (INT32, WN*, DU_MANAGER*, ALIAS_MANAGER*);
-extern void choose_from_complete_struct_for_relayout_candidates();
-extern DU_MANAGER* Create_Du_Manager (MEM_POOL *);
-extern void Delete_Du_Manager (DU_MANAGER *, MEM_POOL *);
-extern BOOL Verify_alias (ALIAS_MANAGER *, WN *);
-
-#else
-
-#pragma weak wopt_main
-#pragma weak Wopt_Init
-#pragma weak Wopt_Fini
-#pragma weak Perform_Global_Optimization
-#pragma weak Perform_Preopt_Optimization
-#pragma weak Pre_Optimizer
-#pragma weak choose_from_complete_struct_for_relayout_candidates
-#pragma weak Create_Du_Manager
-#pragma weak Delete_Du_Manager
-#pragma weak Verify_alias
-
-#endif // USE_WEAK_REFERENCES
-
 // symbols defined in lno.so
 #ifndef USE_WEAK_REFERENCES
 
@@ -2030,7 +2001,6 @@ main (INT argc, char **argv)
       if (!Run_wopt && !Run_preopt) {
 	/* load wopt */
 	Get_Phase_Args (PHASE_WOPT, &phase_argc, &phase_argv);
-	dso_load_simply ("wopt", WOPT_Path, Show_Progress);
 	wopt_main (phase_argc, phase_argv, argc, argv);
 	wopt_loaded = TRUE;
       }

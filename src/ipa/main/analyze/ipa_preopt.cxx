@@ -74,10 +74,6 @@
 #include "region_main.h"                // REGION_Initialize
 #include "ipa_main.h"
 
-// --- from wopt.so
-#pragma weak Create_Du_Manager
-#pragma weak Delete_Du_Manager
-#pragma weak Pre_Optimizer
 
 // --- from ipl.so
 #pragma weak Array_Summary_Output
@@ -537,7 +533,6 @@ IPA_update_procedure (IPA_NODE* node,
 static void
 IPA_preopt_initialize ()
 {
-  dso_load_simply ("wopt", WOPT_Path, Show_Progress);
   dso_load_simply ("ipl", Ipl_Path, Show_Progress);
 
   MEM_POOL_Initialize (&IPA_preopt_pool, "IPA preopt pool", FALSE);
