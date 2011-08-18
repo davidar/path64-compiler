@@ -46,8 +46,6 @@ SET(PATHSCALE_FE90_C_SRCS "cifcmnrecs.c"
 			"sytb.c"
 			"utils.c")
 
-set(PATHSCALE_FE90_F_SRCS "fold.f")
-
 INCLUDE_DIRECTORIES(
 	"../../crayf90/fe90"
 	"../../arith"
@@ -56,8 +54,6 @@ INCLUDE_DIRECTORIES(
 	"../../linux/mfef90_includes"
 	"../../clibinc/cray"
 )
-
-path64_get_host_arch(host_arch)
 
 add_custom_command(
     OUTPUT cf95.cat
@@ -78,15 +74,8 @@ add_custom_target(
 )
 
 
-# Building fe90 & fe90-tmp for host architecture
 
-path64_add_library_for_arch(fe90-host ${host_arch} STATIC ${PATHSCALE_FE90_C_SRCS})
-path64_set_property_for_arch(fe90-host ${host_arch} COMPILE_FLAGS
-                             "-std=gnu99 -I${CMAKE_CURRENT_SOURCE_DIR}/../../common/com/@ARCH@")
-
-
-
-# Building fe90 and fe90-pathf for multiple architectures
+# Building fe90 and for multiple architectures
 
 path64_set_multiarch_sources(fe90_sources COMMON ${PATHSCALE_FE90_C_SRCS})
 path64_add_multiarch_library(fe90 STATIC fe90_sources)
@@ -96,3 +85,4 @@ path64_set_multiarch_property(fe90 COMPILE_FLAGS
 IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	ADD_DEFINITIONS(-D_DEBUG)
 ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
+

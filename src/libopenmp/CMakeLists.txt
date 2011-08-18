@@ -59,7 +59,7 @@ foreach(targ ${PATH64_ENABLE_TARGETS})
         add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/omp_lib-${targ}.f.o
                                   ${CMAKE_CURRENT_BINARY_DIR}/${targ}/OMP_LIB.mod
                                   ${CMAKE_CURRENT_BINARY_DIR}/${targ}/OMP_LIB_KINDS.mod
-                           COMMAND ${CMAKE_Fortran_COMPILER} ${fflags} ${targ_flag}
+                           COMMAND ${Path64_BINARY_DIR}/bin/pathf90 ${fflags} ${targ_flag}
                                    -c ${CMAKE_CURRENT_SOURCE_DIR}/../include/omp/omp_lib.f
                                    -o ${CMAKE_CURRENT_BINARY_DIR}/omp_lib-${targ}.f.o
                            DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../include/omp/omp_lib.f
@@ -72,7 +72,7 @@ foreach(targ ${PATH64_ENABLE_TARGETS})
                           DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${targ}/OMP_LIB.mod
                                   ${CMAKE_CURRENT_BINARY_DIR}/${targ}/OMP_LIB_KINDS.mod
                          )
-        add_dependencies(OMP_LIB-${targ} switch_fc mfef95-tmp compiler-stage-Fortran)
+        add_dependencies(OMP_LIB-${targ} compiler-stage-Fortran)
 
 
         set(install_mod_dir ${PATH64_LIB_PATH}/${targ_arch}/${targ_bits})

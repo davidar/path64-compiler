@@ -46,12 +46,14 @@ OPTION(PATH64_ENABLE_IPA "Enable IPA" ON)
 
 # Define user option whether to build the Fortran compiler.
 OPTION(PATH64_ENABLE_FORTRAN "Build Fortran compiler" ON)
-IF(PATH64_ENABLE_FORTRAN)
-  SET(CMAKE_Fortran_COMPILER_FORCED TRUE)
-  set(CMAKE_Fortran_COMPILER "true")
-  ENABLE_LANGUAGE(Fortran)
-  set(CMAKE_Fortran_COMPILER "${Path64_BINARY_DIR}/bin/pathf90")
-ENDIF()
+
+if(PATH64_ENABLE_FORTRAN)
+    if("${CMAKE_Fortran_COMPILER}" STREQUAL "")
+        set(CMAKE_Fortran_COMPILER_FORCED TRUE)
+        set(CMAKE_Fortran_COMPILER "true")
+    endif()
+    enable_language(Fortran)
+endif()
 
 # Define user option whether to build the profiling libraries
 OPTION(PATH64_ENABLE_PROFILING "Build profiling libraries" ON)
