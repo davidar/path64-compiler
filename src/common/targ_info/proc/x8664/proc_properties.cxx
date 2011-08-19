@@ -42,7 +42,7 @@
 #include "targ_proc.h"
 #include "proc_properties_gen.h"
 
-main()
+int main()
 {
   PROC_PROPERTY 
     branch_delay_slot,		/* branch delay slot */

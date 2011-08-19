@@ -37,7 +37,7 @@
 #include <stddef.h>
 #include "proc_gen.h"
 
-main ()
+int main ()
 {
   PROC_Create( "x8664",
 	       "opteron",
