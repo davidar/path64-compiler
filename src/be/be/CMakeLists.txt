@@ -90,7 +90,7 @@ path64_multiarch_link_libraries(be-exec -Wl,--whole-archive)
 path64_multiarch_link_multiarch_libraries(be-exec be-static cg wopt)
 path64_multiarch_link_libraries(be-exec  rtkutils -Wl,--no-whole-archive)
 path64_multiarch_link_libraries(be-exec elfutil elf)
-path64_multiarch_link_multiarch_libraries(be-exec cg wopt prompf_anl targinfo comutil ipl lno whirl2c whirl2f be-com)
+path64_multiarch_link_multiarch_libraries(be-exec targinfo comutil lno prompf_anl)
 path64_set_multiarch_property(be-exec OUTPUT_NAME "be")
 path64_set_multiarch_property(be-exec COMPILE_FLAGS
                               "-DSHARED_BUILD  -I${CMAKE_CURRENT_SOURCE_DIR}/@ARCH@  -I${CMAKE_CURRENT_SOURCE_DIR}/../com/@ARCH@ -I${CMAKE_CURRENT_SOURCE_DIR}/../cg/@ARCH@  -I${PATHSCALE_BINARY_DIR}/common/targ_info/@ARCH@ -I${CMAKE_CURRENT_SOURCE_DIR}/../../common/com/@ARCH@")
