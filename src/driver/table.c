@@ -1262,6 +1262,7 @@ main (int argc, char *argv[])
 	if (argc == 2 && strcmp(argv[1], "-phase") == 0) {
 		table_for_phase = TRUE;
 	} 
+	init_error_list();
 	read_table();
 	fill_option_info();
 	if (debug) dump_option_info();
