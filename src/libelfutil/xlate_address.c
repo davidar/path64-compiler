@@ -34,7 +34,7 @@ $Date$
 
 #ifdef _LIBELF_XTND_EXPANDED_DATA
    #pragma weak xlate_address_xtnd = _xlate_address_xtnd
-#elif defined(BUILD_OS_DARWIN)
+#elif defined(XLATE_DISABLE_PRAGMA_WEAK)
 #else
    #pragma weak xlate_address = _xlate_address
 #endif
@@ -63,7 +63,7 @@ xlate_address(xlate_table_con tab,
 		range);
 	}
 
-	
+
 
    } else {
 	if(addr_in < tab->xc_hdr.ich_old_addr_low ||

@@ -51,3 +51,7 @@
 #include "xlate_proTypes.h"
 #include "xlatexterns.h"
 #include "xlate_pro_externs.h"
+
+#if defined(BUILD_OS_DARWIN) || defined(__clang__)
+#define XLATE_DISABLE_PRAGMA_WEAK
+#endif
