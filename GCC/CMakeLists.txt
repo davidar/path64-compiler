@@ -37,6 +37,16 @@ ELSE()
     SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w")
   ENDIF(CMAKE_C_COMPILER MATCHES "bcc32")
 ENDIF()
+
+# For compilers defaulting to c99, set them to gnu89 to avoid errors
+# about "redefinition of a 'extern inline' function"
+# TODO: test for failure to compile a file with code like
+# gcc/toplev.c:572 gcc/toplev.h:181 , and test for a flag to change the
+# standard, instead of hardcoding Clang and --std=gnu89
+IF(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --std=gnu89")
+ENDIF()
+
 # Unknown what happens if you remove TARG_X8664
 ADD_DEFINITIONS(-DALMOST_STDC
                 -DIs_True_On
@@ -50,5 +60,4 @@ ADD_DEFINITIONS(-DALMOST_STDC
                 -Wstrict-prototypes
                 -Wmissing-prototypes
                 -Wmissing-format-attribute)
-
 SUBDIRS(config_cmake libiberty libdecnumber libcpp libspin gcc)
