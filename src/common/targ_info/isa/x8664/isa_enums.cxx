@@ -30,7 +30,7 @@
 #include <stddef.h>
 #include "isa_enums_gen.h"
 
-main ()
+int main ()
 {
   ISA_Enums_Begin();
 

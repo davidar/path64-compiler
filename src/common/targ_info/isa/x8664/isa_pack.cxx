@@ -57,8 +57,8 @@
 #include <stddef.h>
 #include "topcode.h"
 #include "isa_pack_gen.h"
- 
-main()
+
+int main()
 {
   ISA_Pack_Begin("x8664", 32);
 

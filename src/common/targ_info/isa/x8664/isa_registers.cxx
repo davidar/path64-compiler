@@ -115,7 +115,7 @@ static int Range_ISA_Mask(ISA_SUBSET min_isa, ISA_SUBSET max_isa)
 }
 
 
-main (int argc, char** argv)
+int main (int argc, char** argv)
 {
   ISA_Registers_Begin( "x8664" );
 

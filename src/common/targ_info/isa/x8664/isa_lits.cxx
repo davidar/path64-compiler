@@ -32,7 +32,7 @@
 
 #include "isa_lits_gen.h"
 
-main ()
+int main ()
 {
   ISA_Lits_Begin();
 
