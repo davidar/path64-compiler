@@ -38,7 +38,7 @@ $Date$
 #ifdef _LIBELF_XTND_EXPANDED_DATA
 #pragma weak xlate_named_init_elf_xtnd  = _xlate_named_init_elf_xtnd
 #pragma weak xlate_finish_xtnd  = _xlate_finish_xtnd
-#elif defined(BUILD_OS_DARWIN)
+#elif defined(XLATE_DISABLE_PRAGMA_WEAK)
 #else
 #pragma weak xlate_named_init_elf  = _xlate_named_init_elf
 #pragma weak xlate_finish  = _xlate_finish
