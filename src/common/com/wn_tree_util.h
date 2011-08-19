@@ -659,10 +659,11 @@ public:
     _start (iterator(w)), _finish (iterator()), _root (w) {
     Is_True(w!=0,("Bad Tree Root"));
   }
+  /* TODO can't initialize our non-const members from a const pointer
   WN_TREE_CONTAINER(const WN* w) :
     _start (const_iterator(w)), _finish (const_iterator()), _root (w) {
     Is_True(w!=0,("Bad Tree Root"));
-  }
+  }*/
                                        
 }; // class WN_TREE_CONTAINER
 
