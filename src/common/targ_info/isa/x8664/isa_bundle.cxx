@@ -35,7 +35,7 @@
 #include "topcode.h"
 #include "isa_bundle_gen.h"
 
-main()
+int main()
 {
   ISA_EXEC_UNIT_TYPE
     Fetch_Unit;  // Instruction fetch type
