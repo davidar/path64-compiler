@@ -86,10 +86,12 @@ set(EXTERN_INLINE_SUCCESS ${SUCCESS} CACHE INTERNAL
   "If we know how to compile redefinitions of extern inlines" FORCE)
 
 IF(NOT SUCCESS)
-    MESSAGE(STATUS "Could not determine the flag for your C compiler "
+    MESSAGE(WARNING "Could not determine the flag for your C compiler "
       "to permit redefinition of 'extern inline' functions. Please file a "
       "bug, being sure to describe your compiler precisely and include the "
-      "flag it requires to compile a file with these redefintions.")
+      "flag it requires to compile a file with these redefinitions. You will "
+      "probably hit a build error in toplev.c until this message isn't triggered "
+      "- if you can build even with this message file that as a bug too.")
 ENDIF()
 
 # Unknown what happens if you remove TARG_X8664
