@@ -38,13 +38,58 @@ ELSE()
   ENDIF(CMAKE_C_COMPILER MATCHES "bcc32")
 ENDIF()
 
-# For compilers defaulting to c99, set them to gnu89 to avoid errors
-# about "redefinition of a 'extern inline' function"
-# TODO: test for failure to compile a file with code like
-# gcc/toplev.c:572 gcc/toplev.h:181 , and test for a flag to change the
-# standard, instead of hardcoding Clang and --std=gnu89
-IF(CMAKE_C_COMPILER_ID STREQUAL "Clang")
-  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --std=gnu89")
+# Determine if compiler errors on "redefinition of a 'extern inline' function"
+# and if so, find an appropriate flag to change this behavior
+include(CheckCSourceCompiles)
+function(check_extern_inline_redef _varsuffix _arg)
+  if(SUCCESS)
+    return()
+  endif()
+  set(msg "Checking whether 'extern inline' redefinition permitted")
+  if(_arg STREQUAL "")
+    set(msg "${msg} by default")
+  else()
+    set(msg "${msg} using flag ${_arg}")
+  endif()
+  if(NOT EXTERN_INLINE_SUCCESS)
+    message(STATUS "${msg}")
+  endif()
+  string(TOUPPER "PERMITS_EXTERN_INLINE_REDEF_${_varsuffix}" outvar)
+  set(CMAKE_REQUIRED_FLAGS "${_arg}")
+  check_c_source_compiles("
+    extern inline int dummy() { return 0; }
+    int dummy() { return 0; }
+    int main() {
+	    return dummy();
+    }"
+    ${outvar})
+  if(${outvar})
+    set(msg "${msg} - yes")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_arg}" PARENT_SCOPE)
+    set(SUCCESS yes PARENT_SCOPE)
+  else()
+    set(msg "${msg} - no")
+  endif()
+
+  if(NOT EXTERN_INLINE_SUCCESS)
+    message(STATUS "${msg}")
+  endif()
+endfunction()
+
+set(SUCCESS no)
+check_extern_inline_redef(BY_DEFAULT "")
+check_extern_inline_redef(WITH_STD_GNU89 -std=gnu89)
+check_extern_inline_redef(WITH_FGNU89_INLINE -fgnu89-inline) # see http://gcc.gnu.org/gcc-4.3/porting_to.html
+check_extern_inline_redef(WITH_GNU_INLINE_DEFINE -D__GNUC_GNU_INLINE__) # see http://gcc.gnu.org/gcc-4.3/porting_to.html
+
+set(EXTERN_INLINE_SUCCESS ${SUCCESS} CACHE INTERNAL
+  "If we know how to compile redefinitions of extern inlines" FORCE)
+
+IF(NOT SUCCESS)
+    MESSAGE(STATUS "Could not determine the flag for your C compiler "
+      "to permit redefinition of 'extern inline' functions. Please file a "
+      "bug, being sure to describe your compiler precisely and include the "
+      "flag it requires to compile a file with these redefintions.")
 ENDIF()
 
 # Unknown what happens if you remove TARG_X8664
