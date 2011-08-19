@@ -154,7 +154,7 @@ usage (char *progname)
   exit (1);
 }
 
-main (INT argc, char *argv[])
+int main (INT argc, char *argv[])
 {
     register char *progname;
     INT binarg = 1;
