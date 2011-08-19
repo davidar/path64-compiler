@@ -53,7 +53,11 @@ extern void s_lno_debug(const char init_buffer[]);
 extern void s_lwr_debug(const char init_buffer[]); 
 extern void s_anl_debug(const char init_buffer[]); 
 extern void s_ipl_debug(const char init_buffer[]);
-extern void cg_sdebug(const char init_buffer[]);
+extern void cg_sdebug(const char init_buffer[])
+#if defined(__clang__)
+{}
+#endif
+;
 
 static WB_PHASE WB_Current_Phase = WBP_NONE; 
 
