@@ -141,7 +141,7 @@ Usage (char *progname)
 } /* Usage */
 
 
-main (INT argc,       /* Number of command line arguments */
+int main (INT argc,       /* Number of command line arguments */
       char *argv[],   /* Array of command line arguments */
       char *envp[])   /* Array of environment poINTers */
 {

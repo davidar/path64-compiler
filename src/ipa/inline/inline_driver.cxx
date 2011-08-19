@@ -287,7 +287,7 @@ Process_Command_Line (INT argc, char **argv)
  * ====================================================================
  */
 
-main (INT argc, char **argv)
+int main (INT argc, char **argv)
 {
     INT32 ecount, local_ecount, local_wcount;
 
