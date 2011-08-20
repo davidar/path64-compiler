@@ -6986,7 +6986,7 @@ static	void	process_J_option(char	*optargs)
 
 /**************************************************************\
  * add -help option to dump out all possible opstions of
- * Open64 frontend
+ * Fortran frontend
  * there are
  * a,b,d,e,f,g,i,k,m,o,p,q,r,R,s,S,t,u,v,A,C,D,x,F,G,I,J,M,
  * N,P,U,V,X,Y,Z options
@@ -6997,7 +6997,7 @@ static void dump_options(void)
    int i;
    char *all_options[] = {
     " ",
-    "The following options are available in Open64 frontend:",
+    "The following options are available in Fortran frontend:",
     "-a: memory options ",
     "	lign32",
     "	lign64",
