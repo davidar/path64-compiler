@@ -1583,6 +1583,7 @@ Generate_Exit (
     if (! sr.user_allocated)
       continue;
     /* generate the reload ops */
+	CG_Restore_Callee_Save_Register = TRUE;
     CGSPILL_Load_From_Memory (sr.ded_tn, sr.temp, &ops, CGSPILL_LCL, bb_epi);
     Set_OP_no_move_before_gra(OPS_last(&ops));
   }

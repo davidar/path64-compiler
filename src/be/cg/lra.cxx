@@ -1989,7 +1989,11 @@ Assign_Registers_For_OP (OP *op, INT opnum, TN **spill_tn, BB *bb)
 #ifdef KEY	 // Bug 4327.
 		 result_cl == ISA_REGISTER_CLASS_integer &&
 #endif
-		 CG_localize_tns) {
+		 CG_localize_tns && 
+		 !CG_Restore_Callee_Save_Register) {
+		 /*when callee registers are used in the exit BB. it's not safe to release them to make them available again
+		 *CG_Restore_Callee_Save_Register was set when callee register was used here.
+		 */
 	Update_Callee_Availability(bb);
       } 
 
