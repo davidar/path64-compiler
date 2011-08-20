@@ -82,6 +82,7 @@ BOOL  CG_skip_local_sched = FALSE;
 BOOL  CG_skip_local_swp = FALSE;
 #ifdef TARG_X8664
 BOOL CG_cmp_load_exec = FALSE;
+BOOL CG_Restore_Callee_Save_Register = FALSE;
 #endif
 INT32 CG_opt_level;
 BOOL  CG_localize_tns = FALSE;
