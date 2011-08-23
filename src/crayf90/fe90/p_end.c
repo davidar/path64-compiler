@@ -301,9 +301,12 @@ expr_arg_type expr_desc;
 	return;
 
     expr_desc.rank = 0;
+    save = expr_mode;
     expr_mode = Initialization_Expr;
+    m = expr_semantics(&function_ret_kindspec, &expr_desc);
+    expr_mode = save;
 
-    if (!expr_semantics(&function_ret_kindspec, &expr_desc)) 
+    if (!m)
 	return;
 
     line = OPND_LINE_NUM(function_ret_kindspec);

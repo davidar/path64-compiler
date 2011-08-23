@@ -9000,11 +9000,13 @@ static void	not_visible_semantics(int	new_attr_idx,
          KEEP_ATTR(new_attr_idx);
       }
       else if (AT_OBJ_CLASS(old_attr_idx) == Derived_Type ||
-               AT_REFERENCED(old_attr_idx) != Not_Referenced) {
+               AT_REFERENCED(old_attr_idx) != Not_Referenced ||
+	       AT_OBJ_CLASS(old_attr_idx) == Data_Obj) {
 
-         /* If this is a derived type it was used to declare the function's */
-         /* type.  Copy the new attribute information to the old attribute  */
-         /* and keep the old attribute.  Do not keep the new attribute.     */
+	 /* If this is a derived type or data object it was used to         */
+	 /* declare the function's type or kind.  Copy the new attribute    */
+	 /* information to the old attribute and keep the old attribute.    */
+	 /* Do not keep the new attribute.  */
 
          /* Otherwise this object was used in a declaration bound for the   */
          /* function.  Copy the new attribute information to the old attr   */

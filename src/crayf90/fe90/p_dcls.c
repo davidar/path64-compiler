@@ -4322,7 +4322,7 @@ void parse_type_dcl_stmt (void)
                                    LA_CH_VALUE == STAR);
    found_colon			= FALSE;
    found_end			= FALSE;
-   type_err			= !parse_type_spec(TRUE, TRUE, FALSE);
+   type_err			= !parse_type_spec(TRUE, TRUE, TRUE);
    AT_DCL_ERR(AT_WORK_IDX)	= type_err;
    type_idx			= ATD_TYPE_IDX(AT_WORK_IDX);
    array_idx			= NULL_IDX;
