@@ -1957,11 +1957,6 @@ MEM_POOL_Initialize_P
   MEM_POOL_blocks(pool) = NULL;
   MEM_POOL_frozen(pool) = FALSE;
   MEM_POOL_pure_stack(pool) = NULL;
-
-  /* Don't allow duplicate initializations */
-  Is_True (MEM_POOL_magic_num(pool) != MAGIC_NUM,
-           ("Initialization of an already initialized pool: %s\n",
-            MEM_POOL_name(pool)));
   MEM_POOL_magic_num(pool) = MAGIC_NUM;
 
   if (purify_pools_trace_x)
@@ -1970,11 +1965,14 @@ MEM_POOL_Initialize_P
 #ifdef Is_True_On
   MEM_POOL_alloc_site_list(pool) = NULL;
   if ( mem_tracing_enabled ) {
-    if ( ! MEM_STAT_In_List( initialized_pools, pool ) ) {
-        /* trace_initialized_pool ("initialize", MEM_POOL_name(pool)); */
-	MEM_POOL_rest(pool) = initialized_pools;
-	initialized_pools = pool;
-    }
+    /* pool should not be in the list of initialized pools */
+
+    Is_True( !MEM_STAT_In_List( initialized_pools, pool ) ,
+             ("Memory pool is already initialized: %s", MEM_POOL_name(pool)));
+
+    /* trace_initialized_pool ("initialize", MEM_POOL_name(pool)); */
+    MEM_POOL_rest(pool) = initialized_pools;
+    initialized_pools = pool;
   }
 #endif
 
