@@ -71,7 +71,6 @@
 static INT initial_initv_tab_size;
 
 MEM_POOL Ipo_mem_pool;
-WN_MAP Parent_Map;
 
 #if defined(KEY) && !defined(_STANDALONE_INLINER) && !defined(_LIGHTWEIGHT_INLINER)
 extern UINT16 DST_copy_directories_and_files (DST_TYPE, DST_TYPE, MEM_POOL *);

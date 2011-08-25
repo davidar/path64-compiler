@@ -52,6 +52,8 @@
 #include "fb_whirl.h"
 #endif
 
+#include "ipl_summarize.h"
+
 #if (!defined(_STANDALONE_INLINER) && !defined(_LIGHTWEIGHT_INLINER))
 // return the callsite id of a particular call
 INT32 IPL_get_callsite_id(WN* w);
@@ -60,15 +62,10 @@ INT32 IPL_get_callsite_id(WN* w);
 // none exists return 0
 INT IPL_deepest_depth(WN* w);
 
-// find the common loop that surrounds wn1 and wn2
-// if a wn belongs to the bounds expression then it
-// is considered to be outside the loop
-WN* 
-LNO_Common_Loop(WN* wn1, WN* wn2);
-
 // return the stmt or scf surrounding an expression node
 extern 
 WN* IPL_get_stmt_scf(WN* av);
+
 
 // aux. information for each ST that is not part of the summary.
 struct IPL_ST_INFO

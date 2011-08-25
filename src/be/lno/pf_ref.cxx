@@ -149,9 +149,6 @@
 #endif
 #include "targ_sim.h"
 
-#include "w2c_weak.h"
-#include "w2f_weak.h"
-
 #define INT_INFINITY 9999
 #define absof(x) (((x)>0) ? (x) : (0-(x)))
 #define maxof(x, y) (((x)>(y)) ? (x) : (y))

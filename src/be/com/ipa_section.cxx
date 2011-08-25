@@ -89,12 +89,6 @@ IVAR_ARRAY *Ivar = NULL;
 LOOPINFO_TO_DLI_MAP*             IPL_Loopinfo_Map     = NULL;
 PROJ_REGION_TO_ACCESS_ARRAY_MAP* IPL_Access_Array_Map = NULL;
 
-mINT32
-SYSTEM_OF_EQUATIONS::_work_cols;
-mINT32
-SYSTEM_OF_EQUATIONS::_work_rows_eq;
-mINT32
-SYSTEM_OF_EQUATIONS::_work_rows;
 
 //====================================================================
 // initialize ivar and ivar global arrays
@@ -886,8 +880,8 @@ PROJECTED_REGION::Set_region(SYSTEM_OF_EQUATIONS* soe,
 // It returns TRUE if the vector sum of them is a zero vector.
 //
 //========================================================================
-BOOL
-is_equality(const SYSTEM_OF_EQUATIONS *soe, const INT i, const INT j)
+static BOOL
+ipa_is_equality(const SYSTEM_OF_EQUATIONS *soe, const INT i, const INT j)
 {
   for (INT k = 0; k < soe->Num_Vars(); ++k) 
     if ((soe->Work(i,k)+soe->Work(j,k)) != 0) 
@@ -922,7 +916,7 @@ PROJECTED_NODE::Set_linexs(const SYSTEM_OF_EQUATIONS *soe,
   step->Set_term(LTKIND_CONST, abs(stride), CONST_DESC, 0);
 
   // Two inequalities form an equality
-  if (is_equality(soe, i, j)) {
+  if (ipa_is_equality(soe, i, j)) {
     lower->Map_from_SOE(soe, i, syms, depth, dim, 0, TRUE);
 
     // search for LTKIND = LTKIND_SUBSCR

@@ -33,12 +33,6 @@
 
 extern WN_MAP Prompf_Id_Map; /* Maps WN constructs to unique identifiers */
 
-#pragma weak W2C_Should_Emit_Nested_PUs
-#pragma weak W2C_Outfile_Translate_Pu
-#pragma weak W2F_Should_Emit_Nested_PUs
-#pragma weak W2F_Outfile_Translate_Pu
-
-
 extern void Prompf_Emit_Whirl_to_Source(PU_Info* current_pu,
                                         WN* func_nd)
 {

@@ -87,8 +87,8 @@
 #ifdef TARG_X8664
 #include "config_opt.h"    // for CIS_Allowed
 
-extern void (*CG_Set_Is_Stack_Used_p)();
-extern INT (*Push_Pop_Int_Saved_Regs_p)(void);
+extern void CG_Set_Is_Stack_Used();
+extern INT Push_Pop_Int_Saved_Regs();
 #endif
 #include "be_symtab.h"
 
@@ -2426,7 +2426,7 @@ INT64 Finalize_Stack_Frame (void)
 
 #ifdef TARG_X8664
     {
-      int push_pop_int_saved_regs = (*Push_Pop_Int_Saved_Regs_p)();
+      int push_pop_int_saved_regs = Push_Pop_Int_Saved_Regs();
       if (push_pop_int_saved_regs & 1)
 	push_pop_int_saved_regs++;
       Set_ST_ofst(SF_Block(SFSEG_UPFORMAL), ST_ofst(SF_Block(SFSEG_UPFORMAL)) +
@@ -2453,7 +2453,7 @@ INT64 Finalize_Stack_Frame (void)
     		  // the save area for return-addr and frame-ptr
   if (Current_PU_Stack_Model == SMODEL_SMALL && PUSH_FRAME_POINTER_ON_STACK) {
     Frame_Size += MTYPE_byte_size(Pointer_Mtype);
-    if ((*Push_Pop_Int_Saved_Regs_p)() & 1)
+    if (Push_Pop_Int_Saved_Regs() & 1)
       Frame_Size += MTYPE_byte_size(Pointer_Mtype);
   }
 #endif
@@ -2522,7 +2522,7 @@ Allocate_Temp_To_Memory ( ST *st )
   Set_ST_is_temp_var(st);
   Process_Stack_Variable ( st );
 #ifdef TARG_X8664
-  (*CG_Set_Is_Stack_Used_p)();
+  CG_Set_Is_Stack_Used();
 #endif
 }
 

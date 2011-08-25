@@ -60,15 +60,7 @@
 #include "cxx_memory.h"		// CXX_DELETE_ARRAY
 #include "region_whirl_templates.h"	// REGION_search_block
 
-/* this next header should be after the external declarations in the others */
-#include "pragma_weak.h"	/* weak pragmas for Valid_alias...	*/
-
-#ifndef USE_WEAK_REFERENCES
-extern void (*Print_points_to_p) (FILE *fp, POINTS_TO *ptmp);
-#define Print_points_to (*Print_points_to_p)
-#else
-#pragma weak Print_points_to
-#endif
+extern void Print_points_to(FILE *fp, POINTS_TO *ptmp);
 
 // Emit 'T' or 'F' in the print routines for BOOLs
 #define tf(x) ((x) ? 'T' : 'F')

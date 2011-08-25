@@ -94,6 +94,7 @@
 #include "wn_simp.h"               // for WN_Simp_Rsqrt_Newton_Raphson
 #endif
 
+#define MODULE_NAME lno
 #include "err_host.tab"
 
 
@@ -118,7 +119,7 @@ lno_main (INT lno_argc, char **lno_argv, INT be_argc, char **be_argv)
 		   ("WHIRL revision mismatch between be.so (%s) and lno.so (%s)", 
 		    Whirl_Revision, WHIRL_REVISION));
 
-    Set_Error_Tables (Phases, host_errlist);
+    Set_Error_Tables (PHASES_NAME, ERRLIST_NAME);
     Set_Error_Descriptor (EP_BE, EDESC_BE);
 } /* lno_main */
 
@@ -131,7 +132,6 @@ extern BOOL Run_Dsm_Check;
 }
 
 IPA_LNO_READ_FILE* IPA_LNO_File = NULL; 
-extern FILE* STDOUT; 
 
 //-----------------------------------------------------------------------
 // NAME: IPA_LNO_Open_Input_File
@@ -220,7 +220,6 @@ Perform_Loop_Nest_Optimization (PU_Info* current_pu, WN *pu_wn,
     struct DU_MANAGER *du_mgr;
     struct ALIAS_MANAGER *alias_mgr;
     if (!alloca) LNO_Use_Malloc = TRUE;
-    STDOUT = stdout; 
 
     MEM_POOL_Popper popper(&MEM_local_pool);
 

@@ -64,6 +64,8 @@ static char *erlink_rcs_id = "$Source$ $Revision$";
 #define EC_U_Magic	EC_BASE_LINK+19		/* str */
 #define EC_U_Strange	EC_BASE_LINK+20		/* str */
 
+extern ERROR_DESC EDESC_Link[];
+
 #ifdef __cplusplus
 }
 #endif

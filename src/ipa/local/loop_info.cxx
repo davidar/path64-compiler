@@ -63,11 +63,6 @@
 #include "ipl_summary.h"
 #include "ipl_summarize.h"
 
-#pragma weak Aliased 
-mINT32
-SYSTEM_OF_EQUATIONS::_work[SOE_MAX_WORK_ROWS][SOE_MAX_WORK_COLS];
-mINT64 
-SYSTEM_OF_EQUATIONS::_work_const[SOE_MAX_WORK_ROWS];
 struct ALIAS_MANAGER *Ipl_Al_Mgr;
 struct DU_MANAGER *Ipl_Du_Mgr;
 
@@ -140,7 +135,7 @@ Opcode_Match(OPCODE op1, OPCODE op2)
 //------------------------------------------------------------------
 // stolen from lnoutils
 //------------------------------------------------------------------
-extern  
+static  
 WN* UBvar(WN* end)
 {
   WN* wn_index = NULL; 

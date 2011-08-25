@@ -79,7 +79,7 @@ ADD_DEFINITIONS(
 path64_set_multiarch_sources(wopt_sources COMMON ${PATHSCALE_WOPT_COMMON_SRCS})
 path64_add_multiarch_library(wopt STATIC wopt_sources)
 path64_add_multiarch_dependencies(wopt generate_preg_list generate_topcode)
-path64_multiarch_link_multiarch_libraries(wopt comutil)
+path64_multiarch_link_multiarch_libraries(wopt be-com comutil)
 path64_set_multiarch_property(wopt COMPILE_FLAGS
                               "-I${CMAKE_CURRENT_SOURCE_DIR}/../com/@ARCH@ -I${PATHSCALE_BINARY_DIR}/common/targ_info/@ARCH@ -I${CMAKE_CURRENT_SOURCE_DIR}/../../common/com/@ARCH@")
 

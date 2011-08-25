@@ -54,8 +54,6 @@
 #include "flags.h"		// Common_Option_Group
 #include "options_stack.h"	// options stack
 
-#pragma weak Process_Command_Line
-
 //============================================================================
 // Push_Current_Options
 // allocates stack slot and then copies global's values into that space

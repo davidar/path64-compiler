@@ -89,7 +89,6 @@ SET(PATHSCALE_CG_COMMON_SRCS
 			"../../be/cg/hb_trace.cxx"
 			"../../be/cg/iface_scn.cxx"
 			"../../be/cg/igls.cxx"
-			"../../be/cg/init.cxx"
 			"../../be/cg/label_util.cxx"
 			"../../be/cg/localize.cxx"
 			"../../be/cg/note.cxx"
@@ -126,6 +125,7 @@ SET(PATHSCALE_CG_COMMON_SRCS
 			"../../be/cg/gra_mon/gra_spill.cxx"
 			"../../be/cg/gra_mon/gra_split.cxx"
 			"../../be/cg/gra_mon/gra_trace.cxx"
+                        "ercg.cxx"
             "${PATHSCALE_BINARY_DIR}/be/opsch_set.h")
 
 
@@ -238,7 +238,9 @@ path64_set_multiarch_sources(cg_sources mips
                              ${PATHSCALE_CG_COMMON_SRCS}
                              ${PATHSCALE_CG_MIPS_SRCS})
 path64_add_multiarch_library(cg STATIC cg_sources)
-path64_add_multiarch_multiarch_dependencies(cg targinfo)
+path64_add_multiarch_multiarch_dependencies(cg targinfo be-com)
+path64_multiarch_link_multiarch_libraries(cg comutil)
+path64_multiarch_link_libraries(cg dwarf elfutil elf)
 
 path64_add_multiarch_dependencies(cg generate_preg_list generate_topcode)
 path64_set_multiarch_property(cg COMPILE_FLAGS

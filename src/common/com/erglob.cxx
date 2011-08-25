@@ -36,7 +36,7 @@
 /* ====================================================================
  * ====================================================================
  *
- * Module: erglob.desc
+ * Module: erglob.cxx
  * $Revision: 1.18 $
  * $Date: 05/03/10 16:47:52-08:00 $
  * $Author: bos@eng-25.internal.keyresearch.com $
@@ -55,8 +55,6 @@
  * ====================================================================
  * ====================================================================
  */
-
-static const char *erglob_desc_rcs_id = "$Source: /home/bos/bk/kpro64-pending/common/com/SCCS/s.erglob.desc $ $Revision: 1.18 $";
 
 #include "erglob.h"
 

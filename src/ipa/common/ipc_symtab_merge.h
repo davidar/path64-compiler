@@ -74,11 +74,9 @@ enum AUX_ST_FLAG
 extern "C" void
 Sync_symbol_attributes (ST_IDX st_idx, UINT32 sym_attr, BOOL is_weak,
 			UINT32 export_class);
-#pragma weak Sync_symbol_attributes
 
 extern "C" void
 Linker_mark_not_gp_rel (ST_IDX st_idx);
-#pragma weak Linker_mark_not_gp_rel
 
 #endif 
 

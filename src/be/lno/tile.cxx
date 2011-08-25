@@ -88,8 +88,6 @@
 #include "fb_whirl.h"
 #include "lno_trace.h"
 
-#pragma weak New_Construct_Id
-
 #define LEGO_BOGUS_VALUE 100
 #define LEGO_NAME_LENGTH 256
 #define TLOG_STRING_LENGTH 1000

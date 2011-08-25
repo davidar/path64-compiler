@@ -36,7 +36,6 @@
 #include "process_p.h"                    /* For create_tmpdir. */
 
 #include "errors.h"			/* for Set_Error_Phase() */
-#include "glob.h"			/* for Cleanup_Files() */
 #include "config.h"			/* for Preconfigure() */
 #include "config_list.h" 
 #include "config_targ.h"		/* for Target_ABI */
@@ -52,7 +51,12 @@
 #include "ld_ipa_interface.h"		// for ld_for_all_ST ()
 
 #include "ipc_weak.h"
+
+#define MODULE_NAME ipa
 #include "err_host.tab"       /* Include the error tables in the driver */
+
+
+void Do_Cleanup();
 
 
 /***************************************************************************/
@@ -119,10 +123,11 @@ ipa_dot_so_init ()
     ipa_dot_so_initialized = TRUE;
 
     MEM_Initialize();
-    Set_Error_Tables(Phases, host_errlist);
+    Set_Error_Tables(PHASES_NAME, ERRLIST_NAME);
     Preconfigure ();
     IP_set_target();
     Dont_Use_WN_Free_List ();
+    Set_Signal_Cleanup(&Do_Cleanup);
 
     Init_Operator_To_Opcode_Table ();
     Initialize_Symbol_Tables (TRUE);
@@ -223,11 +228,11 @@ ipa_driver (INT argc, char **argv)
 
 
 
-/* preempt the definition in be.so, so that we can call ld's cleanup
-   routines */
-/*ARGSUSED*/
+void Cleanup_Files(BOOL, BOOL);
+
+/* Cleanup function */
 void
-Signal_Cleanup (INT sig)
+Do_Cleanup ()
 {
     Cleanup_Files (FALSE, TRUE);
 
@@ -254,4 +259,4 @@ Signal_Cleanup (INT sig)
 #else
     msg (ER_FATAL, ERN_MESSAGE, "IPA processing aborted");
 #endif
-} /* Signal_Cleanup */
+} /* Do_Cleanup */

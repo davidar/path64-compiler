@@ -67,16 +67,6 @@ BOOL Purple_loaded = FALSE;
 BOOL Whirl2f_loaded = FALSE;
 BOOL Whirl2c_loaded = FALSE;
 
-/* The subroutines we use from Prompf, Whirl2c, and Whirl2f
- */
-
-#include "w2c_weak.h"
-#include "w2f_weak.h"
-
-#ifdef USE_WEAK_REFERENCES
-#pragma weak Anl_Cleanup
-#endif
-
 
 /* ====================================================================
  *

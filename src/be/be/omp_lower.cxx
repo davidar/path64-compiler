@@ -86,11 +86,6 @@
 #include "dra_export.h"
 #include "be_symtab.h"
 
-#pragma weak New_Construct_Id
-#if ! defined(BUILD_OS_DARWIN)
-#pragma weak Anl_File_Path
-#endif /* ! defined(BUILD_OS_DARWIN) */
-
 /***********************************************************************
  * Local constants, types, etc.
  ***********************************************************************/

@@ -36,13 +36,6 @@ extern "C" {
 extern void ipa_driver (int, char **);
 extern void ipa_dot_so_init (void);
 
-#ifdef _LD_IPA_INTERFACE
-
-#pragma weak ipa_driver
-#pragma weak ipa_dot_so_init
-
-#endif
-
 #ifdef __cplusplus
 }
 #endif

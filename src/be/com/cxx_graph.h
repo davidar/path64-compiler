@@ -127,9 +127,7 @@ typedef mUINT16 EINDEX16; // increase graph capacity. see bug 13018
 extern const VINDEX16 INVALID_VINDEX16;
 extern VINDEX16 GRAPH16_CAPACITY;
 
-#ifndef graph_template_INCLUDED
 #include "graph_template.h"
-#endif
 
 /* To up the graph capacity, here's what all one needs to do:
  * 1. change the typedefs below to (say) mUINT32.

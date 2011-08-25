@@ -38,12 +38,5 @@ extern void Prompf_Emit_Whirl_to_Source(PU_Info* current_pu,
 {
 }  
 
-#if 1 /* ! defined(BUILD_OS_DARWIN) */
-/* Changed this to be inline; see comment in anl_driver.h about weak syms */
-extern INT64 New_Construct_Id()
-{
-  return 0;
-}
-#endif /* ! defined(BUILD_OS_DARWIN) */
 
   

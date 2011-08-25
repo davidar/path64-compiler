@@ -146,8 +146,6 @@
 #include "tile.h"
 #include "be_symtab.h"
 
-#pragma weak New_Construct_Id
-
 /***********************************************************************
  *
  * External declarations.

@@ -64,8 +64,6 @@
 #include "wn_simp.h"            // for WN_Simp_Compare_Trees
 #endif
 
-#pragma weak New_Construct_Id
-
 #define SHACKLE_CHAIN_VISITED               1
 #define SHACKLE_CHAIN_NOT_VISITED           0
 

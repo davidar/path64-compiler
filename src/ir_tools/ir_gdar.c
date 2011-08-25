@@ -72,6 +72,8 @@
 #include "ir_bwrite.h"
 #include "file_util.h"
 #include "gdar.h"
+
+#define MODULE_NAME gdar
 #include "err_host.tab"
 
 
@@ -283,7 +285,7 @@ main (INT argc,       /* Number of command line arguments */
     * possible upon start-up.
     */
    MEM_Initialize ();
-   Set_Error_Tables (Phases, host_errlist);
+   Set_Error_Tables (PHASES_NAME, ERRLIST_NAME);
    Init_Error_Handler (10);
    Set_Error_Line (ERROR_LINE_UNKNOWN);
    Set_Error_Phase ("IR Walker");
@@ -357,11 +359,6 @@ main (INT argc,       /* Number of command line arguments */
 } /* main */
 
 
-/* Dummy definitions to satisify references from routines that got pulled
- * in by the header files but are never called
- */
-void Signal_Cleanup (INT sig) { }
-
-char * Host_Format_Parm (INT kind, MEM_PTR parm) { return NULL; }
 
 INT8 Debug_Level = 0;
+

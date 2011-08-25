@@ -65,7 +65,6 @@
 /* #include <libgen.h> */
 
 #include "defs.h"
-#include "dso.h"		    /* for load_so() */
 #include "be_errors.h"		/* Set_Error_Tables(), etc. */
 #include "erglob.h"		    /* for EC_ errmsg */
 #include "mempool.h"		    /* for MEM_Initialze()  */
@@ -132,7 +131,10 @@
 #include "output_func_start_profiler.h"
 #include "goto_conv.h"
 #endif
+
+#define MODULE_NAME be
 #include "err_host.tab"
+
 #include "libelftc.h"
 
 extern ERROR_DESC EDESC_BE[], EDESC_CG[];
@@ -144,119 +146,6 @@ extern void CYG_Instrument_Driver(WN *);
 #endif
 
 extern void Initialize_Targ_Info(void);
-
-// symbols defined in cg.so
-#ifndef USE_WEAK_REFERENCES
-
-extern void CG_Process_Command_Line (INT, char **, INT, char **);
-extern void CG_Init ();
-extern void CG_Fini ();
-extern void CG_PU_Initialize (WN*);
-extern void CG_PU_Finalize ();
-extern WN* CG_Generate_Code (WN*, ALIAS_MANAGER*, DST_IDX, BOOL);
-extern void EH_Generate_Range_List (WN *);
-
-#else
-
-#pragma weak CG_Process_Command_Line
-
-#pragma weak CG_Init
-#pragma weak CG_Fini
-#pragma weak CG_PU_Finalize
-#pragma weak CG_PU_Initialize
-#pragma weak CG_Generate_Code
-#pragma weak EH_Generate_Range_List
-
-#endif // USE_WEAK_REFERENCES
-
-// symbols defined in lno.so
-#ifndef USE_WEAK_REFERENCES
-
-extern void (*lno_main_p) (INT, char**, INT, char**);
-#define lno_main (*lno_main_p)
-
-extern void (*Lno_Init_p) ();
-#define Lno_Init (*Lno_Init_p)
-
-extern void (*Lno_Fini_p) ();
-#define Lno_Fini (*Lno_Fini_p)
-
-extern WN* (*Perform_Loop_Nest_Optimization_p) (PU_Info*, WN*, WN*, BOOL);
-#define Perform_Loop_Nest_Optimization (*Perform_Loop_Nest_Optimization_p)
-
-#else 
-
-#pragma weak lno_main
-#pragma weak Lno_Init
-#pragma weak Lno_Fini
-#pragma weak Perform_Loop_Nest_Optimization
-
-#endif // USE_WEAK_REFERENCES
-
-// symbols defined in ipl.so
-
-#ifndef USE_WEAK_REFERENCES
-
-extern void (*Ipl_Extra_Output_p) (Output_File *);
-#define Ipl_Extra_Output (*Ipl_Extra_Output_p)
-
-extern void (*Ipl_Init_p) ();
-#define Ipl_Init (*Ipl_Init_p)
-
-extern void (*Ipl_Fini_p) ();
-#define Ipl_Fini (*Ipl_Fini_p)
-
-extern void (*ipl_main_p) (INT, char **);
-#define ipl_main (*ipl_main_p)
-
-extern void (*Perform_Procedure_Summary_Phase_p) (WN*, DU_MANAGER*,
-						  ALIAS_MANAGER*, void*);
-#define Perform_Procedure_Summary_Phase (*Perform_Procedure_Summary_Phase_p)
-
-#ifdef KEY	// bug 3672
-extern void (*Preprocess_struct_access_p)(void);
-#define Preprocess_struct_access (*Preprocess_struct_access_p)
-#endif
-
-#else
-
-#pragma weak ipl_main
-#pragma weak Ipl_Init
-#pragma weak Ipl_Fini
-#pragma weak Ipl_Extra_Output
-#pragma weak Perform_Procedure_Summary_Phase
-
-#endif // USE_WEAK_REFERENCES
-
-#include "w2c_weak.h"
-#include "w2f_weak.h"
-
-#if ! defined(BUILD_OS_DARWIN) && !defined(_WIN32)
-#pragma weak Prp_Process_Command_Line
-#pragma weak Prp_Needs_Whirl2c
-#pragma weak Prp_Needs_Whirl2f
-#pragma weak Prp_Init
-#pragma weak Prp_Instrument_And_EmitSrc
-#pragma weak Prp_Fini
-
-#pragma weak Anl_Cleanup
-#pragma weak Anl_Process_Command_Line
-#pragma weak Anl_Needs_Whirl2c
-#pragma weak Anl_Needs_Whirl2f
-#pragma weak Anl_Init
-#pragma weak Anl_Init_Map
-#pragma weak Anl_Static_Analysis
-#pragma weak Anl_Fini
-#endif /* ! defined(BUILD_OS_DARWIN) */
-
-#ifndef __GNUC__
-#pragma weak Prompf_Emit_Whirl_to_Source__GP7pu_infoP2WN
-#elif (__GNUC__ == 2)
-#pragma weak Prompf_Emit_Whirl_to_Source__FP7pu_infoP2WN
-#else
-#pragma weak _Z27Prompf_Emit_Whirl_to_SourceP7pu_infoP2WN	// gcc 3.2
-#endif
-
 extern void Prompf_Emit_Whirl_to_Source(PU_Info* current_pu, WN* func_nd);
 
 #ifdef _WIN32
@@ -297,6 +186,9 @@ extern BOOL   Purple_loaded;     /* Defined in cleanup.c */
 extern BOOL   Whirl2f_loaded;    /* Defined in cleanup.c */
 extern BOOL   Whirl2c_loaded;    /* Defined in cleanup.c */
 
+
+void Cleanup_Files(BOOL report, BOOL delete_dotofile);
+        
 extern void *Current_Dep_Graph;
 FILE *DFile = stderr;
 
@@ -366,34 +258,23 @@ load_components (INT argc, char **argv)
 
     if (Run_ipl) {
       Get_Phase_Args (PHASE_IPL, &phase_argc, &phase_argv);
-      dso_load_simply ("ipl", Ipl_Path, Show_Progress);
       ipl_main (phase_argc, phase_argv);
       Set_Error_Descriptor (EP_BE, EDESC_BE);
     }
 
     if (Run_lno || Run_autopar) {
       Get_Phase_Args (PHASE_LNO, &phase_argc, &phase_argv);
-      dso_load_simply ("lno", LNO_Path, Show_Progress);
       lno_main (phase_argc, phase_argv, argc, argv);
-
-      // load in ipl.so if we need to perform automatic
-      // parallelization and interprocedural analysis has
-      // been performed
-      if (Run_autopar && LNO_IPA_Enabled) {
-	  dso_load_simply("ipl", Ipl_Path, Show_Progress);
-      }
-  }
+    }
 
     if (Run_prompf || Run_w2fc_early) {
       Get_Phase_Args (PHASE_PROMPF, &phase_argc, &phase_argv);
-      dso_load_simply("prompf_anl", Prompf_Anl_Path, Show_Progress);
       Prompf_anl_loaded = TRUE;
       Anl_Process_Command_Line(phase_argc, phase_argv, argc, argv);
     }
 
     if (Run_purple) {
       Get_Phase_Args (PHASE_PURPLE, &phase_argc, &phase_argv);
-      dso_load_simply("purple", Purple_Path, Show_Progress);
       Purple_loaded = TRUE;
       Prp_Process_Command_Line(phase_argc, phase_argv, argc, argv);
     }
@@ -403,7 +284,6 @@ load_components (INT argc, char **argv)
 	(Run_purple && Prp_Needs_Whirl2c()))
     {
       Get_Phase_Args (PHASE_W2C, &phase_argc, &phase_argv);
-      dso_load_simply("whirl2c", W2C_Path, Show_Progress);
       Whirl2c_loaded = TRUE;
       if (Run_prompf)
 	W2C_Set_Prompf_Emission(&Prompf_Id_Map);
@@ -415,7 +295,6 @@ load_components (INT argc, char **argv)
 	(Run_purple && Prp_Needs_Whirl2f()))
     {
       Get_Phase_Args (PHASE_W2F, &phase_argc, &phase_argv);
-      dso_load_simply("whirl2f", W2F_Path, Show_Progress);
       Whirl2f_loaded = TRUE;
       if (Run_prompf)
 	W2F_Set_Prompf_Emission(&Prompf_Id_Map);
@@ -1876,6 +1755,12 @@ Process_Feedback_Options (OPTION_LIST* olist)
   }
 } // Process_Feedback_Options
 
+
+void Do_Cleanup() {
+    Cleanup_Files(FALSE, TRUE);
+}
+
+
 // Provide a place to stop after components are loaded
 extern "C" {
   void be_debug(void) {}
@@ -1885,12 +1770,14 @@ main (INT argc, char **argv)
 {
   INT local_ecount, local_wcount;
   PU_Info *pu_tree;
+
+  Set_Signal_Cleanup(&Do_Cleanup);
   
   setlinebuf (stdout);
   setlinebuf (stderr);
   Handle_Signals ();
   MEM_Initialize ();
-  Set_Error_Tables (Phases, host_errlist);
+  Set_Error_Tables (PHASES_NAME, ERRLIST_NAME);
   Cur_PU_Name = NULL;
   Init_Error_Handler ( 100 );
   Set_Error_Line ( ERROR_LINE_UNKNOWN );
@@ -2006,7 +1893,6 @@ main (INT argc, char **argv)
       }
 
       Get_Phase_Args (PHASE_LNO, &phase_argc, &phase_argv);
-      dso_load_simply ("lno", LNO_Path, Show_Progress);
       lno_main (phase_argc, phase_argv, argc, argv);
     }
   }

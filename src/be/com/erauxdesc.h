@@ -24,18 +24,17 @@
 
 #ifndef erauxdesc_INCLUDED
 #define erauxdesc_INCLUDED
+
+#include "erbe.h"
+#include "ercg.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 
-
-#ifdef _KEEP_RCS_ID
-static char *eraux_desc_rcs_id = "$Source$ $Revision$";
-#endif /* _KEEP_RCS_ID */
-
-#include "erbe.desc"		/* Compiler code gen error codes */
-#include "ercg.desc"		/* Compiler code gen error codes */
+extern ERROR_DESC EDESC_BE[];
+extern ERROR_DESC EDESC_CG[];
 
 #ifdef __cplusplus
 }

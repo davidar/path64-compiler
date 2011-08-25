@@ -109,8 +109,6 @@ static const char *rcs_id = "$Source: /home/bos/bk/kpro64-pending/be/lno/SCCS/s.
 #include "anl_driver.h"
 #include "debug.h"
 
-#pragma weak New_Construct_Id
-
 enum REF_TYPE {SINGLE_ELEMENT_REF,IMPLIED_DO_REF,TOTAL_REF,OTHER_REF};
 
 class REFERENCE

@@ -75,7 +75,7 @@ extern void
 ipa_process_whirl ( bfd *);
 
 #ifdef KEY
-extern void (*p_Ipalink_ErrMsg_EC_outfile)(char *);
+extern void Ipalink_ErrMsg_EC_outfile(char *);
 #endif
 #endif
 
@@ -2499,13 +2499,13 @@ process_archive_whirl(lang_input_statement_type *entry, bfd *member)
     }
     member->ipa_usrdata = buf;
     if ((elf_elfheader(member)->e_flags & EF_IRIX_ABI64) == 0)
-	(*p_process_whirl32) ((void *)member,
+	process_whirl32 ((void *)member,
 	    elf_elfheader (member)->e_shnum,
 	    member->ipa_usrdata+elf_elfheader(member)->e_shoff,
 	    0, /* check_whirl_revision */
 	    member->filename);
     else
-	(*p_process_whirl64) ((void *)member,
+	process_whirl64 ((void *)member,
 	    elf_elfheader (member)->e_shnum,
 	    member->ipa_usrdata+elf_elfheader(member)->e_shoff,
 	    0, /* check_whirl_revision */
@@ -2671,7 +2671,7 @@ load_symbols (lang_input_statement_type *entry,
 			    /* replace the current argument (-llib or libxx.a)
 			     * with the temporary archive we're creating.
 			     */
-			    (*p_ipa_modify_link_flag)(entry->local_sym_name, tmp_arname);
+			    ipa_modify_link_flag(entry->local_sym_name, tmp_arname);
 			}
 			/*
 			 * NOTE
@@ -2712,7 +2712,7 @@ load_symbols (lang_input_statement_type *entry,
 	      member = bfd_openr_next_archived_file (entry->the_bfd, member);
 	  }
 	  if (is_ipa && entry->whole_archive && tmp_arname == NULL && loaded) {
-	      (*p_ipa_erase_link_flag) (entry->local_sym_name);
+	      ipa_erase_link_flag (entry->local_sym_name);
 	  }
 
 	  entry->loaded = loaded;
@@ -3026,7 +3026,7 @@ open_output (const char *name)
 	einfo (_("%P%F: target %s not found\n"), output_target);
 
 #ifndef KEY	// bug 3956
-      (*p_Ipalink_ErrMsg_EC_outfile)(name);
+      Ipalink_ErrMsg_EC_outfile(name);
 #else
       einfo (_("%P%F: cannot open output file %s: %E\n"), name);
 #endif

@@ -83,7 +83,6 @@ static const char *rcs_id =   snl_CXX "$Revision: 1.8 $";
 #include <iostream>
 #include <sstream>
 using namespace std;
-#pragma weak New_Construct_Id 
 
 //-----------------------------------------------------------------------
 // DEBUGGING STUFF

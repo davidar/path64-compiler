@@ -506,7 +506,7 @@ main (int argc, char **argv
 #ifdef IPA_LINK
   if (is_ipa) {
     cleanup_symtab_for_ipa();
-    (*p_ipa_driver) (ipa_argc, ipa_argv);
+    ipa_driver (ipa_argc, ipa_argv);
   }
 #endif
 

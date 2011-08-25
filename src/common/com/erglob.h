@@ -465,6 +465,7 @@ static char *erglob_rcs_id = "$Source: common/com/SCCS/s.erglob.h $ $Revision: 1
 /* IPA dladd error codes: */
 #define EC_IP_Load_Dso  EC_BASE_FILE+120    /* str, str */
 
+extern ERROR_DESC EDESC_Globals[];
 
 #ifdef __cplusplus
 }

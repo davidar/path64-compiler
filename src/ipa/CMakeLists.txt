@@ -26,24 +26,21 @@ path64_set_multiarch_sources(libipl_sources COMMON
 	"local/ipl_bread_write.cxx"
 	"local/ipl_summary_print.cxx"
 	"local/ipl_summarize_util.cxx"
+	"local/ipl_summarize_template.cxx"
 	"local/ipl_linex.cxx"
 	"local/ipl_array_bread_write.cxx"
 	"local/ipl_tlog.cxx"
 	"local/ipl_outline.cxx"
-	"local/init.cxx"
 	"local/ipl_elfsym.cxx"
 	"local/ipl_reorder.cxx" 
-	"../be/lno/lwn_util.cxx" 
-	"../be/lno/access_vector.cxx" 
 	"../be/lno/if_info.cxx" 
 	"../be/lno/lno_bv.cxx" 
 	"../be/com/ipa_section.cxx" 
 	"../be/com/ipa_section_main.cxx" 
 	"../be/com/ipa_section_print.cxx" 
-	"../be/com/ipl_lno_util.cxx"
+        "../be/com/ipl_lno_util.cxx"
 	"../be/com/reshape.cxx" 
 	"../be/com/wb_summary.cxx" 
-	"../be/com/wb_ipl_summary.cxx" 
 	"../be/com/ipa_cost_util.cxx" 
 )
 
@@ -70,7 +67,6 @@ path64_set_multiarch_sources(libipa_sources COMMON
 	"common/ipc_symtab_merge.cxx"
 	"common/ipc_type_merge.cxx"
 	"common/ipc_ty_hash.cxx"
-	"common/init.cxx"
 	"local/ipl_summary_print.cxx"
 	"local/ipl_tlog.cxx"
 	"main/analyze/ipa_option.cxx"
@@ -127,7 +123,6 @@ path64_set_multiarch_sources(libipa_sources COMMON
 	"../be/com/wb_summary.cxx"
 	"../be/com/ipa_cost_util.cxx"
 	"../be/com/be_util.cxx"
-	"../be/lno/lwn_util.cxx"
 )
 
 path64_set_multiarch_sources(PATHSCALE_INLINE_SRCS COMMON
@@ -152,34 +147,31 @@ path64_set_multiarch_sources(PATHSCALE_INLINE_SRCS COMMON
 	"inline/inline.cxx"
 	"inline/inline_utils.cxx"
 	"inline/timelib.cxx"
-	"local/ipl_summarize_util.cxx"
 	"../common/com/dwarf_DST.cxx"
 	"../common/com/dwarf_DST_mem.cxx"
 	"../common/com/dwarf_DST_producer.cxx"
 	"../be/com/clone.cxx"
-	"../be/com/ipl_lno_util.cxx"
 	"../be/com/cxx_template.cxx"
-	"../be/lno/lwn_util.cxx"
 	"../be/com/clone_DST_utils.cxx"
-)
+        )
 
 add_definitions(${PATH64_STDC_FORMAT_MACROS})
 
 if(PATH64_ENABLE_IPA)
 
-path64_add_multiarch_library(ipa SHARED libipa_sources)
+path64_add_multiarch_library(ipa STATIC libipa_sources)
 path64_set_multiarch_property(ipa PREFIX "")
 path64_set_multiarch_property(ipa COMPILE_DEFINITIONS MONGOOSE_BE;_SUPPORT_IPA;__MIPS_AND_IA64_ELF_H;BACK_END)
 path64_set_multiarch_property(ipa COMPILE_FLAGS
                               "-I${PATHSCALE_BINARY_DIR}/common/targ_info/@ARCH@ -I${CMAKE_CURRENT_SOURCE_DIR}/../common/com/@ARCH@")
-path64_multiarch_link_multiarch_libraries(ipa be ipl)
+path64_multiarch_link_multiarch_libraries(ipa be-static ipl)
 path64_add_multiarch_multiarch_dependencies(ipa generate_topcode)
 path64_install_multiarch(ipa)
 path64_add_dependencies_from_multiarch(compiler-stage ipa)
 
 endif()
 
-path64_add_multiarch_library(ipl SHARED libipl_sources)
+path64_add_multiarch_library(ipl STATIC libipl_sources)
 path64_set_multiarch_property(ipl PREFIX "")
 path64_set_multiarch_property(ipl COMPILE_DEFINITIONS MONGOOSE_BE;IPA_SUMMARY;__MIPS_AND_IA64_ELF_H)
 path64_set_multiarch_property(ipl COMPILE_FLAGS
@@ -188,13 +180,13 @@ path64_add_multiarch_dependencies(ipl generate_preg_list generate_topcode)
 path64_install_multiarch(ipl)
 path64_add_dependencies_from_multiarch(compiler-stage ipl)
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    path64_multiarch_link_multiarch_libraries(ipl comutil be)
+    path64_multiarch_link_multiarch_libraries(ipl comutil be-static)
 endif()
 
 path64_add_multiarch_executable(inline PATHSCALE_INLINE_SRCS)
 path64_set_multiarch_property(inline COMPILE_DEFINITIONS MONGOOSE_BE;_LIGHTWEIGHT_INLINER;_STDC_FORMAT_MACROS)
 path64_multiarch_link_libraries(inline)
-path64_multiarch_link_multiarch_libraries(inline comutil be)
+path64_multiarch_link_multiarch_libraries(inline comutil be-static)
 path64_multiarch_link_libraries(inline elfutil elf)
 path64_set_multiarch_property(inline COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}/../common/com/@ARCH@")
 

@@ -72,9 +72,6 @@ static char USMID[] = "\n@(#)5.0_pl/sources/messages.c	5.9	10/14/99 14:08:59\n";
 #endif /* KEY Bug 3632 */
 #ifdef KEY /* Bug 6673 */
 #include "../liberrno.h"
-/* Can remove this pragma and the two "if (verbose_message)" tests later on,
- * once we have a new toolroot libpathfortran.a containing verbose_message. */
-#pragma weak verbose_message
 #endif /* KEY Bug 6673 */
 
 #  define	 CIF_VERSION	       3    /* Must be defined before         */

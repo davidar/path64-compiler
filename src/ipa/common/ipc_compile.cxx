@@ -84,9 +84,6 @@
 #include <alloca.h>
 #endif
 
-#pragma weak tos_string
-#pragma weak outfilename
-
 using std::vector;
 using __gnu_cxx::hash_map;
 

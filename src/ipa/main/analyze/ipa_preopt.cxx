@@ -54,7 +54,6 @@
 #endif
 #include "be_symtab.h"                  // BE_ST
 #include "config.h"                     // Run_preopt, Run_ipl
-#include "dso.h"                        // dso_load
 #include "erglob.h"                     // ErrMsg
 #include "glob.h"                       // Show_Progress
 #include "ir_reader.h"                  // fdump_tree
@@ -73,15 +72,6 @@
 #include "optimizer.h"                  // Pre_Optimizer
 #include "region_main.h"                // REGION_Initialize
 #include "ipa_main.h"
-
-
-// --- from ipl.so
-#pragma weak Array_Summary_Output
-#pragma weak Do_Par
-#pragma weak Ipl_Init_From_Ipa
-#pragma weak Summary
-#pragma weak Trace__20ARRAY_SUMMARY_OUTPUTGP8__file_s
-#pragma weak Trace__31SUMMARIZE__pt__14_XC7PROGRAML10GP8__file_s
 
 
 class ST_IDX_PAIR_TO_INT32_HASH_TABLE
@@ -533,8 +523,6 @@ IPA_update_procedure (IPA_NODE* node,
 static void
 IPA_preopt_initialize ()
 {
-  dso_load_simply ("ipl", Ipl_Path, Show_Progress);
-
   MEM_POOL_Initialize (&IPA_preopt_pool, "IPA preopt pool", FALSE);
   MEM_POOL_Push (&IPA_preopt_pool);
 

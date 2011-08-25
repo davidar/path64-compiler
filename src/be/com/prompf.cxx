@@ -49,16 +49,8 @@
 #include "ir_reader.h"
 #include "targ_sim.h"
 
-#pragma weak New_Construct_Id 
-#if defined(BUILD_OS_DARWIN)
-#pragma weak Get_Next_Construct_Id
-#else /* defined(BUILD_OS_DARWIN) */
-#pragma weak Get_Next_Construct_Id
-#endif /* defined(BUILD_OS_DARWIN) */
-
 PROMPF_INFO* Prompf_Info = NULL; 
 MEM_POOL PROMPF_pool;
-FILE* STDOUT = stdout;
 
 //-----------------------------------------------------------------------
 // NAME: prompf_chain 
