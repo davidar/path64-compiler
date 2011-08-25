@@ -64,8 +64,6 @@ static char *rcs_id = "$Source: /home/bos/bk/kpro64-pending/be/lno/SCCS/s.fissio
 #include "anl_driver.h"
 #include "lno_trace.h"
 
-#pragma weak New_Construct_Id
-
 typedef HASH_TABLE<WN *, INT> WN2INT;
 
 extern WN* Get_Only_Loop_Inside(const WN* wn, BOOL regions_ok);

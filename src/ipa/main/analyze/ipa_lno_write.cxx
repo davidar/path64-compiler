@@ -936,7 +936,7 @@ extern void IPA_LNO_Write_Summary(IPA_LNO_WRITE_SUMMARY* IPA_LNO_Summary)
   FmtAssert(IPA_LNO_Summary != NULL, 
     ("IPA_LNO_Write_Summary: NULL summary"));
 
-  extern string tmpdir __attribute__((weak));
+  extern string tmpdir;
   // Open the output file for LNO information from IPA
   char* dirname = (char *) tmpdir; 
   char* buffer = (char *) MEM_POOL_Alloc(Malloc_Mem_Pool,

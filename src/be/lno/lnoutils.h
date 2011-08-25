@@ -688,6 +688,8 @@ class WN;
 #include "name.h"
 #endif
 
+#include "cxx_hash.h"
+
 /*
  * Input may be any integer
  */

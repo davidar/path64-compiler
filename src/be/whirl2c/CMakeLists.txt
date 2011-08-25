@@ -12,21 +12,20 @@ set(WHIRL2C_SRC
 			whirl2c_common.cxx 
 			wn_attr.cxx
 			wn2c.cxx
-			wn2c_pragma.cxx
-			init.cxx)
+			wn2c_pragma.cxx)
 
 ADD_DEFINITIONS(
 	-DBUILD_WHIRL2C
 	-DMONGOOSE_BE)
 
 path64_set_multiarch_sources(whirl2c_sources COMMON ${WHIRL2C_SRC})
-path64_add_multiarch_library(whirl2c SHARED whirl2c_sources)
+path64_add_multiarch_library(whirl2c STATIC whirl2c_sources)
 path64_add_multiarch_dependencies(whirl2c generate_preg_list)
 path64_set_multiarch_property(whirl2c PREFIX "")
 path64_set_multiarch_property(whirl2c COMPILE_FLAGS
                               "-I${CMAKE_CURRENT_SOURCE_DIR}/../../common/com/@ARCH@")
 path64_install_multiarch(whirl2c)
-path64_multiarch_link_multiarch_libraries(whirl2c comutil be)
+path64_multiarch_link_multiarch_libraries(whirl2c comutil be-static)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     path64_set_multiarch_sources(whirl2c-exec_sources COMMON whirl2c_main.cxx)

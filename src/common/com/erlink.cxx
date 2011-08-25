@@ -45,8 +45,6 @@
  * ====================================================================
  */
 
-static const char *erlink_desc_rcs_id = "$Source$ $Revision$";
-
 #include "erlink.h"
 
 ERROR_DESC EDESC_Link[] = {

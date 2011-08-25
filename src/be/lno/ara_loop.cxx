@@ -91,8 +91,6 @@
 #include "lno_trace.h"
 
 
-#pragma weak New_Construct_Id 
-
 extern INT Parallel_Debug_Level; 
 extern ARRAY_DIRECTED_GRAPH16 *Array_Dependence_Graph; 
   // PU array dependence graph

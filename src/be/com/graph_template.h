@@ -227,13 +227,12 @@ static char *graph_template_rcs_id = graph_template_INCLUDED "$Revision: 1.7 $";
 #ifndef cxx_template_INCLUDED
 #include "cxx_template.h"
 #endif
-#ifndef cxx_graph_INCLUDED
-#include "cxx_graph.h"
-#endif
 #include "cxx_memory.h"
 
 typedef mUINT16 VINDEX16;
 typedef mUINT16 EINDEX16;
+
+extern VINDEX16 GRAPH16_CAPACITY;
 
 template <class EDGE_TYPE, class VERTEX_TYPE>
 class DIRECTED_GRAPH16 {

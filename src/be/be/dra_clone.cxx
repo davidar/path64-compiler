@@ -160,7 +160,7 @@ static MEM_POOL DRA_check_pool, *DRA_check_pool_ptr = NULL;
 //
 // =====================================================================
 
-extern TY_IDX Get_Original_Type (ST* st) {
+extern TY_IDX DRA_Get_Original_Type (ST* st) {
 
   TY_IDX ty;
 
@@ -190,17 +190,17 @@ extern TY_IDX Get_Original_Type (ST* st) {
 
 // =====================================================================
 //
-// Function Name: Get_Array_Type
+// Function Name: DRA_Get_Array_Type
 //
 // Description: Given the ST for a distributed array, return the array TY.
 //
 // =====================================================================
 
-extern TY_IDX Get_Array_Type (ST* st) {
+extern TY_IDX DRA_Get_Array_Type (ST* st) {
 
   TY_IDX ty;
 
-  ty = Get_Original_Type (st);
+  ty = DRA_Get_Original_Type (st);
 
   if (TY_kind(ty) == KIND_POINTER &&
       (ST_sclass(st) == SCLASS_FORMAL ||
@@ -788,7 +788,7 @@ DRA_New_Clone_Sig(WN *pu_wn,
 
     // Extract the number of dimensions
     //
-    TY_IDX arg_ty = Get_Array_Type(arg_st);
+    TY_IDX arg_ty = DRA_Get_Array_Type(arg_st);
     DRA_INFO *dra = dra_table->Find(arg_st);
     INT16 num_dims = (INT16) strtol (arg_sig, &dim_sig, 10);
 
@@ -1147,7 +1147,7 @@ Find_Insertion_Point (WN *pu_wn,
     //
     INT16 num_dims = (INT16) strtol (arg_sig, &arg_sig, 10);
     ST *arg_st = WN_st(WN_kid(pu_wn, arg_pos));
-    TY_IDX arg_ty = Get_Array_Type(arg_st);
+    TY_IDX arg_ty = DRA_Get_Array_Type(arg_st);
 
     for (INT16 dim = 0; dim < num_dims; dim++) {
 
@@ -1244,7 +1244,7 @@ DRA_Insert_Pragmas(WN *pu_wn,
     //
     INT16 num_dims = (INT16) strtol (arg_sig, &arg_sig, 10);
     ST *arg_st = WN_st(WN_kid(pu_wn, arg_pos));
-    TY_IDX arg_ty = Get_Array_Type(arg_st);
+    TY_IDX arg_ty = DRA_Get_Array_Type(arg_st);
 
     for (INT16 dim = 0; dim < num_dims; dim++) {
 
@@ -1616,7 +1616,7 @@ DRA_Process_Globals(DRA_HASH_TABLE *dra_table)
 
     // is it a global array? if so, write it out
     //
-    TY_IDX ty = Get_Original_Type(st);
+    TY_IDX ty = DRA_Get_Original_Type(st);
     if (ty && TY_kind(ty) == KIND_ARRAY) {
 
       char* st_name = ST_name(st);

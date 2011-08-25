@@ -29,11 +29,6 @@
 
 #include "whirl2src.h"
 
-#include "dso.h"	// dso_load
-
-#include "w2c_weak.h"	// W2C_
-#include "w2f_weak.h"	// W2F_
-
 extern BOOL Show_Progress;
 
 static BOOL init_whirl2c = FALSE;   /* Has whirl2c been initialized already? */
@@ -58,7 +53,6 @@ Whirl2C_Init (WN* func_nd)
       /* load and initialize whirl2c */
       extern char *W2C_Path;
       const char* const str = "";
-      dso_load_simply("whirl2c", W2C_Path, Show_Progress);
       W2C_Process_Command_Line(0, &str, 0, &str);
       W2C_Init ();
     }
@@ -85,7 +79,6 @@ Whirl2F_Init (WN* func_nd)
       extern char *W2F_Path;
       const char* str;
       str = "";
-      dso_load_simply("whirl2f", W2F_Path, Show_Progress);
       W2F_Process_Command_Line(0, &str, 0, &str);
       W2F_Init ();
     }
@@ -176,81 +169,4 @@ Whirl2Src_Emit (FILE* fp, WN* wn)
   }
 }
 
-#ifdef USE_WEAK_REFERENCES
 
-// These functions are needed only for prompf_anl.so
-
-/***********************************************************************
- *
- * This is a dummy routine that calls the following two routines:
- *  W2C_Translate_Istore_Lhs
- *  W2F_Translate_Istore_Lhs
- * thereby forcing them to actually get "weak"ly defined in the .o
- *
- ***********************************************************************/
-static void 
-dummy () 
-{
-  W2C_Translate_Istore_Lhs ((char*) NULL, (UINT) 0, (WN*) NULL, (WN_OFFSET) 0, 
-                            (TY_IDX) NULL, (TYPE_ID) 0);
-  W2F_Translate_Istore_Lhs ((char*) NULL, (UINT) 0, (WN*) NULL, (WN_OFFSET) 0, 
-                            (TY_IDX) NULL, (TYPE_ID) 0);
-  W2C_Translate_Wn_Str ((char*) NULL, (UINT) 0, (WN*) NULL);
-  W2F_Translate_Wn_Str ((char*) NULL, (UINT) 0, (WN*) NULL);
-}
-
-extern void 
-Whirl2Src_Translate_Iload_Str(char  *str_buf,
-                              UINT  buf_size,
-                              WN*   iload) 
-{
-  INT i;
-  for (i=0; i<buf_size; i++) str_buf[i]='\0';
-  switch (PU_src_lang(Get_Current_PU())) {
-    case PU_C_LANG:
-    case PU_CXX_LANG:
-      W2C_Push_PU (w2src_func_nd, iload);
-      W2C_Translate_Wn_Str(str_buf, buf_size, iload);
-      W2C_Pop_PU ();
-      break;
-    case PU_F90_LANG:
-    case PU_F77_LANG:
-      W2F_Push_PU (w2src_func_nd, iload);
-      W2F_Translate_Wn_Str(str_buf, buf_size, iload);
-      W2F_Pop_PU ();
-      break;
-    default:
-      FmtAssert (FALSE, ("Unknown source language type"));
-  }
-}
-
-extern void 
-Whirl2Src_Translate_Istore_Str(char *str_buf,
-                               UINT  buf_size,
-                               WN*   istore) 
-{
-  INT i;
-  for (i=0; i<buf_size; i++) str_buf[i]='\0';
-  switch (PU_src_lang(Get_Current_PU())) {
-    case PU_C_LANG:
-    case PU_CXX_LANG:
-      W2C_Push_PU (w2src_func_nd, istore);
-      W2C_Translate_Istore_Lhs(str_buf, buf_size,  WN_kid1(istore),
-                               WN_offset(istore), WN_ty(istore),
-                               WN_desc(istore));
-      W2C_Pop_PU ();
-      break;
-    case PU_F90_LANG:
-    case PU_F77_LANG:
-      W2F_Push_PU (w2src_func_nd, istore);
-      W2F_Translate_Istore_Lhs(str_buf, buf_size,  WN_kid1(istore),
-                               WN_offset(istore), WN_ty(istore),
-                               WN_desc(istore));
-      W2F_Pop_PU ();
-      break;
-    default:
-      FmtAssert (FALSE, ("Unknown source language type"));
-  }
-}
-
-#endif // USE_WEAK_REFERENCES

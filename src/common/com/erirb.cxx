@@ -24,7 +24,7 @@
 /* ====================================================================
  * ====================================================================
  *
- * Module: erirb.desc
+ * Module: erirb.cxx
  * $Revision$
  * $Date$
  * $Author$
@@ -41,11 +41,6 @@
  * ====================================================================
  * ====================================================================
  */
-
-#ifndef erirb_desc_INCLUDED
-#define erirb_desc_INCLUDED
-
-static const char *erirb_desc_rcs_id = "$Source$ $Revision$";
 
 /* Include the error code definitions: */
 #include "erirb.h"
@@ -191,4 +186,3 @@ ERROR_DESC EDESC_Irb[] = {
   { -1, 0, RAG_EN_NONE, "", 0, 0, 0, 0, 0, 0, 0 }
 };
 
-#endif /* erirb_desc_INCLUDED */

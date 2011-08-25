@@ -62,8 +62,6 @@
 #include "parallel.h"
 #include "lno_trace.h"
 
-#pragma weak New_Construct_Id 
-
 typedef HASH_TABLE<INT,void *> INT2PTR;
 
 // we will handle at most 16-nested loops

@@ -110,14 +110,14 @@ BOOL   ALIAS_CLASS_REP::_structure_not_frozen;
 
 #if Is_True_On
 static const int num_acr_table_entries = 100;
-ALIAS_CLASS_REP *acr_table[num_acr_table_entries];
+static ALIAS_CLASS_REP *acr_table[num_acr_table_entries];
 
 static const int num_acm_table_entries = 100;
-ALIAS_CLASS_MEMBER *acm_table[num_acm_table_entries];
+static ALIAS_CLASS_MEMBER *acm_table[num_acm_table_entries];
 static int next_acm_idx = 0;
 
 
-void print_table(void)
+void alias_print_table(void)
 {
   UINT i;
   INT acr_size = Min(ALIAS_CLASS_REP::_last_id_used + 1,
@@ -1090,7 +1090,7 @@ ALIAS_CLASSIFICATION::Classify_deref_of_expr(WN  *const expr,
 	  ref->Print(TFile, Global_class());
 	  Print(TFile);
 #if Is_True_On
-	  print_table();
+	  alias_print_table();
 #endif
 	}
 	return AC_PTR_OBJ_PAIR(ref, ref->Class_pointed_to());
@@ -1166,7 +1166,7 @@ ALIAS_CLASSIFICATION::Classify_deref_of_expr(WN  *const expr,
       t.Ref_class()->Print(TFile, Global_class());
       Print(TFile);
 #if Is_True_On
-      print_table();
+      alias_print_table();
 #endif
     }
     if (opr == OPR_PARM) {
@@ -1342,7 +1342,7 @@ ALIAS_CLASSIFICATION::Handle_assignment(WN *const stmt)
   if (WOPT_Enable_Verbose && Tracing()) {
     fprintf(TFile, "  after handling assignment:\n");
 #if Is_True_On
-    print_table();
+    alias_print_table();
 #endif
     if (OPERATOR_is_scalar_istore (WN_operator(stmt)) ||
 	WN_operator(stmt) == OPR_MSTORE) {

@@ -49,13 +49,12 @@
 #ifndef inline_summarize_INCLUDED
 #define inline_summarize_INCLUDED
 
+#include "ipa_option.h"
+
 // define dummy variables referenced by ipl_summarize_template.h that are
 // never referenced by the inliner.  In fact, these references will be
 // removed by the optimizer as dead code.  But if we build the inliner
 // without optimization, we need them to statisfy the linker. 
-WN_MAP Summary_Map;
-WN_MAP Stmt_Map;
-BOOL Trace_IPA = FALSE, Trace_Perf = FALSE;
 static BOOL DoPreopt = FALSE;
 static BOOL Do_Par = FALSE;
 static BOOL Do_Common_Const = FALSE;

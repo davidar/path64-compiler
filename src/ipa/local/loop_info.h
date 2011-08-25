@@ -150,11 +150,7 @@ public:
   void Set_step(ACCESS_VECTOR *step) { _step = step;};
   ACCESS_VECTOR* Get_step() const { return _step;};
 
-#ifdef KEY
-  void Print(FILE *fp, INT = 0) __attribute__((weak));
-#else
   void Print(FILE *fp, INT = 0);
-#endif
 
   ~DO_LOOP_INFO_BASE() {
     CXX_DELETE(_lb,_pool);

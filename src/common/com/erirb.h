@@ -113,6 +113,8 @@ static char *erirb_rcs_id = "$Source$ $Revision$";
 #define EC_Sym_Removal	EC_IRB_Start+89		/* stab, str */
 #define EC_Gnum_Range	EC_IRB_Start+90		/* str */
 
+extern ERROR_DESC EDESC_Irb[];
+
 #ifdef __cplusplus
 }
 #endif

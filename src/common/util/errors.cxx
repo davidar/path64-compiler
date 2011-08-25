@@ -142,6 +142,8 @@ static INT   Max_Errors = 100;		/* Maximum errors allowed */
 
 static BOOL Had_Compiler_Error = FALSE;
 
+static signal_cleanup_handler cleanup_handler = NULL;
+
 /* ====================================================================
  *
  * Severity Description Table
@@ -1537,3 +1539,27 @@ Had_Internal_Error (void)
 {
 	return Had_Compiler_Error;
 }
+
+
+/* ====================================================================
+ *
+ * Signal_Cleanup
+ *
+ * Clean up before dying in response to a signal.
+ *
+ * ====================================================================
+ */
+
+void
+Signal_Cleanup ( INT sig )
+{
+  if(cleanup_handler != NULL) {
+    cleanup_handler();
+  }
+}
+
+
+void Set_Signal_Cleanup(signal_cleanup_handler handler) {
+  cleanup_handler = handler;
+}
+

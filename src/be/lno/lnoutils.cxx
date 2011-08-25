@@ -88,8 +88,6 @@
 #include "be_symtab.h" // for Be_preg_tab
 #endif
 
-#pragma weak New_Construct_Id
-
 extern void LWN_Parentize_One_Level(const WN* wn);
 
 extern WN* LWN_Make_Icon(TYPE_ID wtype, INT64 i)

@@ -65,8 +65,6 @@
 #include "ipl_lno_util.h"
 #include "lno_trace.h"
 
-#pragma weak New_Construct_Id
-
 #define MAX_NAME_SIZE 75 
 #define HMB_ABS_CODE_EXPANSION 	1000 
 #define HMB_REL_CODE_EXPANSION  3

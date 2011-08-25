@@ -951,12 +951,12 @@ ADD_DEFINITIONS(
 IF(PATH64_ENABLE_FORTRAN)
 add_executable( gen_ieee_cpp_macros  ../libfi/mathlb/gen_ieee_cpp_macros.c)
 
+add_dependencies(gen_ieee_cpp_macros compiler-stage-Fortran)
+
 add_custom_command(
 		OUTPUT ${Path64_BINARY_DIR}/src/include/ieee_cpp_macros.h
 		COMMAND  gen_ieee_cpp_macros > ${Path64_BINARY_DIR}/src/include/ieee_cpp_macros.h
 		DEPENDS gen_ieee_cpp_macros)
-
-add_dependencies(gen_ieee_cpp_macros switch_fc)
 
 set(PATHF90_FLAGS "-Wf,-eQ -Wf,-intrinsic_module_gen -Wf,-intrinsic_module_path=.")
 
@@ -965,8 +965,6 @@ set_source_files_properties("../libu/util/rtc.c" PROPERTIES COMPILE_DEFINITIONS 
 set_source_files_properties(${PATHSCALE_PATHFORTRAN_F_SRCS} PROPERTIES COMPILE_FLAGS ${PATHF90_FLAGS})
 set_source_files_properties(../libfi/mathlb/ieee_exceptions.F90 PROPERTIES OBJECT_OUTPUTS IEEE_EXCEPTIONS.mod)
 set_source_files_properties(../libfi/mathlb/ieee_arithmetic.F90 PROPERTIES OBJECT_DEPENDS IEEE_EXCEPTIONS.mod)
-
-#SET(CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES "m;c")
 
 
 path64_set_multitarget_sources(pathfortran-static COMMON
@@ -1017,11 +1015,40 @@ path64_add_multitarget_library(pathfstart STATIC)
 
 # Building libpathfortran for host architecture
 path64_get_host_arch(host_arch)
-path64_add_library_for_arch(pathfortran-host ${host_arch} STATIC
-                            ${PATHSCALE_PATHFORTRAN_C_SRCS}
-                            ${PATHSCALE_PATHFORTRAN_F_SRCS}
+path64_add_library_for_arch(pathfortran-mfef95 ${host_arch} STATIC
+                            "../libcsup/gen/strnrstrn.c"
+                            "../libcsup/gen/strnstrn.c"
+                            "../libcsup/msgnew/catgetmsg.c"
+                            "../libcsup/msgnew/catmsgfmt.c"
+                            "../libf/fio/fmtparse.c"
+                            "../libfi/array/reshape_gen.c"
+                            "../libfi/array/transfer_gen.c"
+                            "../libfi/char/f90_index.c"
+                            "../libfi/char/f90_scan.c"
+                            "../libfi/char/f90_verify.c"
+                            "../libfi/char/index.c"
+                            "../libfi/char/scan.c"
+                            "../libfi/char/verify.c"
+                            "../libu/util/asnenv.c"
+                            "../libu/util/asnlib.c"
+                            "../libu/util/asnparse.c"
+                            "../libu/util/asntools.c"
+                            "../libu/util/f2ccpy.c"
+                            "../libu/util/_string_cmp.c"
+                            "../libu/ffio/asgrls.c"
+                            "../libu/ffio/binhex.c"
+                            "../libu/ffio/class_vf_check.c"
+                            "../libu/ffio/class_vms_check.c"
+                            "../libu/ffio/fxrmisc.c"
+                            "../libu/ffio/parse_data.c"
+                            "../libu/ffio/set_layer_options.c"
+                            "../libu/ffio/sysasg.c"
+                            "../libu/errmsg/lerror.c"
+                            "../libu/errmsg/lmessage.c"
+                            "../libu/errmsg/lwarn.c"
+                            "../libu/util/posix/cri_cintrin.c"
                             ${Path64_BINARY_DIR}/src/include/ftn_lib_messages.h
-                            ${Path64_BINARY_DIR}/src/include/ieee_cpp_macros.h)
+                           )
 
 add_custom_command(
     OUTPUT massage.c

@@ -32,7 +32,10 @@
 #include "defs.h"
 #include "glob.h"
 #include "erglob.h"
+
+#define MODULE_NAME wgen
 #include "err_host.tab"
+
 #include "config.h"
 #include "file_util.h" // for Last_Pathname_Component
 #include "wgen_misc.h"
@@ -312,7 +315,7 @@ main ( INT argc, char **argv, char **envp)
       struct stat sbuf;
       int st;
 
-      Set_Error_Tables ( Phases, host_errlist );
+      Set_Error_Tables ( PHASES_NAME, ERRLIST_NAME );
       Process_Command_Line(argc, argv);
 
       st = stat(Spin_File_Name, &sbuf);

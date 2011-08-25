@@ -636,13 +636,8 @@ ipa_search_command_line(int argc,
     arg_vector = argv;
     environ_vars = envp;
 
-    	/*
-	 *  The ipa.so needs to be opened and entry
-	 *  points need to be found with dlsym.
-	 */
-    ipa_set_syms();
 #ifdef KEY
-    (*p_Ipalink_Set_Error_Phase)("IPA Startup");
+    Ipalink_Set_Error_Phase("IPA Startup");
 #endif
 
     	/*
@@ -650,7 +645,7 @@ ipa_search_command_line(int argc,
     	 * that will be passed to the linker/compiler during
          * the second pass
     	 */
-    (*p_ipa_init_link_line) (0, NULL);
+    ipa_init_link_line (0, NULL);
 
     for (i=1;i<argc;i++) {
 #ifdef KEY
@@ -674,8 +669,8 @@ ipa_search_command_line(int argc,
 	    	continue;
 	    }
 	    else if ((needs_argument(&string[2],TRUE) == TRUE)) {
-	    	(*p_ipa_add_link_flag) (argv[i++]);
-		(*p_ipa_add_link_flag) (argv[i]);
+	    	ipa_add_link_flag (argv[i++]);
+		ipa_add_link_flag (argv[i]);
 		continue;
 	    }
 	}   /* if "--" */
@@ -766,8 +761,8 @@ ipa_search_command_line(int argc,
     	    	MALLOC_ASSERT(outfilename);
 		strcpy(outfilename,"");
 		strcat(outfilename,argv[i+1]);
-	    	(*p_ipa_add_link_flag) (argv[i++]);
-		(*p_ipa_add_link_flag) (argv[i]);
+	    	ipa_add_link_flag (argv[i++]);
+		ipa_add_link_flag (argv[i]);
 		continue;
 	    }
 	    else if ((strcmp(string,"-v")) == 0) {
@@ -782,14 +777,14 @@ ipa_search_command_line(int argc,
 		continue;
 	    }
 	    else if (needs_argument(&string[1],FALSE)) {
-	    	(*p_ipa_add_link_flag) (argv[i++]);
-		(*p_ipa_add_link_flag) (argv[i]);
+	    	ipa_add_link_flag (argv[i++]);
+		ipa_add_link_flag (argv[i]);
 		continue;
 	    }
 	}
 	/* This splits the post ipa commandline arguments */
 	else if (check_for_whirl(argv[i], &is_elf)) {
-	    (*p_ipa_insert_whirl_marker)();
+	    ipa_insert_whirl_marker();
 	    continue;
 	}
 
@@ -806,9 +801,9 @@ ipa_search_command_line(int argc,
 	 */
 
 	if (is_elf == TRUE)
-	  (*p_ipa_insert_whirl_marker)();
+	  ipa_insert_whirl_marker();
 #endif
-    	(*p_ipa_add_link_flag) (argv[i]);
+    	ipa_add_link_flag (argv[i]);
 
     }	    /* for */
 

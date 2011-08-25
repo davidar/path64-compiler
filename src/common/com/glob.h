@@ -182,13 +182,6 @@ extern BOOL Symbol_Table_Out;	/* Symbol table output (list or trace) */
 extern BOOL Create_Cycle_Output; /* added by cbq */
 extern BOOL Show_Progress;	/* Report progress to stdout */
 
-/* Clean up files after failure: */
-extern void Cleanup_Files (
-  BOOL report	/* Report errors which occur during file cleanup? */
-		/* This should generally be FALSE for failures.   */
-  ,BOOL delete_doto /*delete the .o if created */
-);
-
 /* Clean up and terminate program with given exit status: */
 extern void Terminate ( INT status );
 

@@ -64,13 +64,6 @@
 #define F90_LOWER_INTERNAL
 #include "f90_lower.h"
 
-#ifdef __GNUC__
-#if ! (defined(BUILD_OS_DARWIN) || defined(_WIN32))
-#pragma weak Anl_File_Path
-#pragma weak New_Construct_Id
-#endif /* defined(BUILD_OS_DARWIN) */
-#endif
-
 /* Useful macros */
 #define is_constant(x) (WN_operator(x)==OPR_INTCONST)
 #define ST_is_f90_pointer(x) TY_is_f90_pointer(ST_type(x))
@@ -117,15 +110,15 @@ static MEM_POOL *f90_lower_pool=NULL;
 
 typedef struct f90_dep_info_s {
    INT ndim;
-   DEP_SUMMARY summary;
+   VHO_DEP_SUMMARY summary;
    DIR_FLAG directions[MAX_NDIM];
 } DEP_INFO;
 
 #define DEP_NDIM(x) ((x)->ndim)
 #define DEP_DIRECTION(x,n) ((x)->directions[(n)])
-#define DEP_SUMMARY(x) ((x)->summary)
+#define VHO_DEP_SUMMARY(x) ((x)->summary)
 #define SET_DEP_NDIM(x,y) (x)->ndim=(y)
-#define SET_DEP_SUMMARY(x,y) (x)->summary=(y)
+#define SET_VHO_DEP_SUMMARY(x,y) (x)->summary=(y)
 #define SET_DEP_DIRECTION(x,n,d) (x)->directions[(n)]=(d)
 
 /* Accessors for aux data structure */
@@ -2168,7 +2161,7 @@ static void F90_Lower_Init_Dep_Info(DEP_INFO *d, INT ndim)
 
    /* allocate the main structure */
    SET_DEP_NDIM(d,ndim);
-   SET_DEP_SUMMARY(d,DEP_INDEPENDENT);
+   SET_VHO_DEP_SUMMARY(d,VHO_DEP_INDEPENDENT);
 
    /* Initialize fields */
    for (i=0; i < MAX_NDIM; i++) {
@@ -2184,7 +2177,7 @@ static void print_dep_info(DEP_INFO *d)
    INT i;
    
    fprintf(TFile,"%s ",summ[d->summary]);
-   if (d->summary == DEP_REMOVABLE) {
+   if (d->summary == VHO_DEP_REMOVABLE) {
       fprintf(TFile,":");
       for (i=0; i < d->ndim; i++) {
 	 fprintf(TFile," %s",dirr[DEP_DIRECTION(d,i)]);
@@ -2230,7 +2223,7 @@ static BOOL F90_Lower_Merge_Dep_Info(DEP_INFO *in1, DEP_INFO *in2)
 
    INT ndim1,ndim2;
    INT i;
-   DEP_SUMMARY sum1,sum2;
+   VHO_DEP_SUMMARY sum1,sum2;
    DIR_FLAG dir1,dir2,dir_merge;
    BOOL all_zero;
 
@@ -2245,31 +2238,31 @@ static BOOL F90_Lower_Merge_Dep_Info(DEP_INFO *in1, DEP_INFO *in2)
 
    ndim1 = DEP_NDIM(in1);
    ndim2 = DEP_NDIM(in2);
-   sum1 = DEP_SUMMARY(in1);
-   sum2 = DEP_SUMMARY(in2);
+   sum1 = VHO_DEP_SUMMARY(in1);
+   sum2 = VHO_DEP_SUMMARY(in2);
 
    /* If the number of dimensions is different, or either is UNKNOWN, give up */
    if ((ndim1 != ndim2) ||
-       (sum1 == DEP_UNKNOWN) ||
-       (sum2 == DEP_UNKNOWN)) {
-      SET_DEP_SUMMARY(in1,DEP_UNKNOWN);
+       (sum1 == VHO_DEP_UNKNOWN) ||
+       (sum2 == VHO_DEP_UNKNOWN)) {
+      SET_VHO_DEP_SUMMARY(in1,VHO_DEP_UNKNOWN);
       SHOW_DEP_RES;
       return (FALSE);
    }
-   if (sum2 == DEP_INDEPENDENT) {
+   if (sum2 == VHO_DEP_INDEPENDENT) {
       SHOW_DEP_RES;
       return (TRUE);
    }
-   if (sum2 == DEP_IDENTICAL) {
-      if (sum1 == DEP_INDEPENDENT) {
-	 SET_DEP_SUMMARY(in1,DEP_IDENTICAL);
+   if (sum2 == VHO_DEP_IDENTICAL) {
+      if (sum1 == VHO_DEP_INDEPENDENT) {
+	 SET_VHO_DEP_SUMMARY(in1,VHO_DEP_IDENTICAL);
       } 
       SHOW_DEP_RES;
       return (TRUE);
    }
    
    /* sum2 is REMOVABLE */
-   if (sum1 == DEP_IDENTICAL || sum1 == DEP_INDEPENDENT) {
+   if (sum1 == VHO_DEP_IDENTICAL || sum1 == VHO_DEP_INDEPENDENT) {
       *in1 = *in2;
       SHOW_DEP_RES;
       return (TRUE);
@@ -2292,7 +2285,7 @@ static BOOL F90_Lower_Merge_Dep_Info(DEP_INFO *in1, DEP_INFO *in2)
 	 dir_merge = DIR_UNKNOWN;
       }
       if (dir_merge == DIR_UNKNOWN) {
-	 SET_DEP_SUMMARY(in1,DEP_UNKNOWN);
+	 SET_VHO_DEP_SUMMARY(in1,VHO_DEP_UNKNOWN);
 	 SHOW_DEP_RES;
 	 return (FALSE);
       }	 
@@ -2300,7 +2293,7 @@ static BOOL F90_Lower_Merge_Dep_Info(DEP_INFO *in1, DEP_INFO *in2)
       SET_DEP_DIRECTION(in1,i,dir_merge);
    }
    if (all_zero) {
-      SET_DEP_SUMMARY(in1,DEP_IDENTICAL);
+      SET_VHO_DEP_SUMMARY(in1,VHO_DEP_IDENTICAL);
    }
    SHOW_DEP_RES;
    return (TRUE);
@@ -2351,13 +2344,13 @@ INT f90_fdump(INT f)
    return (0);
 }
 
-static const char * f90_depsum_name(DEP_SUMMARY d)
+static const char * f90_depsum_name(VHO_DEP_SUMMARY d)
 {
    switch (d) {
-    case DEP_UNKNOWN: return ("UNKNOWN"); 
-    case DEP_INDEPENDENT: return ("INDEPENDENT");
-    case DEP_IDENTICAL: return ("IDENTICAL"); 
-    case DEP_REMOVABLE: return ("REMOVABLE"); 
+    case VHO_DEP_UNKNOWN: return ("UNKNOWN"); 
+    case VHO_DEP_INDEPENDENT: return ("INDEPENDENT");
+    case VHO_DEP_IDENTICAL: return ("IDENTICAL"); 
+    case VHO_DEP_REMOVABLE: return ("REMOVABLE"); 
    }
    return ("error");
 }
@@ -2836,12 +2829,12 @@ static DIR_FLAG Analyze_index(WN *i1, WN *i2) {
 /*================================================================
  *
  * Analyze_all_indices checks all the indices in a pair of ARRAY
- * and ARRSECTION nodes, returning the DEP_SUMMARY for the overall
+ * and ARRSECTION nodes, returning the VHO_DEP_SUMMARY for the overall
  *
  * Analyze_all_indices(WN *lhs, WN *rhs, DEP_INFO *dep_info)
  *
  *================================================================*/
-static DEP_SUMMARY Analyze_all_indices(WN *lhs, WN *rhs, DEP_INFO *kid_dep)
+static VHO_DEP_SUMMARY Analyze_all_indices(WN *lhs, WN *rhs, DEP_INFO *kid_dep)
 {
    BOOL allzero,allzerounknown;
    INT lhskids,rhskids;
@@ -2851,8 +2844,8 @@ static DEP_SUMMARY Analyze_all_indices(WN *lhs, WN *rhs, DEP_INFO *kid_dep)
    lhskids = WN_kid_count(lhs);
    rhskids = WN_kid_count(rhs);
    if ((lhskids != rhskids) || (WN_element_size(lhs) != WN_element_size(rhs))) {
-      SET_DEP_SUMMARY(kid_dep,DEP_UNKNOWN);
-      return (DEP_UNKNOWN);
+      SET_VHO_DEP_SUMMARY(kid_dep,VHO_DEP_UNKNOWN);
+      return (VHO_DEP_UNKNOWN);
    }
    ndim = (lhskids - 1) / 2;
    SET_DEP_NDIM(kid_dep,ndim);
@@ -2864,26 +2857,26 @@ static DEP_SUMMARY Analyze_all_indices(WN *lhs, WN *rhs, DEP_INFO *kid_dep)
       dir = Analyze_index(WN_kid(lhs,i+ndim+1),WN_kid(rhs,i+ndim+1));
       SET_DEP_DIRECTION(kid_dep,i,dir);
       if (dir == DIR_DONTCARE) {
-	 SET_DEP_SUMMARY(kid_dep,DEP_INDEPENDENT);
+	 SET_VHO_DEP_SUMMARY(kid_dep,VHO_DEP_INDEPENDENT);
 	 allzero = FALSE;
 	 allzerounknown = FALSE;
 	 break;
       } else if (dir == DIR_UNKNOWN) {
 	 allzero = FALSE;
       } else if (dir == DIR_POSITIVE || dir == DIR_NEGATIVE) {
-	 SET_DEP_SUMMARY(kid_dep,DEP_REMOVABLE);
+	 SET_VHO_DEP_SUMMARY(kid_dep,VHO_DEP_REMOVABLE);
 	 allzero = FALSE;
 	 allzerounknown = FALSE;
       }
    }
    if (allzero) {
       /* all zero means identical */
-      SET_DEP_SUMMARY(kid_dep,DEP_IDENTICAL);
+      SET_VHO_DEP_SUMMARY(kid_dep,VHO_DEP_IDENTICAL);
    } else if (allzerounknown && !allzero) {
       /* all zero or unknown means unknown if at least one unknown was found */
-      SET_DEP_SUMMARY(kid_dep,DEP_UNKNOWN);
+      SET_VHO_DEP_SUMMARY(kid_dep,VHO_DEP_UNKNOWN);
    }
-   return (DEP_SUMMARY(kid_dep));
+   return (VHO_DEP_SUMMARY(kid_dep));
 }
 
 /*================================================================
@@ -2891,18 +2884,18 @@ static DEP_SUMMARY Analyze_all_indices(WN *lhs, WN *rhs, DEP_INFO *kid_dep)
  * Check_overlap: Given bases and sizes, decide if there is overlap between 
  * two variables.
  *
- * static DEP_SUMMARY check_overlap(INT64 base1, INT64 base2, INT64 size1, INT64 size2)
+ * static VHO_DEP_SUMMARY check_overlap(INT64 base1, INT64 base2, INT64 size1, INT64 size2)
  *
- * returns either DEP_IDENTICAL if the two are the same,
- *                DEP_INDEPENDENT if the two do not overlap
- *                DEP_UNKNOWN otherwise
+ * returns either VHO_DEP_IDENTICAL if the two are the same,
+ *                VHO_DEP_INDEPENDENT if the two do not overlap
+ *                VHO_DEP_UNKNOWN otherwise
  *
  *================================================================
  */
-static DEP_SUMMARY check_overlap(INT64 base1, INT64 base2, INT64 size1, INT64 size2)
+static VHO_DEP_SUMMARY check_overlap(INT64 base1, INT64 base2, INT64 size1, INT64 size2)
 {
    INT64 t;
-   if (base2 == base1 && size2 == size1) return (DEP_IDENTICAL);
+   if (base2 == base1 && size2 == size1) return (VHO_DEP_IDENTICAL);
 
    /* Swap so that base1 is always less than base2 */
    if (base1 > base2) {
@@ -2914,9 +2907,9 @@ static DEP_SUMMARY check_overlap(INT64 base1, INT64 base2, INT64 size1, INT64 si
       size1 = t;
    }
    if (base2 < base1 + size1) {
-      return (DEP_UNKNOWN);
+      return (VHO_DEP_UNKNOWN);
    } else {
-      return (DEP_INDEPENDENT);
+      return (VHO_DEP_INDEPENDENT);
    }
 }  
 
@@ -2926,13 +2919,13 @@ static DEP_SUMMARY check_overlap(INT64 base1, INT64 base2, INT64 size1, INT64 si
  * the same member or a definitely different one.
  * When we see an indirect reference we stop.
  */
-static DEP_SUMMARY analyze_structure_bases(INT lhs_start, INT rhs_start, INT *lhs_end1, INT *rhs_end1)
+static VHO_DEP_SUMMARY analyze_structure_bases(INT lhs_start, INT rhs_start, INT *lhs_end1, INT *rhs_end1)
 {
    INT64 lc,rc;
    INT i,ri,li,lhs_end,rhs_end;
    OPERATOR opr;
    WN *lhsa,*rhsa;
-   DEP_SUMMARY t;
+   VHO_DEP_SUMMARY t;
    DEP_INFO dummy_dep;
 
    lc = lhs_const_offset;
@@ -2968,9 +2961,9 @@ static DEP_SUMMARY analyze_structure_bases(INT lhs_start, INT rhs_start, INT *lh
     * (due to equivalences, for example).
     */
    if (lhs_ty == rhs_ty) {
-      if (lc != rc) return (DEP_INDEPENDENT);
+      if (lc != rc) return (VHO_DEP_INDEPENDENT);
    } else {
-      return (DEP_UNKNOWN);
+      return (VHO_DEP_UNKNOWN);
    }
 
    /* Check all the other pieces for known indentical or not known identical. */
@@ -3001,11 +2994,11 @@ static DEP_SUMMARY analyze_structure_bases(INT lhs_start, INT rhs_start, INT *lh
 	 /* compare all the indices. Each one will get back either 
 	    independent or unknown */
 	 t = Analyze_all_indices(lhsa,rhsa,&dummy_dep);
-	 if (t == DEP_UNKNOWN || t == DEP_INDEPENDENT) {
+	 if (t == VHO_DEP_UNKNOWN || t == VHO_DEP_INDEPENDENT) {
 	    return (t);
-	 } else if (t == DEP_REMOVABLE) {
+	 } else if (t == VHO_DEP_REMOVABLE) {
 	    /* This shouldn't happen */
-	    return (DEP_UNKNOWN);
+	    return (VHO_DEP_UNKNOWN);
 	 }
 	 /* Otherwise, we have an identical case */
 	 li--;
@@ -3013,7 +3006,7 @@ static DEP_SUMMARY analyze_structure_bases(INT lhs_start, INT rhs_start, INT *lh
       } else if ((li > lhs_end && ri <= rhs_end) ||
 		 (ri > rhs_end && li <= lhs_end)) {
 	 /* One runs out first, return unknown */
-	 return (DEP_UNKNOWN);
+	 return (VHO_DEP_UNKNOWN);
       } else {
 	 li--;
 	 ri--;
@@ -3021,7 +3014,7 @@ static DEP_SUMMARY analyze_structure_bases(INT lhs_start, INT rhs_start, INT *lh
    }
    
    /* At this point, we can only be identical */
-   return (DEP_IDENTICAL);
+   return (VHO_DEP_IDENTICAL);
 }
       
 
@@ -3035,15 +3028,15 @@ static DEP_SUMMARY analyze_structure_bases(INT lhs_start, INT rhs_start, INT *lh
 * is_char - are these bases for a character variable
 *
 * Try to figure out if two bases might overlap. It returns either
-* DEP_UNKNOWN - Can't figure it out
-* DEP_INDEPENDENT - the bases are different and non-overlapping
-* DEP_IDENTICAL - the bases are the same thing
+* VHO_DEP_UNKNOWN - Can't figure it out
+* VHO_DEP_INDEPENDENT - the bases are different and non-overlapping
+* VHO_DEP_IDENTICAL - the bases are the same thing
 *
 */
 
-static DEP_SUMMARY Analyze_bases(WN * addr, BOOL is_expr, BOOL is_char)
+static VHO_DEP_SUMMARY Analyze_bases(WN * addr, BOOL is_expr, BOOL is_char)
 {
-   DEP_SUMMARY r;
+   VHO_DEP_SUMMARY r;
    OPERATOR opr;
    INT i;
    BOOL same;
@@ -3052,14 +3045,14 @@ static DEP_SUMMARY Analyze_bases(WN * addr, BOOL is_expr, BOOL is_char)
    BOOL l_pointer,l_target,l_formal;
    BOOL r_pointer,r_target,r_formal;
       
-   r = DEP_UNKNOWN;
+   r = VHO_DEP_UNKNOWN;
    if (trace_dependence) fprintf(TFile,"Analyze_bases: ");
 
    /* First, check for identical addresses */
    if (!is_expr) {
       if (WN_Simp_Compare_Trees(lhs_address,addr) == 0) {
 	 if (trace_dependence) fprintf(TFile,"same addresses\n");
-	 return (DEP_IDENTICAL);
+	 return (VHO_DEP_IDENTICAL);
       }
    }
 
@@ -3068,7 +3061,7 @@ static DEP_SUMMARY Analyze_bases(WN * addr, BOOL is_expr, BOOL is_char)
    if (lhs_sym == NULL || rhs_sym == NULL || 
        (F90_UNKNOWN & (lhs_flag | rhs_flag))) {
       if (trace_dependence) fprintf(TFile,"unanalyzable symbols\n");
-      return (DEP_UNKNOWN);
+      return (VHO_DEP_UNKNOWN);
    }
    
    /* Check for case in which no indirect references exist */
@@ -3078,11 +3071,11 @@ static DEP_SUMMARY Analyze_bases(WN * addr, BOOL is_expr, BOOL is_char)
 	 else we are independent */
       if (lhs_sym != rhs_sym) {
 	 if (trace_dependence) fprintf(TFile,"no indirection, different symbols\n");
-	 return (DEP_INDEPENDENT);
+	 return (VHO_DEP_INDEPENDENT);
       }
       /* Same symbol, check for overlap in equivalences */
       r = check_overlap(lhs_base_offset,rhs_base_offset,lhs_size,rhs_size);
-      if (r == DEP_INDEPENDENT || r == DEP_UNKNOWN) {
+      if (r == VHO_DEP_INDEPENDENT || r == VHO_DEP_UNKNOWN) {
 	 if (trace_dependence) fprintf(TFile,"same base, overlap check %s\n",f90_depsum_name(r));
 	 return (r);
       }
@@ -3094,7 +3087,7 @@ static DEP_SUMMARY Analyze_bases(WN * addr, BOOL is_expr, BOOL is_char)
       } else {
 	 /* For charcater variables, alas, we are just going to give up and say the bases 
 	    are identical. This will be conservative */
-	 r = DEP_IDENTICAL; 
+	 r = VHO_DEP_IDENTICAL; 
 	 if (trace_dependence) fprintf(TFile,"no indirection, same symbol (char) %s\n",
 				       f90_depsum_name(r));
       }
@@ -3115,7 +3108,7 @@ static DEP_SUMMARY Analyze_bases(WN * addr, BOOL is_expr, BOOL is_char)
       }
       if (same) {
 	 if (trace_dependence) fprintf(TFile,"all but ARRSECTIONs IDENTICAL\n");
-	 return (DEP_IDENTICAL);
+	 return (VHO_DEP_IDENTICAL);
       }
    }
 
@@ -3190,22 +3183,22 @@ static DEP_SUMMARY Analyze_bases(WN * addr, BOOL is_expr, BOOL is_char)
 	 r_target  = r_target  || ST_is_f90_target(rhs_sym);
       }
       if (is_f90_formal(lhsa) || is_f90_formal(rhsa)) {
-	 r = DEP_INDEPENDENT;
+	 r = VHO_DEP_INDEPENDENT;
       } else if ((l_pointer && r_target) ||
 	  (r_pointer && l_target) || 
 	  (r_pointer && l_pointer)) {
 	 if (Alias_F90_Pointer_Unaliased) {
-	    r = DEP_INDEPENDENT;
+	    r = VHO_DEP_INDEPENDENT;
 	 } else {
-	    r = DEP_UNKNOWN;
+	    r = VHO_DEP_UNKNOWN;
 	 }
       } else {
 	 /* Need to check for the case where we have only one indirection */
 	 if ((rhs_flag ^ lhs_flag) & F90_INDIRECTION) {
 	    /* Only one, but not both */
-	    r = DEP_INDEPENDENT;
+	    r = VHO_DEP_INDEPENDENT;
 	 } else if ((rhs_flag | lhs_flag) & F90_UNALIASED) { 
-	    r = DEP_INDEPENDENT;
+	    r = VHO_DEP_INDEPENDENT;
 	 } else {
 	    /* Last ditch attempt. If there are no F90_POINTERs 
 	     * F90_TARGETs in one or the other of the subtrees, we are independent
@@ -3216,15 +3209,15 @@ static DEP_SUMMARY Analyze_bases(WN * addr, BOOL is_expr, BOOL is_char)
 	    r_target = r_pointer || ((rhs_flag & F90_TARGET) != 0);
 	    if ((l_pointer && r_target) ||
 		(r_pointer && l_target)) {
-	       r = DEP_UNKNOWN;
+	       r = VHO_DEP_UNKNOWN;
 	    } else {
-	       r = DEP_INDEPENDENT;
+	       r = VHO_DEP_INDEPENDENT;
 	    }
 	 }
       }
    } else {
       /* We fell off the edge, give up */
-      r = DEP_UNKNOWN;
+      r = VHO_DEP_UNKNOWN;
    }
    if (trace_dependence) fprintf(TFile,"bases with indirection %s\n",f90_depsum_name(r));
    return (r);
@@ -3265,7 +3258,7 @@ static void Dependence_Walk(WN *expr,F90_LOWER_AUX_DATA *adata, DEP_INFO *dep,
    WN *copy_store;
    INT i,num_kids;
    BOOL keep_going;
-   DEP_SUMMARY base_dep;
+   VHO_DEP_SUMMARY base_dep;
    
    op = WN_opcode(expr);
    opr = OPCODE_operator(op);
@@ -3298,30 +3291,30 @@ static void Dependence_Walk(WN *expr,F90_LOWER_AUX_DATA *adata, DEP_INFO *dep,
 		       &rhs_base_offset,&rhs_size,&rhs_flag,&rhs_ty);
       base_dep = Analyze_bases(expr,FALSE,is_char_load);
       /* Scalar copy, if we can */
-      if (base_dep == DEP_UNKNOWN) {
+      if (base_dep == VHO_DEP_UNKNOWN) {
 	 if (rhs_sym != NULL && !(rhs_flag & F90_ARRSECTION) && parent) {
 	    kid = F90_Lower_Copy_To_STemp(&copy_store,expr);
 	    WN_kid(parent,kidno) = kid;
 	    WN_INSERT_BlockLast(PRELIST(adata),copy_store);
-	    SET_DEP_SUMMARY(dep,DEP_INDEPENDENT);
+	    SET_VHO_DEP_SUMMARY(dep,VHO_DEP_INDEPENDENT);
 	 } else {
-	    SET_DEP_SUMMARY(dep,DEP_UNKNOWN);
+	    SET_VHO_DEP_SUMMARY(dep,VHO_DEP_UNKNOWN);
 	 }
 	 return;
-      } else if (base_dep == DEP_INDEPENDENT) {
+      } else if (base_dep == VHO_DEP_INDEPENDENT) {
 	 goto check_kids; /* GOTO just to be safe */
-      } else { /* DEP_IDENTICAL */
+      } else { /* VHO_DEP_IDENTICAL */
 	 /* If it's scalar and we can, copy it */
 	 if (!(rhs_flag & F90_ARRSECTION) && parent) {
 	    kid = F90_Lower_Copy_To_STemp(&copy_store,expr);
 	    WN_kid(parent,kidno) = kid;
 	    WN_INSERT_BlockLast(PRELIST(adata),copy_store);
-	    SET_DEP_SUMMARY(dep,DEP_INDEPENDENT);
+	    SET_VHO_DEP_SUMMARY(dep,VHO_DEP_INDEPENDENT);
 	    return;
 	 }
 	 /* If we are under a transformational, we need to give up */
 	 if (transformational_seen) {
-	    SET_DEP_SUMMARY(dep,DEP_UNKNOWN);
+	    SET_VHO_DEP_SUMMARY(dep,VHO_DEP_UNKNOWN);
 	    return;
 	 }
 	 /* Now, analyze indices */
@@ -3525,7 +3518,7 @@ static void f90_analyze_assignment(WN *stmt, WN *block, BOOL is_call)
 	 Dependence_Walk(WN_kid(lhs_arrsection,i),adata,&lhs_dep,FALSE,lhs_arrsection,i,lhsdim,FALSE);
       }
       
-      if (DEP_SUMMARY(&lhs_dep) != DEP_INDEPENDENT) {
+      if (VHO_DEP_SUMMARY(&lhs_dep) != VHO_DEP_INDEPENDENT) {
 	 /* Must mark this as COPY_LEFT */
 	 SET_COPY_FLAG(adata,COPY_LEFT | COPY_FLAG(adata));
       }
@@ -3537,18 +3530,18 @@ static void f90_analyze_assignment(WN *stmt, WN *block, BOOL is_call)
       
       /* Do the LHS/RHS walk, to see if we need to do a COPY_RIGHT */
       Dependence_Walk(rhs,adata,&rhs_dep,FALSE,rhs_parent,rhs_kidno,lhsdim,is_call);
-      switch (DEP_SUMMARY(&rhs_dep)) {
-       case DEP_INDEPENDENT:
-       case DEP_IDENTICAL:
+      switch (VHO_DEP_SUMMARY(&rhs_dep)) {
+       case VHO_DEP_INDEPENDENT:
+       case VHO_DEP_IDENTICAL:
 	 /* Don't need to do anything */
 	 break;
 	 
-       case DEP_UNKNOWN:
+       case VHO_DEP_UNKNOWN:
 	 /* Mark COPY_RIGHT */
 	 SET_COPY_FLAG(adata,COPY_RIGHT | COPY_FLAG(adata));
 	 break;
 	 
-       case DEP_REMOVABLE:
+       case VHO_DEP_REMOVABLE:
 	 /* Tricky, need to set direction flags appropriately. The hard part is
 	  * identifying which are the non-scalar indices.
 	  */

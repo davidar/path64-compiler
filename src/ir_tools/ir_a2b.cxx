@@ -45,7 +45,10 @@
 #include "dwarf_DST_dump.h"
 #include "erglob.h"
 #include "errors.h"
+
+#define MODULE_NAME a2b
 #include "err_host.tab"
+
 #include "config.h"
 #include "config_opt.h"
 #include "tracing.h"
@@ -350,7 +353,7 @@ main (INT argc, char *argv[])
 
     
     MEM_Initialize();
-    Set_Error_Tables (Phases, host_errlist);
+    Set_Error_Tables (PHASES_NAME, ERRLIST_NAME);
     Init_Error_Handler (10);
     Set_Error_File(NULL);
     Set_Error_Line(ERROR_LINE_UNKNOWN);
@@ -462,18 +465,5 @@ main (INT argc, char *argv[])
     exit (0);
 } /* main */
 
-
-/* Dummy definitions to satisify references from routines that got pulled
- * in by the header files but are never called
- */
-void
-Signal_Cleanup (INT sig) { }
-
-const char *
-Host_Format_Parm (INT kind, MEM_PTR parm)
-{
-    fprintf (stderr, "Internal: Host_Format_Parm () not implemented\n");
-    return "";
-}
 
 INT8 Debug_Level = 0;

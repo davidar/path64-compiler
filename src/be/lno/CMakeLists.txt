@@ -1,6 +1,5 @@
 set(PATHSCALE_LNO_COMMON_SRCS
 				"../com/cxx_template.cxx"
-				"../com/dep_graph.cxx"
 				"@ARCH@/lnotarget.cxx"
 				"lnodriver.cxx"
 				"lnopt_main.cxx"
@@ -106,9 +105,10 @@ set(PATHSCALE_LNO_COMMON_SRCS
 				"ipa_lno_cost.cxx"
 				"cross_snl.cxx"
 				"cross_cache.cxx"
-				"init.cxx"
                                 "lno_trace.cxx"
-				"lx_prompf_anl.cxx")
+				"lx_prompf_anl.cxx"
+                                "access_vector.cxx"
+                                "../com/reshape.cxx")
 
 set(PATHSCALE_LNO_X8664_SRCS "simd.cxx")
 
@@ -123,9 +123,9 @@ ADD_DEFINITIONS(
 path64_set_multiarch_sources(lno_sources COMMON ${PATHSCALE_LNO_COMMON_SRCS})
 path64_set_multiarch_sources(lno_sources x8664 ${PATHSCALE_LNO_COMMON_SRCS} ${PATHSCALE_LNO_X8664_SRCS})
 path64_set_multiarch_sources(lno_sources mips ${PATHSCALE_LNO_COMMON_SRCS} ${PATHSCALE_LNO_MIPS_SRCS})
-path64_add_multiarch_library(lno SHARED lno_sources)
+path64_add_multiarch_library(lno STATIC lno_sources)
 path64_set_multiarch_property(lno PREFIX "")
-path64_multiarch_link_multiarch_libraries(lno comutil ipl)
+path64_multiarch_link_multiarch_libraries(lno wopt prompf_anl comutil)
 path64_add_multiarch_dependencies(lno generate_preg_list generate_topcode)
 path64_set_multiarch_property(lno COMPILE_FLAGS
                               "-DSHARED_BUILD -I${PATHSCALE_BINARY_DIR}/common/targ_info/@ARCH@ -I${CMAKE_CURRENT_SOURCE_DIR}/../../common/com/@ARCH@")

@@ -72,7 +72,6 @@ static char *rcs_id = region_bounds_CXX"$Revision: 1.4 $";
 #include "opt_cfg.h"		// CFG
 #include "opt_main.h"		// COMP_UNIT
 #include "opt_alias_rule.h"	// ALIAS_RULE
-#include "pragma_weak.h"	// pragma weak
 #include "opt_points_to.h"	// Is_nested_call
 #include "region_alias_templates.h"	// REGION_search_set
 #include "data_layout.h"	// Get_ST_formal_preg_num
@@ -233,8 +232,6 @@ REGION_BOUND::GRB_merge_var(RID *rid, ST *st, TY_IDX ty)
 
 //---------------------------------------------------------------------------
 
-// POINTS_TO::Meet()
-#pragma weak Meet__9POINTS_TOGPC9POINTS_TOP2ST
 
 // Add a variable to the boundary set.
 // Optimization: if all occurrences of a variable are LDIDs, it can

@@ -79,8 +79,6 @@ static const char *rcs_id =   snl_dist_CXX "$Revision: 1.5 $";
 #include <sstream>
 using namespace std;
 
-#pragma weak New_Construct_Id
-
 //-----------------------------------------------------------------------
 // NAME: SNL_GEN_Distribute
 // FUNCTION: Distribute out the imperfect code in the SNL 'wn_outer' of

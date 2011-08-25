@@ -235,8 +235,6 @@ ir_b_create_map (Output_File *fl)
 #if defined(KEY) && !defined(FRONT_END) && !defined(IR_TOOLS)
 
 // ******************** IPA weak symbols^
-#define IPA_get_symbol_file_array (*IPA_get_symbol_file_array_p)
-#define Get_Node_From_PU (*Get_Node_From_PU_p)
 #include <ipc_file.h>
 
 extern IP_FILE_HDR_TABLE IP_File_header;
@@ -357,7 +355,7 @@ ir_b_write_tree (WN *node, off_t base_offset, Output_File *fl, WN_MAP off_map)
 
     }
 #endif /* BACK_END */
-#if defined(KEY) && !defined(FRONT_END) && !defined(IR_TOOLS)
+#if defined(KEY) && defined(_SUPPORT_IPA)
 // ONLY for IPA.
     if (Get_ipa_tlog_phase() == PHASE_IPA && WN_operator(node) == OPR_REGION 
         && WN_region_is_EH (node) && WN_block_empty (WN_region_pragmas (node)))

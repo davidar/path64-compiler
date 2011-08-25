@@ -50,18 +50,25 @@ static char *err_host_tab_rcs_id = "$Source$ $Revision$";
 #include "errdesc.h"
 
 /* Include the common error descriptor lists: */
-#include "erglob.desc"		/* Global error codes */
-#include "erlib.desc"		/* Program library error codes */
+#include "erglob.h"		/* Global error codes */
+#include "erlib.h"		/* Program library error codes */
 
 #ifndef MONGOOSE_BE
-#include "erirb.desc"		/* IR builder error codes */
-#include "erlink.desc"		/* Linker error codes */
+#include "erirb.h"		/* IR builder error codes */
+#include "erlink.h"		/* Linker error codes */
 #include "erauxdesc.h"		/* Process specific error codes */
 #endif /* MONGOOSE_BE */
 
+#ifndef MODULE_NAME
+#error "MODULE_NAME macro is not defined
+#endif // MODULE_NAME
+
+#define PHASES_NAME Phases_ ## MODULE_NAME
+#define ERRLIST_NAME host_errlist_ ## MODULE_NAME
+
 
 /* Build the phase table: */
-static ERROR_DESC_TABLE Phases[] = {
+static ERROR_DESC_TABLE PHASES_NAME[] = {
   /* Common phases: */
 #ifndef MONGOOSE_BE
   { EP_UNIX,		NULL,		"Unix" },
@@ -98,7 +105,7 @@ static ERROR_DESC_TABLE Phases[] = {
   { -1,		NULL,		NULL }
 };
 
-static const char *host_errlist[] = {
+static const char *ERRLIST_NAME[] = {
 	NULL,
 	NULL,
 	NULL,

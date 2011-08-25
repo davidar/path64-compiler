@@ -81,13 +81,13 @@ UINT32              IP_ALIAS_CLASS_REP::_recycled_acr_nodes;
 
 #if Is_True_On
 static const int num_acr_table_entries = 100;
-IP_ALIAS_CLASS_REP *acr_table[num_acr_table_entries];
+static IP_ALIAS_CLASS_REP *acr_table[num_acr_table_entries];
 
 static const int num_acm_table_entries = 100;
-IP_ALIAS_CLASS_MEMBER *acm_table[num_acm_table_entries];
+static IP_ALIAS_CLASS_MEMBER *acm_table[num_acm_table_entries];
 static int next_acm_idx = 0;
 
-void print_table(void)
+void ipa_alias_print_table(void)
 {
   UINT i;
 
@@ -1274,7 +1274,7 @@ IP_ALIAS_CLASSIFICATION::Classify_deref_of_expr(IP_ALIAS_CLASS_MEMBER        *lh
       expr_class->Print(TFile, Global_data_class());
       Print(TFile);
 #if Is_True_On
-      print_table();
+      ipa_alias_print_table();
 #endif
     }
   }
@@ -1468,7 +1468,7 @@ IP_ALIAS_CLASSIFICATION::Handle_assignment(WN *const stmt)
     }
     Print(TFile);
 #if Is_True_On
-    print_table();
+    ipa_alias_print_table();
 #endif
   }
 
@@ -1491,7 +1491,7 @@ IP_ALIAS_CLASSIFICATION::Handle_return_val(WN *const stmt)
     pu_acr->Signature().Return_class()->Print(TFile, Global_data_class());
     Print(TFile);
 #if Is_True_On
-    print_table();
+    ipa_alias_print_table();
 #endif
   }
 
@@ -1841,7 +1841,7 @@ IP_ALIAS_CLASSIFICATION::Handle_call(WN *const call_wn)
     fprintf(TFile, "  after handling call:\n");
     Print(TFile);
 #if Is_True_On
-    print_table();
+    ipa_alias_print_table();
 #endif
   }
   return stmt;
@@ -1916,7 +1916,7 @@ IP_ALIAS_CLASSIFICATION::Handle_function_definition(WN *entry_wn)
     fprintf(TFile, "  after handling function arguments:\n");
     Print(TFile);
 #if Is_True_On
-    print_table();
+    ipa_alias_print_table();
 #endif
   }
 

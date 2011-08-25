@@ -86,6 +86,8 @@
 #include "mempool.h" //for MEM_POOL in SUMMARY_STRUCT_ACCESS
 #endif
 
+#include "elf_defines.h"
+
 #define IPA_SUMMARY_REVISION 29//will later to 29:0
 #define IPA_SUMMARY_MINOR_REVISION 0
 

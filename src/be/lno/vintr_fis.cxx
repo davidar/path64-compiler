@@ -102,8 +102,6 @@ static char *rcs_id = "$Source: be/lno/SCCS/s.vintr_fis.cxx $ $Revision: 1.18 $"
 #include "config_opt.h"         // for CIS_Allowed
 #endif
 
-#pragma weak New_Construct_Id
-
 BOOL Variant_Array(WN *store, WN *split_point,
                    ARRAY_DIRECTED_GRAPH16 *dep_graph);
 INT Split_Array(WN *statement, WN *split_point,

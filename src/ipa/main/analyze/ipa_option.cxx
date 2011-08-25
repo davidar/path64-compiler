@@ -54,8 +54,6 @@ static char *rcs_id = "$Source: /home/bos/bk/kpro64-pending/ipa/main/analyze/SCC
 #include <stdint.h>
 #include "linker.h"
 
-#pragma weak outfilename	/* So elfdump doesn't barf */
-
 #define USE_STANDARD_TYPES
 #include "defs.h"
 #include "config.h"
@@ -74,17 +72,11 @@ static char *rcs_id = "$Source: /home/bos/bk/kpro64-pending/ipa/main/analyze/SCC
 /* Copied from config.c: */
 #define MAX_OLIMIT		INT32_MAX
 
-/* IPA file variables declared in glob.h: */
-char *Ipa_File_Name = NULL;	/* IPAA summary file name */
-FILE *Ipa_File = NULL;		/* IPAA summary file (if open) */
-
 /* Skiplist support from config.h: */
 typedef struct skiplist SKIPLIST;
 SKIPLIST *Build_Skiplist ( OPTION_LIST *olist );
 SKIPLIST *IPA_Skip_List = NULL;	/* List of skip options */
 
-BOOL Trace_IPA = FALSE;		/* Main IPA progress trace */
-BOOL Trace_Perf = FALSE;	/* performance trace */
 BOOL Trace_IPALNO = FALSE;    /* IPA to LNO correctness trace */
 
 /* flags that do not fall into the option group */

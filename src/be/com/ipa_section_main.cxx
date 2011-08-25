@@ -63,14 +63,6 @@
 #ifndef IPA_SUMMARY
 INT IPA_Ivar_Global_Count;
 INT IPA_Ivar_Count;
-mINT32
-SYSTEM_OF_EQUATIONS::_work_cols;
-mINT32
-SYSTEM_OF_EQUATIONS::_work_rows_eq;
-mINT32
-SYSTEM_OF_EQUATIONS::_work_rows;
-template <> MEM_POOL*
-MAT<int>::_default_pool;
 #endif
 
 //=========================================================================

@@ -1217,14 +1217,7 @@ OPTION_GROUP Cg_Option_Groups[] = {
 
 
 
-extern INT prefetch_ahead;
-INT _prefetch_ahead = 2;
-#if defined(BUILD_OS_DARWIN)
-/* Apparently not referenced elsewhere; Mach-O can't do aliases */
-#define prefetch_ahead (_prefetch_ahead)
-#else /* defined(BUILD_OS_DARWIN) */
-#pragma weak prefetch_ahead = _prefetch_ahead
-#endif /* defined(BUILD_OS_DARWIN) */
+INT prefetch_ahead = 2;
 
 /* =======================================================================
  *

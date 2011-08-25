@@ -97,8 +97,6 @@ static const char *rcs_id = "$Source$ $Revision$";
 #include "glob.h"  
 #endif /*KEY*/
 
-#pragma weak New_Construct_Id
-
 static void Transform_Expression(BIT_VECTOR *bv, WN *exp, DOLOOP_STACK *do_stack, INT num_loops, 
 		INT outer_reg_tile, BOOL can_tile, WN* wn_inner);
 static BOOL Process_Load(WN *load, BIT_VECTOR *result,DOLOOP_STACK *do_stack, 

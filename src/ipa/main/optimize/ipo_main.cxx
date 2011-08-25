@@ -127,7 +127,6 @@ extern void IPO_WN_Update_For_Complete_Structure_Relayout_Legality(IPA_NODE *);
 #include "ipa_reorder.h" //IPO_Modify_WN_for_field_reorder ()
 
 extern "C" void add_to_tmp_file_list (char*);
-#pragma weak add_to_tmp_file_list
 
 extern MEM_POOL Ipo_mem_pool;
 extern WN_MAP Parent_Map;

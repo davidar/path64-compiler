@@ -2908,18 +2908,7 @@ check_existence_of_phases (void)
 			
 	    /* check if be phase exists, to warn about wrong toolroot */
 	case P_ipl:
-	    if (!file_exists (concat_strings (get_phase_dir(phase_order[i]),
-					      "/" FN_DSO("ipl"))))
-		give_warning = TRUE;
-
-	    /* fall through */
-	    
 	case P_be:
-
-	    if (!file_exists (concat_strings (get_phase_dir(phase_order[i]),
-					      "/" FN_DSO("be"))))
-		give_warning = TRUE;
-
 	    if (!file_exists(get_full_phase_name(phase_order[i])))
 		give_warning = TRUE;
 
@@ -3187,13 +3176,6 @@ run_ld (void)
 #endif
 
 	if (ipa == TRUE) {
-	    ldpath = get_phase_dir (ldphase);
-	    ldpath = concat_strings (ldpath, "/" FN_DSO("ipa"));
-	    if (!file_exists (ldpath)) {
-		error (FN_DSO("ipa") " is not installed on %s", 
-			   get_phase_dir (ldphase));
-		return;
-	    }
 	    // Tell ipa_link about the LD_LIBRARY_PATH that was in effect
 	    // before the compiler was run.
 	    char *str = "-INTERNAL:old_ld_lib_path=";

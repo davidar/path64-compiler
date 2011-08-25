@@ -350,30 +350,14 @@
 static char *dep_graph_rcs_id = dep_graph_INCLUDED "$Revision$";
 #endif /* _KEEP_RCS_ID */
 
-#ifndef cxx_graph_INCLUDED
-#include "cxx_graph.h"
-#endif
-#ifndef graph_template_INCLUDED
-#include "graph_template.h"
-#endif
-#ifndef _defs_INCLUDED
-#include "cxx_memory.h"
-#endif
 
-#ifdef LNO
-#ifndef dep_INCLUDED
-#include "dep.h"
-#endif
-#ifndef cxx_hash_INCLUDED
+#include "access_vector.h"
 #include "cxx_hash.h"
-#endif
-#endif
-
-#ifndef LNO
-#ifndef dvector_INCLUDED
 #include "dvector.h"
-#endif
-#endif
+#include "dep.h"
+#include "cxx_memory.h"
+#include "graph_template.h"
+#include "cxx_graph.h"
 
 /* C interface functions used for reading and writing graphs */
 extern "C" {
@@ -430,7 +414,6 @@ public:
   };
 };
 
-#ifdef LNO
 class REFERENCE_LIST;
 typedef STACK<REFERENCE_LIST *> REF_LIST_STACK;
 typedef STACK<VINDEX16 > VINDEX16_STACK;
@@ -445,7 +428,6 @@ public:
   }
 };
 
-#endif
 
 class  ARRAY_DIRECTED_GRAPH16 : 
 	public DIRECTED_GRAPH16<ARRAY_EDGE16,ARRAY_VERTEX16> {
@@ -608,7 +590,6 @@ public:
   void PruneMapsUsingParity(void);
 
 
-#ifdef LNO
   INT Build(WN *func_nd,MEM_POOL *pool=0);
   INT Build(ARRAY_DIRECTED_GRAPH16 *da_graph);
   EINDEX16 Add_Edge(VINDEX16 from, VINDEX16 to, DEPV_ARRAY *array) {
@@ -699,11 +680,9 @@ public:
 #ifdef Is_True_On
   void Check_Graph();
 #endif
-#endif /* LNO */
 
 private:
 
-#ifdef LNO
   void Add_Must();
   void Set_Must(EINDEX16 edge) {
     _e[edge].DEP_Struct.Is_Must = TRUE;
@@ -734,7 +713,6 @@ private:
   INT Copy_Do_Loop_Deps(VINDEX16 *do_loop_vertices, INT num_loops);
   INT Fission_Dep_Update_R(WN *in_loop,UINT fission_depth, UINT depth,
 	BOOL outer_good_do);   
-#endif
 
   /* friends called from C functions for reading and writing graphs */
   friend void Depgraph_Write(void *depgraph, struct output_file *fl,
@@ -746,7 +724,6 @@ extern ARRAY_DIRECTED_GRAPH16 *Current_Dep_Graph;
 extern void LNO_Erase_Dg_From_Here_In(WN* wn, ARRAY_DIRECTED_GRAPH16* dg);
 extern void Unmapped_Vertices_Here_Out(WN* wn);
 
-#ifdef LNO
 // A list of references and their associated DOLOOP_STACKs
 // For efficiency reasons, the build routines use stacks of 
 // REFERENCE_LISTs, one element for each base array.  
@@ -897,7 +874,6 @@ public:
   ~REFERENCE_ITER() {};
 };
 
-#endif 
 
 
 #endif

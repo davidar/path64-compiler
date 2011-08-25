@@ -69,9 +69,6 @@
 #include "fb_whirl.h"			// for Query
 #endif // fb_whirl_INCLUDED
 
-#pragma weak Def_at_entry__7CODEREPCGv
-#pragma weak Print_kind__7CODEREPCGv
-
 // Hashing on CODEREP and PHI_NODE pointers is much faster than tracing
 // chains of PHIs and CHIs and then hashing on the SUMMARY_* structs
 CHI_CR_TO_INT_MAP* Chi_To_Idx_Map;
@@ -143,59 +140,6 @@ IPL_deepest_depth(WN* w)
     }
   return depth;
 }
-
-//-----------------------------------------------------------------
-// find the common loop that surrounds wn1 and wn2
-// if a wn belongs to the bounds expression then it
-// is considered to be outside the loop
-// taken from lno, while removing lno dependencies
-//-----------------------------------------------------------------
-WN* 
-LNO_Common_Loop(WN* wn1, WN* wn2)
-{
-  const INT IPL_max_do_loop_depth = 128;
-
-  WN* parent;
-
-  WN* l1[IPL_max_do_loop_depth];
-  INT i1 = 0;
-
-  if (WN_operator(wn1) == OPR_DO_LOOP) {
-    l1[i1++] = wn1;
-  }
-  while (parent = LWN_Get_Parent(wn1)) {
-    if (WN_operator(parent) == OPR_DO_LOOP) {
-      if (WN_do_body(parent) == wn1 || WN_step(parent) == wn1) { 
-        l1[i1++] = parent;
-      }
-    }
-    wn1 = parent;
-  }
-
-  WN* l2[IPL_max_do_loop_depth];
-  INT i2 = 0;
-
-  if (WN_operator(wn2) == OPR_DO_LOOP) {
-    l2[i2++] = wn2;
-  }
-  while (parent = LWN_Get_Parent(wn2)) {
-    if (WN_operator(parent) == OPR_DO_LOOP) {
-      if (WN_do_body(parent) == wn2 || WN_step(parent) == wn2) {
-        l2[i2++] = parent;
-      }
-    }
-    wn2 = parent;
-  }
-
-  WN* answer = NULL;
-  while (i1 >= 1 && i2 >= 1 && l1[i1-1] == l2[i2-1]) {
-    answer = l1[i1-1];
-    i1--, i2--;
-  }
-
-  return answer;
-}
-
 
 
 AUX_SYMBOL_INFO Aux_Symbol_Info (1);

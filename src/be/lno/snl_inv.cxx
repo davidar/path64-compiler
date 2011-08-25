@@ -82,8 +82,6 @@ static const char *rcs_id =   snl_CXX "$Revision: 1.5 $";
 #include "ff_utils.h"
 #include "fb_whirl.h"
 
-#pragma weak New_Construct_Id
-
 //-----------------------------------------------------------------------
 // UTILITIES 
 //-----------------------------------------------------------------------

@@ -91,15 +91,6 @@ PROJ_REGION_TO_ACCESS_ARRAY_MAP* IPL_Access_Array_Map = NULL;
 #endif
 
 #ifdef ORIGINAL_SGI_CODE
-mINT32
-SYSTEM_OF_EQUATIONS::_work_cols;
-mINT32
-SYSTEM_OF_EQUATIONS::_work_rows_eq;
-mINT32
-SYSTEM_OF_EQUATIONS::_work_rows;
-#endif 
-
-#ifdef ORIGINAL_SGI_CODE
 //====================================================================
 // initialize ivar and ivar global arrays
 //====================================================================
