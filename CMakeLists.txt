@@ -18,16 +18,9 @@ ENDIF()
 include(${Path64_SOURCE_DIR}/cmake/Modules/ConfigureChecks.cmake)
 
 # Force the build_type=debug flags to sane values overriding users choices
-# -g0 is used on solaris to workaround bug in libdwarf
-if("${CMAKE_SYSTEM_NAME}" STREQUAL "SunOS")
-    SET(CMAKE_C_FLAGS_DEBUG  "-O0 -g0 -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
-    SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g0 -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
-    SET(CMAKE_Fortran_FLAGS_DEBUG  "-O0 -g0 -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
-else()
-    SET(CMAKE_C_FLAGS_DEBUG  "-O0 -g -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
-    SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
-    SET(CMAKE_Fortran_FLAGS_DEBUG  "-O0 -g3 -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
-endif()
+SET(CMAKE_C_FLAGS_DEBUG  "-O0 -g -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
+SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
+SET(CMAKE_Fortran_FLAGS_DEBUG  "-O0 -g3 -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
 
 # Using -mno-sse3 flag for release build if PATH64_ENABLE_PSCRUNTIME=ON
 if(PATH64_ENABLE_PSCRUNTIME)
