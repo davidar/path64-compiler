@@ -106,9 +106,7 @@ static phase_info_t phase_info[] = {
 #endif // PATH64_ENABLE_PSCRUNTIME
 #endif // PATH64_ENABLE_GNU_FRONTEND
 
-#ifdef PATH64_ENABLE_PSCLANG
    {'p',  0x0000000000000080LL,	"psclang", PHASEPATH, TRUE}, /* psclang_cpp */
-#endif // PATH64_ENABLE_PSCLANG
 
 #ifdef KEY	// bug 9058
    {'p',  0x0000000000000800LL,	"coco"   ,PHASEPATH,	FALSE},	/* coco */
@@ -146,9 +144,7 @@ static phase_info_t phase_info[] = {
 #endif // KEY
 #endif // PATH64_ENABLE_GNU_FRONTEND
 
-#ifdef PATH64_ENABLE_PSCLANG
    {'f',  0x0000000004000000LL,	"psclang", PHASEPATH,	TRUE }, /* psclang  */
-#endif // PATH64_ENABLE_PSCLANG
 
    /* place-holder for generic fe, whose mask unites all fe's; */
    /* this is so -Wf will apply to whatever fe is being invoked. */

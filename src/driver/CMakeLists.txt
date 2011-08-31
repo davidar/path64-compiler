@@ -217,11 +217,6 @@ if(PATH64_ENABLE_DEFAULT_PATHAS)
 endif()
 
 
-if(PATH64_ENABLE_PSCLANG)
-    list(APPEND driver_defs "-DPATH64_ENABLE_PSCLANG")
-endif()
-
-
 if(PATH64_ENABLE_GNU_FRONTEND)
     list(APPEND driver_defs "-DPATH64_ENABLE_GNU_FRONTEND")
 endif()

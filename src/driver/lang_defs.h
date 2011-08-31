@@ -98,9 +98,7 @@ typedef enum {
 	P_gcpp_plus,	/* g++ cpp */
 #endif // PATH64_ENABLE_GNU_FRONTEND
 
-#ifdef PATH64_ENABLE_PSCLANG
     P_psclang_cpp,      /* psclang preprocessor */
-#endif // PATH64_ENABLE_PSCLANG
 
 #ifdef KEY
 	P_f_coco,	/* coco preprocessor for Fortran	bug 9058 */
@@ -124,9 +122,7 @@ typedef enum {
 #endif // KEY
 #endif // PATH64_ENABLE_GNU_FRONTEND
 
-#ifdef PATH64_ENABLE_PSCLANG
     P_psclang,  /* psclang front-end */
-#endif // PATH64_ENABLE_PSCLANG
 
 	P_any_fe,	/* generic union of all fe's */
 	P_pseudo_f_fe,	/* not a real phase, just a placeholder 

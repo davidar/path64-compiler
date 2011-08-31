@@ -552,9 +552,7 @@ fix_name_by_phase (char *name, phases_t phase)
 		case P_gcpp:
 		case P_gcpp_plus:
 #endif // PATH64_ENABLE_GNU_FRONTEND
-#ifdef PATH64_ENABLE_PSCLANG
         case P_psclang_cpp:
-#endif // PATH64_ENABLE_PSCLANG
 			break;
 		default:
 			switch (source_kind) {
@@ -661,13 +659,11 @@ add_file_args_first (string_list_t *args, phases_t index)
       break;
 #endif // PATH64_ENABLE_GNU_FRONTEND
 
-#ifdef PATH64_ENABLE_PSCLANG
     case P_psclang_cpp:
       add_common_cpp_definitions(args);
       break;
 
     case P_psclang:
-#endif // PATH64_ENABLE_PSCLANG
 
     default:
       break;
@@ -799,9 +795,7 @@ add_sysroot(string_list_t *args, phases_t phase)  // 15149
   case P_gcpp:
   case P_gcpp_plus:
 #endif // PATH64_ENABLE_GNU_FRONTEND
-#ifdef PATH64_ENABLE_PSCLANG
   case P_psclang_cpp:
-#endif // PATH64_ENABLE_PSCLANG
     add_string(args, "-isysroot");
     add_string(args, sysroot);
     break;
@@ -1224,7 +1218,6 @@ add_file_args (string_list_t *args, phases_t index)
 		
 		break;
 
-#ifdef PATH64_ENABLE_PSCLANG
     case P_psclang_cpp:
         // psclang preprocessor
 
@@ -1313,7 +1306,6 @@ add_file_args (string_list_t *args, phases_t index)
         }
 
         break;
-#endif // PATH64_ENABLE_PSCLANG
 
 	case P_f_coco:	// bug 9058
 		{
@@ -1553,7 +1545,6 @@ add_file_args (string_list_t *args, phases_t index)
 		break;
 #endif // PATH64_ENABLE_GNU_FRONTEND
 
-#ifdef PATH64_ENABLE_PSCLANG
     case P_psclang:
         // psclang front-end
 
@@ -1580,7 +1571,6 @@ add_file_args (string_list_t *args, phases_t index)
         add_string(args, "-o");
         add_string(args, construct_name(the_file,"B"));
         break;
-#endif // PATH64_ENABLE_PSCLANG
 
 	case P_inline:
         add_targ_options (args);
@@ -2574,7 +2564,6 @@ add_inline_option(void)
 }
 
 
-#ifdef PATH64_ENABLE_PSCLANG
 // Returns true if psclang should be used as preprocessor/front-end
 int is_psclang_enabled() {
 #ifdef PATH64_ENABLE_DEFAULT_PSCLANG
@@ -2583,7 +2572,6 @@ int is_psclang_enabled() {
     return option_was_seen(O_fpsclang);
 #endif // !PATH64_ENABLE_DEFAULT_PSCLANG
 }
-#endif // PATH64_ENABLE_PSCLANG
 
 
 static void
@@ -2597,11 +2585,9 @@ determine_phase_order (void)
 	phase_order_index = 0;
  
 	/* determine which cpp to use */
-#ifdef PATH64_ENABLE_PSCLANG
     if ((source_lang == L_cc || source_lang == L_CC) && is_psclang_enabled()) {
         cpp_phase = P_psclang_cpp;
     } else
-#endif // PATH64_ENABLE_PSCLANG
 #ifdef PATH64_ENABLE_GNU_FRONTEND
 	if (source_lang == L_CC) {
 		cpp_phase = P_gcpp_plus;
@@ -2640,14 +2626,12 @@ determine_phase_order (void)
 	} else {
 #ifdef PATH64_ENABLE_GNU_FRONTEND
         cpp_phase = P_gcpp;
-#elif defined(PATH64_ENABLE_PSCLANG)
+#else
         if (source_lang == L_as) {
             cpp_phase = P_psclang_cpp;
         } else {
             cpp_phase = P_cpp;
         }
-#else
-        cpp_phase = P_cpp;
 #endif // PATH64_ENABLE_GNU_FRONTEND
 	}
 
@@ -2693,12 +2677,10 @@ determine_phase_order (void)
 		} else {
             add_phase(cpp_phase);
 
-#ifdef PATH64_ENABLE_PSCLANG
             if (is_psclang_enabled()) {
                 next_phase = P_psclang;
             }
             else
-#endif // PATH64_ENABLE_PSCLANG
 		    next_phase = (source_lang == L_CC ? cplus_fe : c_fe);
 		}
 		break;
@@ -2788,12 +2770,10 @@ determine_phase_order (void)
 			break;
 #endif // PATH64_ENABLE_GNU_FRONTEND
 
-#ifdef PATH64_ENABLE_PSCLANG
         case P_psclang:
 			add_phase(next_phase);
 			next_phase = post_fe_phase ();
 			break;
-#endif // PATH64_ENABLE_PSCLANG
 
 #ifdef PATH64_ENABLE_GNU_FRONTEND
 		case P_wgen:
@@ -3410,9 +3390,7 @@ run_compiler (int argc, char *argv[])
 			    phase_order[i] != P_spin_cc1plus &&
 			    phase_order[i] != P_wgen &&
 #endif // PATH64_ENABLE_GNU_FRONTEND
-#ifdef PATH64_ENABLE_PSCLANG
                 phase_order[i] != P_psclang &&
-#endif // PATH64_ENABLE_PSCLANG
 			    phase_order[i] < P_any_fe) 
 			{
 			    add_command_line_arg(args, source_file);
