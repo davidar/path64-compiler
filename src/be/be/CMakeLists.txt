@@ -53,21 +53,14 @@ ADD_DEFINITIONS(
 	-D_LEGO_CLONER)
 
 add_custom_command(
-  OUTPUT ${PATHSCALE_BINARY_DIR}/be/preg_list.cxx ${PATHSCALE_BINARY_DIR}/be/preg_list.h
-  COMMAND ${PATHSCALE_SOURCE_DIR}/be/com/gen_preg_list.${SHELL_EXT} ${PATHSCALE_SOURCE_DIR}/common/util
-  DEPENDS ${PATHSCALE_SOURCE_DIR}/be/com/gen_preg_list.${SHELL_EXT}
-  WORKING_DIRECTORY ${PATHSCALE_BINARY_DIR}/be
-  )
-SET_SOURCE_FILES_PROPERTIES(${PATHSCALE_BINARY_DIR}/be/preg_list.h PROPERTIES GENERATED 1)
-SET_SOURCE_FILES_PROPERTIES(${PATHSCALE_BINARY_DIR}/be/preg_list.cxx PROPERTIES GENERATED 1)
-ADD_CUSTOM_TARGET(generate_preg_list DEPENDS ${PATHSCALE_BINARY_DIR}/be/preg_list.h ${PATHSCALE_BINARY_DIR}/be/preg_list.cxx)
-
-add_custom_command(
     OUTPUT   extension_include.h
     COMMAND  ${PATHSCALE_SOURCE_DIR}/scripts/common/preprocess.pl -I${PATHSCALE_SOURCE_DIR}/common/com -I${PATHSCALE_SOURCE_DIR}/common/com/${BUILD_TARGET_DIR} -I${PATHSCALE_BINARY_DIR}/../GCC/gcc -I${PATHSCALE_SOURCE_DIR}/../GCC/gcc -MD  ${PATHSCALE_SOURCE_DIR}/include/extension_include.hin -o ${PATHSCALE_BINARY_DIR}/include/extension_include.h
 )
 SET_SOURCE_FILES_PROPERTIES(extension_include.h PROPERTIES GENERATED 1)
 ADD_CUSTOM_TARGET(generate_extension DEPENDS extension_include.h)
+
+set_source_files_properties(${PATHSCALE_BINARY_DIR}/be/preg_list.h PROPERTIES GENERATED 1)
+set_source_files_properties(${PATHSCALE_BINARY_DIR}/be/preg_list.cxx PROPERTIES GENERATED 1)
 
 #add_library(be-static STATIC ${PATHSCALE_BE_BE_SRCS})
 path64_set_multiarch_sources(be_sources COMMON ${PATHSCALE_BE_BE_COMMON_SRCS})

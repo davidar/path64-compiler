@@ -107,9 +107,21 @@ set(BE_COM_SOURCES
     "../be/dra_file_util.cxx"
     "../be/dra_mangle.cxx"
 
+    "${PATHSCALE_BINARY_DIR}/be/preg_list.h"
    )
 
 add_definitions(-D_LEGO_CLONER)
+
+add_custom_command(
+    OUTPUT ${PATHSCALE_BINARY_DIR}/be/preg_list.cxx ${PATHSCALE_BINARY_DIR}/be/preg_list.h
+    COMMAND ${PATHSCALE_SOURCE_DIR}/be/com/gen_preg_list.${SHELL_EXT} ${PATHSCALE_SOURCE_DIR}/common/util
+    DEPENDS ${PATHSCALE_SOURCE_DIR}/be/com/gen_preg_list.${SHELL_EXT}
+    WORKING_DIRECTORY ${PATHSCALE_BINARY_DIR}/be
+    )
+add_custom_target(generate_preg_list DEPENDS ${PATHSCALE_BINARY_DIR}/be/preg_list.h ${PATHSCALE_BINARY_DIR}/be/preg_list.cxx)
+
+set_source_files_properties(${PATHSCALE_BINARY_DIR}/be/preg_list.h PROPERTIES GENERATED 1)
+set_source_files_properties(${PATHSCALE_BINARY_DIR}/be/preg_list.cxx PROPERTIES GENERATED 1)
 
 path64_set_multiarch_sources(be_com_sources COMMON ${BE_COM_SOURCES})
 path64_add_multiarch_library(be-com STATIC be_com_sources)
