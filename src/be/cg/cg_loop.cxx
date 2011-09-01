@@ -180,6 +180,7 @@
 #include "ebo.h"
 #include "hb.h"
 #include "gra_live.h"
+#include "label_util.h"
 
 #ifdef KEY
 #include "config_lno.h"		// for LNO_Prefetch_Ahead
@@ -2831,7 +2832,7 @@ static void unroll_xfer_annotations(BB *unrolled_bb, BB *orig_bb)
  *
  * <unrolled_bb> is an unrolled version of <orig_bb>.  Look at the
  * annotations on <orig_bb>, handling them as follows:
- *   LABEL	do nothing (BBs must have unique labels)
+ *   LABEL	do something (BBs must have unique labels, but when label is address saved, we should copy it) 
  *   PRAGMA	copy to <unrolled_bb> (pragma WN shared, not copied)
  *   ENTRYINFO	do nothing (unrolled replicas shouldn't be entries)
  *   EXITINFO	copy to <unrolled_bb> and point sp_adj to spadjust OP
@@ -2843,6 +2844,28 @@ static void unroll_xfer_annotations(BB *unrolled_bb, BB *orig_bb)
 {
   if (BB_has_pragma(orig_bb)) {
     BB_Copy_Annotations(unrolled_bb, orig_bb, ANNOT_PRAGMA);
+  }
+  /*we copy LABEL with ADDR_SAVED for .debug_info*/
+  if(BB_has_label(orig_bb)){
+  	ANNOTATION *ant_list = BB_annotations(orig_bb);
+    ANNOTATION *ant = ANNOT_First(BB_annotations(orig_bb), ANNOT_LABEL);
+	ANNOTATION *ant_next = NULL;
+	while(ant != NULL){
+	  ant_next = ANNOT_Next(ant, ANNOT_LABEL);
+	  //ANNOTATION *ant_bk = ant;
+	  LABEL_IDX label_idx = ANNOT_label(ant);
+	  LABEL &label = Label_Table[label_idx];
+	  if(label.flags != LABEL_ADDR_SAVED){
+	  	ant = ant_next;
+		continue;
+	  }
+
+	  BB_annotations(orig_bb) = ANNOT_Unlink(BB_annotations(orig_bb), ant);
+      BB_Add_Annotation(unrolled_bb, ANNOT_LABEL, (void *)label_idx);
+	  Set_Label_BB(label_idx, unrolled_bb);
+	  ant = ant_next;
+	}
+
   }
 
   if (BB_exit(orig_bb)) {
