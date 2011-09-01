@@ -169,7 +169,9 @@ extern void Push_region(STACK<E_REGION *> *stk,
                         MEM_POOL *pool);
 
 extern WN  *Pop_region(STACK<E_REGION *> *stk, WN *first_wn, WN *last_wn,
-		       REGION_LEVEL rgn_level, OPT_STAB *opt_stab);
+		       REGION_LEVEL rgn_level, OPT_STAB *opt_stab, CFG *cfg);
+
+extern INT32 REGION_delete_dead_exits(CFG *cfg, WN *exit_list, INT32 nexits);
 
 
 #endif  // opt_region_emit_INCLUDED

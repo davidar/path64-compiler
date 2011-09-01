@@ -1400,7 +1400,7 @@ EMITTER::Gen_wn(BB_NODE *first_bb, BB_NODE *last_bb)
 	bb_region->Find_first_last_stmt(bb_region->Region_start()->Next(),
 			       bb_region->Region_end(), &first, &last);
 	stmt = Pop_region(Region_stack(), first, last,
-			  Cfg()->Rgn_level(), Opt_stab());
+			  Cfg()->Rgn_level(), Opt_stab(), Cfg());
 
 	// normal case, region not empty or EH Guard region
 	if (stmt) {
