@@ -73,7 +73,7 @@
 // suffix starts with an underscore. To get the assembly name we strip off
 // the suffix.
 
-main()
+int main()
 {
   ISA_Print_Begin("x8664");
 

@@ -61,7 +61,7 @@
 #include "topcode.h"
 #include "isa_properties_gen.h"
 
-main()
+int main()
 {
   ISA_PROPERTY
     move,   		/* Move operator */
