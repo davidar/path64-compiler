@@ -914,8 +914,11 @@ public:
 #endif
   void      Set_opr(OPERATOR c)       { Is_True(Non_leaf(),
 				            ("CODEREP::Set_opr, illegal kind"));
-					(Kind() == CK_OP) ? u2.isop._opr = c :
-						u2.isivar._opr = c; }
+					if (Kind() == CK_OP) {
+					  u2.isop._opr = c;
+					} else {
+						u2.isivar._opr = c;
+					} }
   mINT16    Kid_count(void) const     { Is_True(Kind() == CK_OP,
 				        ("CODEREP::Kid_count, illegal kind %s",
 					  Print_kind()));
