@@ -2323,7 +2323,9 @@ static boolean expr_sem_d(opnd_type      *result_opnd,
                if (ATD_CLASS(attr_idx) != Struct_Component &&
                    ! ATD_LCV_IS_CONST(attr_idx)     &&
                    ! ATD_PARENT_OBJECT(attr_idx) &&
-                   ATD_CLASS(attr_idx) != Constant) {
+                   ATD_CLASS(attr_idx) != Constant &&
+		   !(ATD_CLASS(attr_idx) == Compiler_Tmp &&
+		    AT_DEFINED(attr_idx) && ATD_FLD(attr_idx) == CN_Tbl_Idx) ) {
 
                   if (!fnd_semantic_err(Obj_Use_Init_Expr,
                                         line,
