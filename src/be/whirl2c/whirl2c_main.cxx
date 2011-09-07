@@ -156,7 +156,7 @@ Usage (const char *progname)
 } /* Usage */
 
 
-main (INT argc,                   /* Number of command line arguments */
+int main (INT argc,                   /* Number of command line arguments */
       const char *const argv[],   /* Array of command line arguments */
       const char *const envp[])   /* Array of environment pointers */
 {

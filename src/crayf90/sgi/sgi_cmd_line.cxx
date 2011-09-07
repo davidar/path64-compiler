@@ -54,7 +54,10 @@ static const char *rcs_id = "$Source: crayf90/sgi/SCCS/s.sgi_cmd_line.cxx $ $Rev
 #include "erglob.h"
 #include "erlib.h"
 #include "tracing.h"
+
+#define MODULE_NAME mfef
 #include "err_host.tab"
+
 #ifdef KEY /* Bug 4607 */
 #  include "path_intrinsic_list.h"
 #endif /* KEY Bug 4607 */
@@ -931,7 +934,7 @@ void sgi_cmd_line (INT *argc, char ***argv)
       strcpy(save_argv[i], (*argv)[i]);
    }
 
-   Set_Error_Tables (Phases, host_errlist);
+   Set_Error_Tables (PHASES_NAME, ERRLIST_NAME);
    Init_Error_Handler ( 100 );
    Set_Error_Line ( ERROR_LINE_UNKNOWN );
    Set_Error_File ( NULL );

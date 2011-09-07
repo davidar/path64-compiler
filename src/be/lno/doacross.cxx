@@ -100,8 +100,6 @@ static char *rcs_id = "$Source: be/lno/SCCS/s.doacross.cxx $";
 #include "prompf.h"
 #include "anl_driver.h"
 
-#pragma weak New_Construct_Id 
-
 // in parallel.cxx
 extern BOOL Is_Privatizable_With_Context(WN* loop, WN* wn, BOOL defnitely);
 

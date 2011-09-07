@@ -48,15 +48,6 @@ ipa_add_comma_list (const char* name);
 extern void
 ipa_compose_comma_list (const char* name);
 
-#ifdef _LD_IPA_INTERFACE
-
-#pragma weak ipa_init_link_line
-#pragma weak ipa_add_link_flag
-#pragma weak ipa_modify_link_flag
-#pragma weak ipa_add_comma_list
-#pragma weak ipa_compose_comma_list
-
-#endif /* _LD_IPA_INTERFACE */
 
 #ifdef __cplusplus
 }

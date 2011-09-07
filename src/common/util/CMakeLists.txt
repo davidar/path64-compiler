@@ -40,6 +40,7 @@ set(COMUTIL_SRCS
   c_q_to_a.c
   c_qtenscale.c
   @ARCH@/c_qwmultu.c
+  ../com/err_host.cxx
   )
 
 path64_set_multiarch_sources(comutil_sources COMMON ${COMUTIL_SRCS})

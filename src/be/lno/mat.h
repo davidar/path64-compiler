@@ -372,6 +372,10 @@ class MAT {
   void			_expand(INT rx, INT cx);	// reset rx and cx
 };
 
+
+template <typename T> MEM_POOL* MAT<T>::_default_pool = NULL;
+
+
 typedef MAT<mINT32>	IMAT;
 typedef MAT<FRAC>	FMAT;
 typedef MAT<double>	DMAT;

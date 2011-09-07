@@ -70,13 +70,10 @@
 
 
 extern "C" void add_to_tmp_file_list (char*);
-#pragma weak add_to_tmp_file_list
 
 extern "C" char* create_unique_file (const char*, char);
-#pragma weak create_unique_file
 
 extern "C" char* create_tmp_file (char*);
-#pragma weak create_tmp_file
 
 /************************************************************************/
 

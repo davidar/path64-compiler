@@ -444,7 +444,7 @@ I-cpp_pic	;		ALL	NONE	"-D_PIC -D__DSO__"
 	"option group to control error/warning messages in ld"
 
 % FE is also a define, so trick cpp
--F/**/E:%s		;		ALL	ffe	"-FE:%s"
+-EFFY:%s		;		ALL	ffe	"-FE:%s"
 	""
 I-init%s		;		CC	ld	"-init %s"
 	""
@@ -472,8 +472,8 @@ I-fini%s		;		CC	ld	"-fini %s"
 % first_phase is P_cpp by default, so set it to anything different
 -nocpp	nocpp_flag=TRUE;first_phase=P_any_fe; 	FTN	FE	self
 	"don't do cpp processing"
-% cpp is also a define, so trick the preprocessor
--c/**/pp  toggle(&use_ftpp,0);first_phase=P_any_cpp; 	ALL	NONE	""
+% cpp is also a define, so this is a placeholder replaced afterward
+-seepeepee  toggle(&use_ftpp,0);first_phase=P_any_cpp; 	ALL	NONE	""
 	""
 % -o is now handled elsewhere because of complications introduced by cord
 -o%-	save_name(&outfile,optargs);check_output_name(optargs);cancel_saved_arg(2);  ALL NONE ""
@@ -850,14 +850,12 @@ I-xall	;		FTN	ffe	self
 -fpathas	;	ALL	NONE	""
 	"Use Pathscale assembler"
 #endif
-#ifdef PATH64_ENABLE_PSCLANG
 #ifdef PATH64_ENABLE_DEFAULT_PSCLANG
 -fno-psclang	;	ALL	NONE	""
 	"Don't use psclang front-end"
 #else
 -fpsclang	;	ALL	NONE	""
-	"Use psclang front-end"
-#endif
+	"Do not use"
 #endif
 %-nocode last_phase=earliest_phase(P_any_fe,last_phase);  FTN ffe   self
 %        "do not generate any intermediate code from front-end"
@@ -1274,9 +1272,9 @@ I-u%s		;		Cc	ld	"-u %s"
 	"Don't define __PATHCC__ and other macros"
 % cpp is also a define, so trick cpp
 #ifdef PATH64_ENABLE_PSCRUNTIME
--traditional-c/**/pp	;		Cc,cpp cpp self
+-traditional-seepeepee	;		Cc,cpp cpp self
 #else
--traditional-c/**/pp	;		Cc,cpp	NONE	"-traditional"
+-traditional-seepeepee	;		Cc,cpp	NONE	"-traditional"
 #endif
 	""
 -trigraphs	;		Cc,cpp	cpp	self

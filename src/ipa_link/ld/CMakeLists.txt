@@ -84,32 +84,16 @@ FOREACH(f
 ENDFOREACH(f)
 
 #ADD_LIBRARY(iberty ${iberty_SRCS})
-add_executable(ld ${LD_SRCS})
-SET_TARGET_PROPERTIES(ld PROPERTIES OUTPUT_NAME "ipa_link")
-IF(${EXPORT_DYNAMIC_SUPPORTED} MATCHES "yes")
-    SET_TARGET_PROPERTIES(ld PROPERTIES LINK_FLAGS "-Wl,--export-dynamic")
-ENDIF()
-target_link_libraries(ld bfd iberty ${libdl})
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-set(ipa_symlinks_deps)
-
-foreach(arch ${PATH64_ENABLE_ARCHES})
-    set(output ${Path64_BINARY_DIR}/lib/${PSC_FULL_VERSION}/${arch}/ipa_link${CMAKE_EXECUTABLE_SUFFIX})
-    add_custom_command(
-        OUTPUT ${output}
-        COMMAND ${CMAKE_COMMAND} -E create_symlink ../../bin/ipa_link ${output}
-    )
-
-    list(APPEND ipa_symlinks_deps ${output})
-endforeach()
-
-add_custom_target(stageit-ipa_link DEPENDS ${ipa_symlinks_deps})
-add_dependencies(stageit-ipa_link ld)
-add_dependencies(compiler-stage stageit-ipa_link)
-
-install(TARGETS ld
-    RUNTIME DESTINATION ${PATH64_LIB_PATH}/x8664
-    LIBRARY DESTINATION ${PATH64_LIB_PATH}/x8664)
+path64_set_multiarch_sources(ld_srcs COMMON ${LD_SRCS})
+path64_add_multiarch_executable(ipa_link ld_srcs)
+if(${EXPORT_DYNAMIC_SUPPORTED} MATCHES "yes")
+    path64_set_multiarch_property(ipa_link LINK_FLAGS "-Wl,--export-dynamic")
+endif()
+path64_multiarch_link_multiarch_libraries(ipa_link ipa)
+path64_multiarch_link_libraries(ipa_link bfd iberty ${libdl})
+path64_add_dependencies_from_multiarch(compiler-stage ipa_link)
+path64_install_multiarch(ipa_link)
 

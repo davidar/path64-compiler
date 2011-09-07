@@ -53,8 +53,6 @@
 #include "prompf.h"
 #include "anl_driver.h"
 
-#pragma weak New_Construct_Id
-
 static INT32     shackle_if_debug_level;
 static QUEUE<INT32> 
                 *Prompf_Elimination_Queue;

@@ -73,6 +73,7 @@ enum _sec_kind {
   _SEC_EH_REGION_SUPP,
   _SEC_DISTR_ARRAY,
 #ifdef KEY
+  _SEC_DATA_REL,
   _SEC_DATA_REL_RO,
 #endif
   _SEC_THREAD_PRIVATE_FUNCS,

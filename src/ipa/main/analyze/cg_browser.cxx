@@ -1272,13 +1272,13 @@ void CG_BROWSER::Whirl_Browser()
 } 
 
 //-----------------------------------------------------------------------
-// NAME: Compute_ST_IDX
+// NAME: IPA_Compute_ST_IDX
 // FUNCTION: Convert a <'st_level','st_index'> to its ST_IDX and return
 //   the value.
 //-----------------------------------------------------------------------
 
-static ST_IDX Compute_ST_IDX(UINT32 st_level,
-                             UINT32 st_index)
+static ST_IDX IPA_Compute_ST_IDX(UINT32 st_level,
+                                 UINT32 st_index)
 {
   UINT32 st_idx = st_level + (st_index << 8);
   return (ST_IDX) (st_idx);
@@ -1308,7 +1308,7 @@ void CG_BROWSER::Symbol()
       Error_Cleanup();
       return;
     }
-    ST_IDX st_idx = Compute_ST_IDX(st_level, st_index);
+    ST_IDX st_idx = IPA_Compute_ST_IDX(st_level, st_index);
     ST* st = &St_Table[st_idx];
     fprintf(stdout, "ST_IDX: %" PRIdPTR "\n", st_idx);
     Print_ST(stdout, st, TRUE);

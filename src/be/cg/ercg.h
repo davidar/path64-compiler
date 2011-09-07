@@ -46,7 +46,7 @@
  *
  * Define the Muse code generator error codes for use with the error
  * message handler errors.c.  The associated error descriptors may be
- * found in the file ercg.desc.
+ * found in the file ercg.cxx.
  *
  * ====================================================================
  * ====================================================================

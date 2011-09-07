@@ -146,11 +146,9 @@ OPTION_GROUP IPL_Option_Groups[] = {
 
 
 SUMMARY *Summary;			// class for all the summary work
-WN_MAP Parent_Map;
 WN_MAP Summary_Map;
 WN_MAP Stmt_Map;
 
-FILE* STDOUT = stdout;
 DYN_ARRAY<char*>* Ipl_Symbol_Names = NULL; 
 DYN_ARRAY<char*>* Ipl_Function_Names = NULL; 
 

@@ -191,7 +191,7 @@ enum { IHOT=FALSE, ICOLD=TRUE };
 #define Set_BB_cold	Set_BB_local_flag1
 #define Reset_BB_cold	Reset_BB_local_flag1
 
-extern const char __Release_ID[];
+extern const char * __Release_ID;
 #ifdef KEY
 extern BOOL profile_arcs;
 extern BOOL PU_has_trampoline;  // defined in wn_lower.cxx

@@ -45,9 +45,6 @@
 //
 #undef int
 
-#pragma weak W2F_Get_Transformed_Src_Path
-#pragma weak W2C_Get_Transformed_Src_Path
-
 
 // ================== Define the global objects =============
 // ==========================================================
@@ -69,7 +66,6 @@ extern const char *Fe_Version;  // From be.so
 // Global C++ objects
 //
 MEM_POOL          Anl_Default_Pool; // Pool used for temporary anl memory alloc
-WN_MAP            Parent_Map;       // Used by LWN_Set_Parent/LWN_Get_Parent
 ANL_DIAGNOSTICS  *Anl_Diag;         // Diagnostics handler
 
 

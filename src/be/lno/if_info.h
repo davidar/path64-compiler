@@ -107,7 +107,7 @@ public:
   mBOOL Condition_On_Then;
   float Freq_True;
   float Freq_False;
-  void Print(FILE *fp) __attribute__((weak));
+  void Print(FILE *fp);
   ARA_LOOP_INFO *_ara_then;
   ARA_LOOP_INFO *_ara_else;
   ARA_LOOP_INFO *_ara_common;

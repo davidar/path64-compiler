@@ -89,13 +89,9 @@ static MEM_POOL LNO_local_pool;
 
 #ifndef LNO
 static DU_MANAGER *Du_Mgr;
-extern void Initialize_Access_Vals(DU_MANAGER* du_mgr, FILE *tfile);
-extern void Finalize_Access_Vals();
 extern WN* LNO_Common_Loop(WN* wn1, WN* wn2);
 extern WN* UBvar (WN *end);	/* In lieu of lnoutils.h for IPL */
 template <> MEM_POOL* MAT<mINT32>::_default_pool = &LNO_local_pool;
-// since wopt.so is loaded dynamically in ipl
-#pragma weak Add_Def_Use__10DU_MANAGERGP2WNT1
 #endif
 
 #ifdef LNO
@@ -2869,7 +2865,6 @@ ACCESS_VECTOR::ACCESS_VECTOR(const SYSTEM_OF_EQUATIONS *soe,
 
 }
 
-#ifndef LNO
 //-----------------------------------------------------------------
 // initialize static variables to be used by the access vector utils,
 // if invoked from outside of LNO
@@ -2894,4 +2889,3 @@ Finalize_Access_Vals()
   MEM_POOL_Delete(&LNO_local_pool);
 }
 
-#endif

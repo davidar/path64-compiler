@@ -87,6 +87,8 @@ static char *erlib_rcs_id = "$Source$ $Revision$";
 /* Sparse bit vector manipulation: */
 #define EC_SBV_Ill_Elmt	EC_BASE_LIB+50		/* int, int */
 
+extern ERROR_DESC EDESC_Lib[];
+
 #ifdef __cplusplus
 }
 #endif

@@ -18,16 +18,9 @@ ENDIF()
 include(${Path64_SOURCE_DIR}/cmake/Modules/ConfigureChecks.cmake)
 
 # Force the build_type=debug flags to sane values overriding users choices
-# -g0 is used on solaris to workaround bug in libdwarf
-if("${CMAKE_SYSTEM_NAME}" STREQUAL "SunOS")
-    SET(CMAKE_C_FLAGS_DEBUG  "-O0 -g0 -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
-    SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g0 -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
-    SET(CMAKE_Fortran_FLAGS_DEBUG  "-O0 -g0 -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
-else()
-    SET(CMAKE_C_FLAGS_DEBUG  "-O0 -g -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
-    SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
-    SET(CMAKE_Fortran_FLAGS_DEBUG  "-O0 -g3 -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
-endif()
+SET(CMAKE_C_FLAGS_DEBUG  "-O0 -g -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
+SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
+SET(CMAKE_Fortran_FLAGS_DEBUG  "-O0 -g3 -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
 
 # Using -mno-sse3 flag for release build if PATH64_ENABLE_PSCRUNTIME=ON
 if(PATH64_ENABLE_PSCRUNTIME)
@@ -46,23 +39,14 @@ OPTION(PATH64_ENABLE_IPA "Enable IPA" ON)
 
 # Define user option whether to build the Fortran compiler.
 OPTION(PATH64_ENABLE_FORTRAN "Build Fortran compiler" ON)
-IF(PATH64_ENABLE_FORTRAN)
-  IF(NOT PATH64_USE_FOLD_F)
-    SET(CMAKE_Fortran_COMPILER_FORCED TRUE)
-    set(CMAKE_Fortran_COMPILER "true")
-  ENDIF()
-  ENABLE_LANGUAGE(Fortran)
-  IF(PATH64_USE_FOLD_F)
-      IF(CMAKE_Fortran_COMPILER)
-	INCLUDE(${Path64_SOURCE_DIR}/cmake/Modules/CheckFortran.cmake)
-      ELSE()
-	MESSAGE(STATUS "No working Fortran compiler is available")
-	SET(PATH64_ENABLE_FORTRAN 0)
-      ENDIF()
-  ELSE()
-    set(CMAKE_Fortran_COMPILER "${Path64_BINARY_DIR}/bin/pathf90")
-  ENDIF()
-ENDIF()
+
+if(PATH64_ENABLE_FORTRAN)
+    if("${CMAKE_Fortran_COMPILER}" STREQUAL "")
+        set(CMAKE_Fortran_COMPILER_FORCED TRUE)
+        set(CMAKE_Fortran_COMPILER "true")
+    endif()
+    enable_language(Fortran)
+endif()
 
 # Define user option whether to build the profiling libraries
 OPTION(PATH64_ENABLE_PROFILING "Build profiling libraries" ON)
@@ -404,11 +388,6 @@ if("X${CMAKE_C_COMPILER_ID}" STREQUAL "XPathScale" AND NOT "X${CMAKE_BUILD_TYPE}
 
     set(pathscale_libs_stage_deps)
     set(pathscale_libs libmv.so libmpath.so)
-    if(PATH64_ENABLE_FORTRAN)
-        if(PATH64_USE_FOLD_F)
-            list(APPEND pathscale_libs libpathfortran.so)
-        endif()
-    endif()
     if(PATH64_ENABLE_PSCRUNTIME)
         list(APPEND pathscale_libs libgcc.so libeh.so libcxxrt.so libstl.so)
     endif()
@@ -436,9 +415,7 @@ if("X${CMAKE_C_COMPILER_ID}" STREQUAL "XPathScale" AND NOT "X${CMAKE_BUILD_TYPE}
 
         # Making link for libpathfortran
         if(PATH64_ENABLE_FORTRAN)
-            if(NOT PATH64_USE_FOLD_F)
-                install(CODE "file(MAKE_DIRECTORY \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/${PSC_FULL_VERSION}/${arch}\") \n execute_process(COMMAND \"${CMAKE_COMMAND}\" -E create_symlink \"./../${host_arch}/${host_bits}/libpathfortran.so\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/${PSC_FULL_VERSION}/${arch}/libpathfortran.so\")")
-            endif()
+            install(CODE "file(MAKE_DIRECTORY \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/${PSC_FULL_VERSION}/${arch}\") \n execute_process(COMMAND \"${CMAKE_COMMAND}\" -E create_symlink \"./../${host_arch}/${host_bits}/libpathfortran.so\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/${PSC_FULL_VERSION}/${arch}/libpathfortran.so\")")
         endif()
     endforeach()
 

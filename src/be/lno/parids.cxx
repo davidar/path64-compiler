@@ -45,10 +45,6 @@
 #include "glob.h"
 #include "file_util.h"
 
-#if ! defined(BUILD_OS_DARWIN)
-#pragma weak Anl_File_Path
-#endif /* ! defined(BUILD_OS_DARWIN) */
-
 //-----------------------------------------------------------------------
 // NAME: Print_Goto_Lines
 // FUNCTION: Print the lines with "gotos" for loop 'wn_loop' onto the

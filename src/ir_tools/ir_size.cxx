@@ -39,6 +39,8 @@
 #include "opcode.h"
 #include "wn.h"
 #include "ir_bread.h"		    /* for WN_open_input(), etc. */
+
+#define MODULE_NAME ir_size
 #include "err_host.tab"
 
 
@@ -152,14 +154,14 @@ usage (char *progname)
   exit (1);
 }
 
-main (INT argc, char *argv[])
+int main (INT argc, char *argv[])
 {
     register char *progname;
     INT binarg = 1;
     BOOL verbose = FALSE;
 
     MEM_Initialize();
-    Set_Error_Tables (Phases, host_errlist);
+    Set_Error_Tables (PHASES_NAME, ERRLIST_NAME);
     Init_Error_Handler (10);
     Set_Error_File(NULL);
     Set_Error_Line(ERROR_LINE_UNKNOWN);
@@ -188,11 +190,5 @@ main (INT argc, char *argv[])
 } /* main */
 
 
-/* Dummy definitions to satisify references from routines that got pulled
- * in by the header files but are never called
- */
-void Signal_Cleanup (INT sig) { }
-
-const char * Host_Format_Parm (INT kind, MEM_PTR parm) { return NULL; }
-
 INT8 Debug_Level = 0;
+

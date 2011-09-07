@@ -28,8 +28,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#define FAIL () { } 
-
 #define QUOTE(x) x
 #define ASSERT_UNIMPLEMENTED 1
 #undef ASSERT_UNIMPLEMENTED 
@@ -47,7 +45,6 @@ extern "C" {
 #include "err_host.h"
 #include "config.h"
 
-void Cleanup_Files FAIL
 /* int  Op_Name FAIL */
 int  trace_verbose = 0 ;
 

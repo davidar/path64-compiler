@@ -86,6 +86,8 @@ typedef STACK<WN *> STACK_OF_WN;
 extern INT Num_Prefetches;
 #endif
 
+WN_MAP Parent_Map;
+
 /* Return next tree node in in-order traversal. 
  * Go all the way to the leaves.
  * Return NULL if no more nodes.

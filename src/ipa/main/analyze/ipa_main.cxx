@@ -63,12 +63,9 @@
 #ifndef KEY
 #include "inline_script_parser.h"
 #else
-extern void (*Preprocess_struct_access_p)(void);
-#define Preprocess_struct_access (*Preprocess_struct_access_p)
+extern void Preprocess_struct_access(void);
 #endif /* KEY */
 #include "ipa_reorder.h"
-
-FILE* STDOUT = stdout; 
 
 //-----------------------------------------------------------------------
 // NAME: Print_Array_Sections

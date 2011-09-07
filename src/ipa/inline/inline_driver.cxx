@@ -63,6 +63,8 @@
 #include "timing.h"		    /* for Initialize_Timing() */
 #include "tracing.h"		    /* for Set_Trace () */
 #include "inline.h"
+
+#define MODULE_NAME inline
 #include "err_host.tab"
 
 /* Default file	extensions: */
@@ -285,7 +287,7 @@ Process_Command_Line (INT argc, char **argv)
  * ====================================================================
  */
 
-main (INT argc, char **argv)
+int main (INT argc, char **argv)
 {
     INT32 ecount, local_ecount, local_wcount;
 
@@ -295,7 +297,7 @@ main (INT argc, char **argv)
      */
     Handle_Signals();
     MEM_Initialize();
-    Set_Error_Tables (Phases, host_errlist);
+    Set_Error_Tables (PHASES_NAME, ERRLIST_NAME);
     Dont_Use_WN_Free_List ();
 
     /* Perform preliminary command line processing: */
@@ -340,7 +342,6 @@ main (INT argc, char **argv)
 	MEM_Trace ();
       }
 
-      Cleanup_Files ( TRUE, FALSE );
       if (close_output)
           Close_Output_Info();
     }

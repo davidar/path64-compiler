@@ -105,17 +105,10 @@ extern BOOL Wn_Is_Intconst(WN *ldid, INT64 *val)
 // ----------------------------------------------------------------------
 // symbols defined in be.so but used in cg.so
 /* official builds will link with identfile that defines _Release_ID */
-extern const char *__Release_ID;
 const char *Default_Release_ID = "none";
-#if defined(BUILD_OS_DARWIN)
-#pragma weak __Release_ID
-const char *__Release_ID = "none";
-#elif defined(_WIN32)
-//Windows does not support weak data symbol
+
 #ifndef __RELEASE_ID__
 #define __RELEASE_ID__ "none"
 #endif
 const char *__Release_ID = __RELEASE_ID__;
-#else /* defined(BUILD_OS_DARWIN) */
-#pragma weak __Release_ID = Default_Release_ID
-#endif /* defined(BUILD_OS_DARWIN) */
+

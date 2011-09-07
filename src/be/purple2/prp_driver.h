@@ -23,7 +23,6 @@
 
 #ifndef prp_driver_INCLUDED
 #define prp_driver_INCLUDED
-#if defined(BUILD_OS_DARWIN) || defined(_WIN32)
 /* Linux assumes weak declaration followed by definition and reference will
  * create a weak symbol which won't cause an error at link time; Mach-O
  * creates an undefined symbol which causes link to fail. */
@@ -34,39 +33,5 @@
 #define Prp_Init() assert(!"Prp_Init")
 #define Prp_Instrument_And_EmitSrc(a) assert(!"Prp_Instrument_And_EmitSrc")
 #define Prp_Fini() assert(!"Prp_Fini")
-#else /* defined(BUILD_OS_DARWIN) */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-/* ==============================================================
- * ==============================================================
- *
- * Module: prp_driver.h
- * $Revision$
- * $Date$
- * $Author$
- * $Source$
- *
- * Description:
- *
- *   Defines utilities exported by purple_instr.so
- *
- * ==============================================================
- * ==============================================================
- */
-
-void Prp_Process_Command_Line (INT phase_argc, char *phase_argv[],
-			       INT argc, char *argv[]);
-BOOL Prp_Needs_Whirl2c(void);
-BOOL Prp_Needs_Whirl2f(void);
-void Prp_Init(void);
-void Prp_Instrument_And_EmitSrc(WN *pu);
-void Prp_Fini(void);
-
-#ifdef __cplusplus
-}
-#endif
-#endif /* defined(BUILD_OS_DARWIN) */
 
 #endif /* prp_driver_INCLUDED */

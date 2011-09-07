@@ -48,7 +48,7 @@
 #include "isa_hazards_gen.h"
 
 
-main()
+int main()
 {
   ISA_HAZARD
     result,

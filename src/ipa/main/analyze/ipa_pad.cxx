@@ -518,13 +518,13 @@ Store_Orig_Dims(ST* s, BOUNDS_ARRAY* b)
 }
 
 //=============================================================
-// DESCR: Pad_Size
+// DESCR: Ipa_Pad_Size
 //        return the size of the padding for dimension pad_dim
 //        add extra padding for certain dimensions
 //=============================================================
-INT64
-Pad_Size(INT pad_dim, INT padding, INT end_dim,
-	 BOUNDS_ARRAY *bounds, BOOL extra_pad)
+static INT64
+Ipa_Pad_Size(INT pad_dim, INT padding, INT end_dim,
+             BOUNDS_ARRAY *bounds, BOOL extra_pad)
 {
   INT size = 1;
   INT size2 = 1;
@@ -793,10 +793,10 @@ Pad_Multi_Dims(COMMON_SNODE *common_snode)
 
 		INT pad_size1=0;
 		if (j == i)
-		  pad_size1 = Pad_Size(pad_dim,padding,i,bounds_array,TRUE);
+		  pad_size1 = Ipa_Pad_Size(pad_dim,padding,i,bounds_array,TRUE);
 		else if (Pad_Dim(&(*bounds_array)[j]))
 		  pad_size1 =
-		    Pad_Size(pad_dim,padding,i,bounds_array,FALSE);
+		    Ipa_Pad_Size(pad_dim,padding,i,bounds_array,FALSE);
 
 		if (Padding_Threshold(pad_size1,pad_dim,bounds_array,arb_base))
 		  {

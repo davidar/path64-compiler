@@ -74,27 +74,3 @@ Host_Format_Parm (
 }
 
 
-
-/* ====================================================================
- *
- * Signal_Cleanup
- *
- * Clean up before dying in response to a signal.
- *
- * ====================================================================
- */
-
-void
-Signal_Cleanup ( INT sig )
-{
-  Cleanup_Files ( FALSE, TRUE );
-#ifdef FRONT_END_FORTRAN
-#ifdef DEBUG
-  Kqqtrc();
-#endif
-  { INT i = 4;
-    Kqqsrc(&i);
-  }
-  Kqqexi();
-#endif
-}

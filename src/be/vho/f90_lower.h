@@ -69,11 +69,11 @@ typedef enum {
 } DIR_FLAG;
 
 typedef enum {
-   DEP_UNKNOWN = 0,
-   DEP_INDEPENDENT = 1,
-   DEP_IDENTICAL = 2,
-   DEP_REMOVABLE = 3
-} DEP_SUMMARY;
+   VHO_DEP_UNKNOWN = 0,
+   VHO_DEP_INDEPENDENT = 1,
+   VHO_DEP_IDENTICAL = 2,
+   VHO_DEP_REMOVABLE = 3
+} VHO_DEP_SUMMARY;
 
 /* This is the interface to the c++ routine for doing triplet dependence
  * analysis. It's in c++ becuase it makes use of LNO's SYSTEM_OF_EQUATIONS

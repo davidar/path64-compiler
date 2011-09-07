@@ -74,6 +74,8 @@ static char *rcs_id = "$Source$ $Revision$";
 #include "glob.h"             /* Irb_File_Name, Cur_PU_Name */
 #include "flags.h"	      /* for OPTION_GROUP */
 #include "pu_info.h"          /* For PU_Info */
+
+#define MODULE_NAME whirl2f
 #include "err_host.tab"       /* Include the error tables in the driver */
 
 #include "pu_info.h"          /* For PU_Info */
@@ -288,7 +290,7 @@ main (INT argc,       /* Number of command line arguments */
    * possible upon start-up.
    */
    MEM_Initialize();
-   Set_Error_Tables(Phases, host_errlist);
+   Set_Error_Tables(PHASES_NAME, ERRLIST_NAME);
    Init_Error_Handler(10);
    Set_Error_Line(ERROR_LINE_UNKNOWN);
    Set_Error_Phase("Whirl2f");

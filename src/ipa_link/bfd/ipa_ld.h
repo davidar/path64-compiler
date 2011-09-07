@@ -220,18 +220,18 @@ extern string WB_flags;
 extern string Y_flags;
 extern char * __Release_ID;
 
-extern void *(*p_ipa_open_input)(char *, off_t *);
-extern void (*p_ipa_init_link_line)(int, char **);
-extern void (*p_ipa_add_link_flag)(const char*);
-extern void (*p_ipa_modify_link_flag)(char *, char*);
-extern void (*p_ipa_driver)(int, char **);
-extern void (*p_process_whirl64)(void *, off_t, void *, int, const char *);
-extern void (*p_process_whirl32)(void *, off_t, void *, int, const char *);
-extern void (*p_ipa_insert_whirl_marker)(void);
+extern void* ipa_open_input(char *, off_t *);
+extern void ipa_init_link_line(int, char **);
+extern void ipa_add_link_flag(const char*);
+extern void ipa_modify_link_flag(char *, char*);
+extern void ipa_driver(int, char **);
+extern void process_whirl64(void *, off_t, void *, int, const char *);
+extern void process_whirl32(void *, off_t, void *, int, const char *);
+extern void ipa_insert_whirl_marker(void);
 #ifdef KEY
-extern void (*p_ipa_erase_link_flag)(const char*);
-extern void (*p_Ipalink_Set_Error_Phase)(char *);
-extern void (*p_Ipalink_ErrMsg_EC_Outfile)(char *);
+extern void ipa_erase_link_flag(const char*);
+extern void Ipalink_Set_Error_Phase(char *);
+extern void Ipalink_ErrMsg_EC_Outfile(char *);
 #endif
 
 /* Function declarations
@@ -332,9 +332,6 @@ ipa_process_whirl ( bfd *);
 
 extern int 
 Count_elf_external_gots (void);
-
-extern void 
-ipa_set_syms (void);
 
 /* The following constant values are shared by both ld and ipa.  Each
    symtab entry in ld's merged symbol table has an ST_IDX field pointing

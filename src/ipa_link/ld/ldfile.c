@@ -48,7 +48,7 @@
 #ifdef KEY
 extern bfd_boolean is_ipa;
 extern bfd_boolean ipa_is_whirl(bfd *);
-extern void (*p_Ipalink_ErrMsg_EC_infile)(char *);
+extern void Ipalink_ErrMsg_EC_infile(char *);
 #endif
 
 const char * ldfile_input_filename;
@@ -411,7 +411,7 @@ ldfile_open_file (lang_input_statement_type *entry)
 	       entry->filename, entry->local_sym_name);
       else
 #ifdef KEY
-	(*p_Ipalink_ErrMsg_EC_infile)(entry->local_sym_name);
+	Ipalink_ErrMsg_EC_infile(entry->local_sym_name);
 #else
 	einfo (_("%F%P: %s: No such file: %E\n"), entry->local_sym_name);
 #endif

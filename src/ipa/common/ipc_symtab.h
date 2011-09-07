@@ -58,16 +58,6 @@ process_whirl64 (an_object_file_ptr p_obj, int nsec,
                  boolean check_whirl_revision, const char* file_name);
 
 
-#ifdef _64BIT_OBJECTS
-
-#pragma weak process_whirl64
-
-#else /* _64BIT_OBJECTS */
-
-#pragma weak process_whirl32
-
-#endif /* _64BIT_OBJECTS */
-
 #else /* _LD_IPA_INTERFACE */
 
 extern void enter_mext32 (ST *st, LD_OBJECT_FILE *p_obj);

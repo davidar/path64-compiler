@@ -17,21 +17,20 @@ set(WHIRL2F_SRC
 			wn2f_load_store.cxx
 			wn2f_stmt.cxx
 			wn2f_pragma.cxx
-			w2f_driver.cxx
-			init.cxx)
+			w2f_driver.cxx)
 
 ADD_DEFINITIONS(
 	-DBUILD_WHIRL2F
 	-DMONGOOSE_BE)
 
 path64_set_multiarch_sources(whirl2f_sources COMMON ${WHIRL2F_SRC})
-path64_add_multiarch_library(whirl2f SHARED whirl2f_sources)
+path64_add_multiarch_library(whirl2f STATIC whirl2f_sources)
 path64_add_multiarch_dependencies(whirl2f generate_preg_list)
 path64_set_multiarch_property(whirl2f PREFIX "")
 path64_set_multiarch_property(whirl2f COMPILE_FLAGS
                               "-I${CMAKE_CURRENT_SOURCE_DIR}/../../common/com/@ARCH@")
 path64_install_multiarch(whirl2f)
-path64_multiarch_link_multiarch_libraries(whirl2f comutil be)
+path64_multiarch_link_multiarch_libraries(whirl2f comutil be-static)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     path64_set_multiarch_sources(whirl2f-exec_sources COMMON whirl2f_main.cxx)

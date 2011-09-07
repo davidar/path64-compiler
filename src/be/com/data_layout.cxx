@@ -87,8 +87,8 @@
 #ifdef TARG_X8664
 #include "config_opt.h"    // for CIS_Allowed
 
-extern void (*CG_Set_Is_Stack_Used_p)();
-extern INT (*Push_Pop_Int_Saved_Regs_p)(void);
+extern void CG_Set_Is_Stack_Used();
+extern INT Push_Pop_Int_Saved_Regs();
 #endif
 #include "be_symtab.h"
 
@@ -2426,7 +2426,7 @@ INT64 Finalize_Stack_Frame (void)
 
 #ifdef TARG_X8664
     {
-      int push_pop_int_saved_regs = (*Push_Pop_Int_Saved_Regs_p)();
+      int push_pop_int_saved_regs = Push_Pop_Int_Saved_Regs();
       if (push_pop_int_saved_regs & 1)
 	push_pop_int_saved_regs++;
       Set_ST_ofst(SF_Block(SFSEG_UPFORMAL), ST_ofst(SF_Block(SFSEG_UPFORMAL)) +
@@ -2453,7 +2453,7 @@ INT64 Finalize_Stack_Frame (void)
     		  // the save area for return-addr and frame-ptr
   if (Current_PU_Stack_Model == SMODEL_SMALL && PUSH_FRAME_POINTER_ON_STACK) {
     Frame_Size += MTYPE_byte_size(Pointer_Mtype);
-    if ((*Push_Pop_Int_Saved_Regs_p)() & 1)
+    if (Push_Pop_Int_Saved_Regs() & 1)
       Frame_Size += MTYPE_byte_size(Pointer_Mtype);
   }
 #endif
@@ -2522,7 +2522,7 @@ Allocate_Temp_To_Memory ( ST *st )
   Set_ST_is_temp_var(st);
   Process_Stack_Variable ( st );
 #ifdef TARG_X8664
-  (*CG_Set_Is_Stack_Used_p)();
+  CG_Set_Is_Stack_Used();
 #endif
 }
 
@@ -2935,15 +2935,25 @@ Allocate_Object ( ST *st )
 #endif
     else if (ST_is_initialized(st) && !ST_init_value_zero (st))
 #ifdef KEY
-    {
-      if (ST_is_constant(st))
-        // GNU puts CLASS_CONST data in .rodata.
-        if (Gen_PIC_Shared && ST_sym_class(st) != CLASS_CONST)
-          sec = _SEC_DATA_REL_RO; // bug 10097
-        else
-          sec = _SEC_RDATA;
-      else
-        sec = _SEC_DATA;
+    {/*data.rel.ro.local is writable(because it is relocated when the code starts up)
+            and since it's writable it's affected by Copy-on-Write. So we put it to .rodata*/
+      if (ST_is_constant(st)){
+	  	// GNU puts CLASS_CONST data in .rodata.
+        if (Gen_PIC_Shared && ST_sym_class(st) != CLASS_CONST){
+		  if(TY_kind(ST_type(st)) == KIND_POINTER)
+		  	sec = _SEC_DATA_REL_RO;
+		  else
+		  	sec = _SEC_RDATA;
+        }
+		else
+		    sec = _SEC_RDATA;
+      }
+      else {
+	  	if (Gen_PIC_Shared && (TY_kind(ST_type(st)) == KIND_POINTER))
+		  sec = _SEC_DATA_REL;
+		else
+          sec = _SEC_DATA;
+      }
     }
 #else
         sec = (ST_is_constant(st) ? _SEC_RDATA : _SEC_DATA);
@@ -3028,14 +3038,19 @@ Allocate_Object ( ST *st )
     else if (ST_is_thread_local(st)) sec = _SEC_LDATA;
 #endif
     else if (ST_is_constant(st)) {
-#ifdef KEY
-      if (Gen_PIC_Shared)
-	sec = _SEC_DATA_REL_RO;  // bug 6925
-      else
-#endif
-      sec = _SEC_RDATA;
+	  /*data.rel.ro.local is writable(because it is relocated when the code starts up)
+		and since it's writable it's affected by Copy-on-Write. So we put it to .rodata*/
+      if(Gen_PIC_Shared && (TY_kind(ST_type(st)) == KIND_POINTER))
+	  	sec = _SEC_DATA_REL_RO;
+	  else
+        sec = _SEC_RDATA;//gnu did the same thing
     }
-    else sec = _SEC_DATA;
+    else{
+	  if(Gen_PIC_Shared && (TY_kind(ST_type(st)) == KIND_POINTER))
+	  	sec = _SEC_DATA_REL;
+	  else
+	    sec = _SEC_DATA;
+    }
     sec = Shorten_Section ( st, sec );
     Allocate_Object_To_Section ( base_st, sec, Adjusted_Alignment(base_st));
     break;

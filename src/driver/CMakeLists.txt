@@ -217,12 +217,6 @@ if(PATH64_ENABLE_DEFAULT_PATHAS)
 endif()
 
 
-option(PATH64_ENABLE_PSCLANG "Enables using psclang front-end" ON)
-if(PATH64_ENABLE_PSCLANG)
-    list(APPEND driver_defs "-DPATH64_ENABLE_PSCLANG")
-endif()
-
-
 if(PATH64_ENABLE_GNU_FRONTEND)
     list(APPEND driver_defs "-DPATH64_ENABLE_GNU_FRONTEND")
 endif()
@@ -325,7 +319,12 @@ endif()
 
 
 add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/check_combos.c ${CMAKE_CURRENT_BINARY_DIR}/implicits.c
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/check_combos.c
+        ${CMAKE_CURRENT_BINARY_DIR}/get_option.i
+        ${CMAKE_CURRENT_BINARY_DIR}/implicits.c
+        ${CMAKE_CURRENT_BINARY_DIR}/init_options.i
+        ${CMAKE_CURRENT_BINARY_DIR}/opt_action.i
+        ${CMAKE_CURRENT_BINARY_DIR}/option_names.h
         COMMAND table < ${CMAKE_CURRENT_BINARY_DIR}/OPTIONS.P
         DEPENDS table ${CMAKE_CURRENT_BINARY_DIR}/OPTIONS.P
         )

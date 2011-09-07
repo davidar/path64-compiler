@@ -58,7 +58,7 @@
 #include "topcode.h"
 #include "isa_subset_gen.h"
 
-main()
+int main()
 {
   ISA_SUBSET x86_64;
 

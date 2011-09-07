@@ -88,7 +88,6 @@ static char *rcs_id = "$Source: be/com/SCCS/s.dep_graph.cxx $ $Revision: 1.7 $";
 #include "dep_graph.h"
 #include "stab.h"
 
-#ifdef LNO
 #include "call_info.h"
 #include "config.h"
 #include "config_cache.h"
@@ -178,7 +177,6 @@ void LNO_Erase_Dg_From_Here_In(WN* wn, ARRAY_DIRECTED_GRAPH16* dg)
 }
 
 extern WN* Get_Only_Loop_Inside(const WN* wn, BOOL regions_ok);
-#endif
 
 
 #ifndef LNO
@@ -563,7 +561,6 @@ Depgraph_Read (char *cur_addr, char *end_addr, char *wn_base)
 // All the remaining code is LNO specific and will not be linked in
 // by other phases
 
-#ifdef LNO
 
 extern MEM_POOL LNO_local_pool; // the local pool
 extern MEM_POOL LNO_default_pool; // the local pool
@@ -3441,7 +3438,6 @@ void SCALAR_STACK::Clear_Formal(INT i)
     _stack->Push(temp_stack.Bottom_nth(j));
 } 
 
-#endif  /* ifdef LNO */
 
 
 

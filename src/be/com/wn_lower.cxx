@@ -121,9 +121,6 @@
 #endif
 
 
-/* this next header should be after the external declarations in the others */
-#include "pragma_weak.h"	/* Alias routines defined in wopt.so */
-
 #include <sstream>
 
 /* ====================================================================

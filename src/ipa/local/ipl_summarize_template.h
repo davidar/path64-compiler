@@ -79,6 +79,8 @@
 #include "wn_mp.h"                    // for WN_has_pragma_with_side_effect
 #include "ipl_lno_util.h" 
 #include "wb_ipl.h"
+#include "ipa_option.h"
+#include "glob.h"
 
 extern BOOL DoPreopt;
 extern BOOL Do_Par;
@@ -87,6 +89,9 @@ extern ALIAS_MANAGER* Ipl_Al_Mgr;
 extern DU_MANAGER *Ipl_Du_Mgr;
 extern DYN_ARRAY<char*>* Ipl_Symbol_Names;
 extern DYN_ARRAY<char*>* Ipl_Function_Names;
+extern WN_MAP Summary_Map;
+extern WN_MAP Stmt_Map;
+extern UINT32 IPL_Ignore_Small_Loops;
 
 extern void Init_Chi_Phi_Hash_Tables(MEM_POOL*);
 extern void IPL_Mark_Code(WN* func_nd);
@@ -1072,7 +1077,7 @@ struct branch_dir
 {
   float taken, not_taken;
 };
-hash_map<WN*, branch_dir, Local::hashfn, Local::eqnode> if_map;
+extern hash_map<WN*, branch_dir, Local::hashfn, Local::eqnode> if_map;
 
 inline void get_parent_if ( WN ** p, WN ** b )
 {

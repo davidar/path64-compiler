@@ -99,7 +99,6 @@ static char *rcs_id = "$Source: /home/bos/bk/kpro64-pending/be/lno/SCCS/s.fis_gt
 #include "prompf.h"
 #include "anl_driver.h"
 #include "lno_trace.h"
-#pragma weak New_Construct_Id
 
 typedef HASH_TABLE<WN*,VINDEX16> WN2VINDEX;
 typedef HASH_TABLE<WN*,UINT> WN2UINT;

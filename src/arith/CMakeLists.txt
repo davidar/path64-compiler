@@ -30,10 +30,6 @@ ADD_DEFINITIONS(
 	-D_LITTLE_ENDIAN
 	-DEDITION=\"23\")
 
-IF(PATH64_USE_FOLD_F)
-    ADD_DEFINITIONS(-D_USE_FOLD_DOT_f)
-ENDIF()
-
 path64_get_host_arch(host_arch)
 path64_add_library_for_arch(arith ${host_arch} STATIC ${PATHSCALE_ARITH_SRCS})
 

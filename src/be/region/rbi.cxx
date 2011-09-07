@@ -77,14 +77,6 @@ static char *rcs_id = rbi_CXX"$Revision$";
 #include "opt_alias_mgr.h"      /* for ALIAS_MANAGER class declaration	*/
 #include "rbi.h"		/* class RBI				*/
 
-// ALIAS_MANAGER::Id(), USE_LIST::Print(), DEF_LIST::Print()
-// defined in wopt.so and exported
-// these pragmas only work for Mongoose (bootstrap), Ucode has no clue.
-#ifdef AFTER_MR
-#pragma weak Print__8USE_LISTGP8__file_s
-#pragma weak Print__8DEF_LISTGP8__file_s
-#pragma weak Id__13ALIAS_MANAGERCGPC2WN
-#endif
 
 #if 0
 this whole file is out of date and needs to be upgraded

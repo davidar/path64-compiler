@@ -444,7 +444,7 @@ WN_TREE_ITER<PRE_ORDER, WHIRL>::Unwind() {
     
     if (WN_operator(parent_wn) == OPR_BLOCK) {
       if (WN_next(wn)) {
-        Set_wn(WN_next(wn));
+        this->Set_wn(WN_next(wn));
         done = TRUE;
       }
       else // all stmts in a block processed ==> go back up
@@ -453,7 +453,7 @@ WN_TREE_ITER<PRE_ORDER, WHIRL>::Unwind() {
     else { // parent is NON_BLOCK ie increment kid_count to get next sibling
       INT indx = this->Get_kid_index();
       if ((0 <= indx) && (indx < WN_kid_count(parent_wn) - 1)) {
-        Set_wn(WN_kid(parent_wn,this->Inc_kid_index()));
+        this->Set_wn(WN_kid(parent_wn,this->Inc_kid_index()));
         done = TRUE;
       }
       else {
@@ -659,10 +659,11 @@ public:
     _start (iterator(w)), _finish (iterator()), _root (w) {
     Is_True(w!=0,("Bad Tree Root"));
   }
+  /* TODO can't initialize our non-const members from a const pointer
   WN_TREE_CONTAINER(const WN* w) :
     _start (const_iterator(w)), _finish (const_iterator()), _root (w) {
     Is_True(w!=0,("Bad Tree Root"));
-  }
+  }*/
                                        
 }; // class WN_TREE_CONTAINER
 

@@ -566,12 +566,10 @@ run_phase (phases_t phase, char *name, string_list_t *args)
               run_inline = FALSE;
             }
 #endif // PATH64_ENABLE_GNU_FRONTEND
-#ifdef PATH64_ENABLE_PSCLANG
             // bug 10215
             if (is_matching_phase(get_phase_mask(phase), P_psclang)) {
               run_inline = FALSE;
             }
-#endif // PATH64_ENABLE_PSCLANG
             break;
 #endif
             if (inline_t == UNDEFINED  && 
@@ -599,12 +597,10 @@ run_phase (phases_t phase, char *name, string_list_t *args)
                 run_inline = TRUE;
             }
 #endif // PATH64_ENABLE_GNU_FRONTEND
-#ifdef PATH64_ENABLE_PSCLANG
             // bug 10215
             if (is_matching_phase(get_phase_mask(phase), P_psclang)) {
               run_inline = TRUE;
             }
-#endif // PATH64_ENABLE_PSCLANG
             break;
 
 #endif
@@ -658,10 +654,8 @@ run_phase (phases_t phase, char *name, string_list_t *args)
 #ifdef KEY
                 phase == P_gas ||           // bug 4846
                 phase == P_f_coco ||        // bug 9058
-#ifdef PATH64_ENABLE_PSCLANG
                 phase == P_psclang_cpp ||
                 phase == P_psclang ||
-#endif // PATH64_ENABLE_PSCLANG
                 status == RC_GCC_INTERNAL_ERROR ||  //bug 9637
 #endif // KEY
 #ifdef PATH64_ENABLE_GNU_FRONTEND

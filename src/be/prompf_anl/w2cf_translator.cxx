@@ -34,26 +34,6 @@
 
 extern ANL_DIAGNOSTICS *Anl_Diag; // Defined in anl_driver.cxx
 
-// Remove any direct dependence on whirl2f.so and whirl2c.so
-//
-#pragma weak    W2C_Push_PU
-#pragma weak    W2C_Pop_PU
-#pragma weak    W2C_Translate_Wn
-#pragma weak    W2C_Translate_Stid_Lhs
-#pragma weak    W2C_Translate_Istore_Lhs
-#pragma weak    W2C_Process_Command_Line
-#pragma weak    W2C_Init
-#pragma weak    W2C_Translate_Wn_Str
-#pragma weak    W2C_Object_Name
-#pragma weak    W2F_Push_PU
-#pragma weak    W2F_Pop_PU
-#pragma weak    W2F_Translate_Wn
-#pragma weak    W2F_Translate_Stid_Lhs
-#pragma weak    W2F_Translate_Istore_Lhs
-#pragma weak    W2F_Process_Command_Line
-#pragma weak    W2F_Init
-#pragma weak    W2F_Translate_Wn_Str
-#pragma weak    W2F_Object_Name
 
 // ============== General Purpose Utilities ===============
 // ========================================================

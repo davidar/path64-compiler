@@ -62,13 +62,6 @@
 
 #include "dra_internal.h"       // Internal DRA interface
 
-#ifndef USE_WEAK_REFERENCES
-extern void (*CG_Change_Elf_Symbol_To_Undefined_p) (ST*);
-#define CG_Change_Elf_Symbol_To_Undefined (*CG_Change_Elf_Symbol_To_Undefined_p)
-#else
-#pragma weak CG_Change_Elf_Symbol_To_Undefined
-#endif // USE_WEAK_REFERENCES
-
 // =====================================================================
 //
 //                      Local function prototypes

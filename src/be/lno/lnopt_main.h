@@ -534,10 +534,6 @@
 //		The phase and local pools used by LNO.
 //		Neither of these pools is "zeroed"
 //
-//    FILE *STDOUT 
-//		
-//		Set to stdout.  Can be used by dbx.
-//
 //    class REGION_INFO 
 //
 // 	Summarizes important information about a parallel region. 
@@ -720,8 +716,6 @@ extern INT snl_debug;
 
 extern BOOL Run_Snl;
 extern BOOL Contains_MP;  // does the PU contain any MP constructs
-
-extern FILE *STDOUT;
 
 extern BOOL LNO_Debug_Delinearization;
 extern BOOL LNO_Allow_Nonlinear;

@@ -90,8 +90,6 @@ static const char *rcs_id = "$Source: /home/bos/bk/kpro64-pending/be/lno/SCCS/s.
 #include "region_util.h"
 #include "debug.h"
 
-#pragma weak New_Construct_Id
-
 typedef struct {
   WN*		pragma;
   BOOL		localized;

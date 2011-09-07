@@ -5282,7 +5282,7 @@ BOOL EBO_Opt_Const_Array( OP* mem_op,
                     ret_val = TRUE;
                   }
                 } 
-                delete init_array;
+                delete [] init_array;
               }
             }
           }

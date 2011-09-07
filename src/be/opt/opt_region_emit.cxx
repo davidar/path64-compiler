@@ -129,7 +129,7 @@ Push_region(STACK<E_REGION *> *stk, BB_NODE *start_region, MEM_POOL *pool)
 
 WN*
 Pop_region(STACK<E_REGION *> *stk, WN *first_wn, WN *last_wn,
-	   REGION_LEVEL rgn_level, OPT_STAB *opt_stab )
+	   REGION_LEVEL rgn_level, OPT_STAB *opt_stab, CFG *cfg)
 {
   E_REGION *e_region = stk->Pop();
   BB_REGION *bb_region = e_region->Region_start()->Regioninfo();
@@ -156,6 +156,12 @@ Pop_region(STACK<E_REGION *> *stk, WN *first_wn, WN *last_wn,
     WN_first(region_body) = first_wn;
     Is_True(last_wn != NULL,("EMITTER::Pop_region, null last statement"));
     WN_last(region_body) = last_wn;
+
+    // filter out dead exits from exit list
+    INT32 nexits = REGION_delete_dead_exits(cfg,
+                                            bb_region->Region_exit_list(),
+                                            bb_region->Region_num_exits());
+
     region_wn = WN_CreateRegion(REGION_type_to_kind(bb_region->Rid()),
 				region_body,
 				bb_region->Region_pragma_list(),
@@ -170,7 +176,7 @@ Pop_region(STACK<E_REGION *> *stk, WN *first_wn, WN *last_wn,
 
     // update the RID and level
     REGION_emit(bb_region->Rid(), region_wn, rgn_level, 
-		bb_region->Region_num_exits(), bb_region->Region_line_num());
+		nexits, bb_region->Region_line_num());
   }
   return region_wn;  
 }
@@ -458,3 +464,36 @@ PRUNE_BOUND::Prune_boundary_sets(void)
     }
   }
 }
+
+
+INT32 REGION_delete_dead_exits(CFG *cfg, WN *exit_list, INT32 nexits) {
+
+  BB_NODE *bb;
+  CFG_ITER cfg_iter;
+  std::set<INT32> live_labels;
+  FOR_ALL_ELEM(bb, cfg_iter, Init(cfg)) {
+    if (bb->Reached() && bb->Labnam() != 0) {
+      live_labels.insert(bb->Labnam());
+    }
+  }
+
+  WN *exit = WN_first(exit_list);
+  while (exit != NULL) {
+    Is_True(WN_opcode(exit) == OPC_REGION_EXIT, ("Bad region exit"));
+    if (live_labels.count(WN_label_number(exit)) == 0) {
+
+      // removing dead exit
+      WN *tmp = exit;
+      exit = WN_next(exit);
+      WN_DELETE_FromBlock(exit_list, tmp);
+      FmtAssert(nexits > 0, ("Inconsistent region info"));
+      --nexits;
+
+    } else {
+      exit = WN_next(exit);
+    }
+  }
+
+  return nexits;
+}
+

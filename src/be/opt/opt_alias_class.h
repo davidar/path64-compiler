@@ -299,7 +299,7 @@ class ALIAS_CLASSIFICATION;
 class ALIAS_CLASS_REP : public U_F_REP<ALIAS_CLASS_MEMBER> {
   friend class ALIAS_CLASSIFICATION;
 #if Is_True_On
-  friend void  print_table(void);
+  friend void  alias_print_table(void);
 #endif
 
   enum ACR_FLAGS {

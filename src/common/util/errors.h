@@ -636,4 +636,7 @@ public:
 
 #endif /* __cplusplus */
 
+typedef void (*signal_cleanup_handler)();
+void Set_Signal_Cleanup(signal_cleanup_handler handler);
+
 #endif /* ERRORS_INCLUDED */

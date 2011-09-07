@@ -141,13 +141,6 @@
 #include "ipa_lno_read.h"
 #include "config_opt.h"
 
-#pragma weak Prompf_Emit_Whirl_to_Source__GP7pu_infoP2WN
-#if ! defined(BUILD_OS_DARWIN)
-#pragma weak Anl_File_Path  
-#endif /* ! defined(BUILD_OS_DARWIN) */
-#pragma weak Print_file__16PROJECTED_REGIONGP8__file_s
-#pragma weak Print_file__14PROJECTED_NODEGP8__file_s
- 
 extern WN *Convert_Intrinsic_To_Alloca_Dealloca (WN *wn);
 extern void Prompf_Emit_Whirl_to_Source(PU_Info* current_pu,
                                         WN* func_nd);
@@ -162,9 +155,6 @@ extern BOOL Phase_123(PU_Info* current_pu, WN* func_nd,
    *
    * ====================================================================
    */
-
-  // Each statement/hcf maps a pointer to its parent
-  WN_MAP Parent_Map;
 
   // Each array maps an ACCESS_ARRAY
   // Each do loop maps a BOUNDS
@@ -191,7 +181,6 @@ extern BOOL Phase_123(PU_Info* current_pu, WN* func_nd,
   REDUCTION_MANAGER *red_manager;
   ARRAY_DIRECTED_GRAPH16 *Array_Dependence_Graph;  // LNO dependence graph
   INT snl_debug = 0; 
-  FILE *STDOUT;
   BOOL Contains_MP = FALSE;
 
   BOOL LNO_enabled = TRUE;
@@ -616,7 +605,6 @@ extern WN * Lnoptimizer(PU_Info* current_pu,
 			ALIAS_MANAGER *alias_mgr)
 {
   extern BOOL Run_lno;
-  STDOUT = stdout;
   last_loop_num = 0;
 
   MEM_POOL_Initialize(&ARA_memory_pool, "ARA_memory_pool", FALSE);

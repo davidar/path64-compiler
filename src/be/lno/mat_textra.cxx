@@ -51,10 +51,6 @@ static const char *rcs_id =   mat_textra_CXX "$Revision: 1.6 $";
 
 // ********************* Required for instantiation **********************
 
-template <> MEM_POOL* MAT<mINT32>::_default_pool = NULL;
-template <> MEM_POOL* MAT<FRAC>::_default_pool = NULL;
-template <> MEM_POOL* MAT<double>::_default_pool = NULL;
-
 // Integer matrix inversion can be performed by making the equivalent fraction
 // matrix and inverting that.
 // The alternative is to cast to doubles instead of fractions.

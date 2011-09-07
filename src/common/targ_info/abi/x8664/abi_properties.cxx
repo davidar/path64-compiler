@@ -325,7 +325,7 @@ static void x86_64_abi(void)
 }
 
 
-main()
+int main()
 {
   ABI_Properties_Begin( "x8664" );
 
