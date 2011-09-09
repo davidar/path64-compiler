@@ -1114,11 +1114,21 @@ Compute_DFO (HB_Schedule *sched, BB_MAP value_map, BOOL is_fwd)
       Compute_Depth(op, value_map);
   }
 #endif
-
+ /*cosider the fowllowing anti dependence. we should schedule op2 first(for the backward). 
+ *so the depth should be calculated backward as well. (SPEC2006 bug of 482.sphinx ) 
+ *op1: [t1] = t2
+ *op2:  t1 = [t3]
+*/
   cur_dfsnum = 1;
-  for (i = 0; i < VECTOR_count(sched->ready_vector()); i++) {
-    DFS_Search (OP_VECTOR_element(sched->ready_vector(), i), value_map, is_fwd);
-  }
+  if(is_fwd)
+    for (i = 0; i < VECTOR_count(sched->ready_vector()); i++) {
+  	 DFS_Search (OP_VECTOR_element(sched->ready_vector(), i), value_map, is_fwd);
+    }
+  else
+    for(i = VECTOR_count(sched->ready_vector()) -1; i >= 0; i--)
+     DFS_Search (OP_VECTOR_element(sched->ready_vector(), i), value_map, is_fwd);
+
+
 }
 
 // ======================================================================
