@@ -4246,6 +4246,25 @@ Identify_Partial_Inline_Candiate(IPA_NODE *callee, WN *wn, BOOL prune_tree,
    return FALSE;
 }
 
+
+struct promote_global_sclass
+{
+    void operator() (UINT, ST* st) const
+    {
+        ST *base = st;
+        while (base != ST_base(base)) {
+            base = ST_base(base);
+        }
+
+        if ((ST_sclass(base) == SCLASS_DGLOBAL || ST_sclass(base) == SCLASS_UGLOBAL) &&
+            ST_sclass(st) == SCLASS_FSTATIC) {
+
+            Set_ST_sclass(st, ST_sclass(base));
+        }
+    }
+};
+
+
 // This function does modify the Caller.
 void
 IPO_INLINE::Process_Callee (IPO_INLINE_AUX& aux, BOOL same_file)
@@ -4379,6 +4398,10 @@ IPO_INLINE::Process_Callee (IPO_INLINE_AUX& aux, BOOL same_file)
     // b. MP related processing in callee: 
     // eg with generation of pregs for actuals, we need to create 
     // pragma "shared" for such pregs IF there is a mp region in callee
+
+    // Previous step can change storage class to [D|U]GLOBAL for some symbols.
+    // We need promote storage class to child symbols.
+    For_all (St_Table, GLOBAL_SYMTAB, promote_global_sclass());
 
 } // Process_Callee
 
