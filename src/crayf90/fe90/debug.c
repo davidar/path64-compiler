@@ -5021,9 +5021,12 @@ static void dump_at_ntry (FILE		*out_file,
       return;
    }
 
+   if (out_file == NULL)
+       out_file = stdout;
+
    /* Note that the fields are displayed in alphabetical order.         */
 
-   fprintf(out_file, "%-s\n", AT_OBJ_NAME_PTR(at_idx));
+   fprintf(out_file, "%s\n", AT_OBJ_NAME_PTR(at_idx));
 
    fprintf(out_file, "  %-25s %-25s %-16s= %-8d\n",
                      obj_class_str[AT_OBJ_CLASS(at_idx)],
