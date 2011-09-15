@@ -1475,8 +1475,15 @@ Merge_St_With_St(const IPC_GLOBAL_TABS &original_tabs,
     case SCLASS_DGLOBAL:
 	if (!ld_resolved_to_obj (pext, original_tabs.p_obj)) {
 	    // multiply defined symbol
-	    if (ST_storage_class (original_st) == SCLASS_DGLOBAL)
-		Invalidate_inito (original_st, original_tabs.inito_tab);
+            if (ST_storage_class (original_st) == SCLASS_DGLOBAL) {
+                if (ST_storage_class(merged_st) == SCLASS_COMMON) {
+                    // merge initialized value to COMMON unitialized value
+                    Set_ST_storage_class(merged_st, SCLASS_DGLOBAL);
+                    Set_ST_is_initialized(merged_st);
+                } else {
+                    Invalidate_inito (original_st, original_tabs.inito_tab);
+                }
+            }
 	    (*New_St_Idx).set_map (ST_st_idx(original_st),
 				   ST_st_idx(merged_st)); 
 	    if (ST_addr_passed (original_st))
