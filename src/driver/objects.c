@@ -61,6 +61,7 @@
 #include "file_utils.h"
 #include "driver_defs.h"
 #include "run.h"
+#include "profile_type.h"    /* for PROFILE_TYPE */
 
 #include "sys/elf_whirl.h"
 
@@ -260,36 +261,70 @@ add_ar_objects (char *arg)
 void
 append_objects_to_list (string_list_t *list)
 {
-	// If without -ipa, don't accept IPA-created objects.
-	if (ipa != TRUE) {
-	  int has_ipa_obj = FALSE;
-	  string_item_t *p;
-	  for (p = objects->head; p != NULL; p = p->next) {
-	    char *filename = p->name;
-	    if (check_for_whirl(filename) == TRUE) {
-	      error("IPA-created object %s not allowed without -ipa", filename);
-	      has_ipa_obj = TRUE;
-	    }
-	  }
-	  if (has_ipa_obj == TRUE)
-	    do_exit(1);
-	}
+    string_list_t *runtime_libs = NULL;
+    string_item_t *object;
 
-        /* Do not allow user to mess with crt*.o objects. Check and throw out redundant files. */
-	string_item_t *p;
-	for (p = objects->head; p != NULL; p = p->next) {
-	  char *filename = p->name;
-         char *dup_filename = strdup(filename);
-	  char *base_name = basename(dup_filename); //basename could modify its argument 
+    // If without -ipa, don't accept IPA-created objects.
+    if (ipa != TRUE) {
+        int has_ipa_obj = FALSE;
+        FOREACH_STRING (object, objects) {
+            char *filename = object->name;
+            if (check_for_whirl(filename) == TRUE) {
+                error("IPA-created object %s not allowed without -ipa", filename);
+                has_ipa_obj = TRUE;
+            }
+        }
+        if (has_ipa_obj == TRUE)
+        do_exit(1);
+    }
 
-	  if (strncmp(base_name, "crt", 3) == 0) {	
+    // building list of runtime libraries
+    runtime_libs = init_string_list();
+    if (!option_was_seen(O_nodefaultlibs) && !option_was_seen(O_nostdlib)) {
+
+        string_list_t *runtime_libs_flags = get_runtime_libraries_ld_flags();
+        string_item_t *item;
+        FOREACH_STRING (item, runtime_libs_flags) {
+            if (strlen(item->name) >= 2 && strncmp(item->name, "-l", 2) == 0) {
+                add_string(runtime_libs, item->name);
+            }
+        }
+        free_string_list(runtime_libs_flags);
+    }
+
+    /* Do not allow user to mess with crt*.o objects. Check and throw out redundant files.
+       Don't add runtime libraries here. Runtime libraries should be added in proper order
+       and with proper flags */
+    FOREACH_STRING (object, objects) {
+        char *filename = object->name;
+        char *dup_filename = strdup(filename);
+        char *base_name = basename(dup_filename); //basename could modify its argument
+
+        if (strncmp(base_name, "crt", 3) == 0) {
             /* cut out superfluous crt*.o objects if specified by libtool */
             add_string_if_new_basename(list, filename);
-	  } else {
+        } else if (strncmp(filename, "-l", 2) == 0) {
+
+            // filtering out runtime libraries
+            string_item_t *rlib;
+            boolean found = FALSE;
+            FOREACH_STRING (rlib, runtime_libs) {
+                if (strcmp(rlib->name, filename) == 0) {
+                    found = TRUE;
+                    break;
+                }
+            }
+
+            if (!found)
+                add_string(list, filename);
+        } else {
             add_string(list, filename);
-          }
-          free(dup_filename);
-	}
+        }
+
+        free(dup_filename);
+    }
+
+    free_string_list(runtime_libs);
 }
 
 /* append cxx_prelinker_objects to end of list */
@@ -637,3 +672,165 @@ check_for_whirl(char *name)
     
 }
 #endif /* defined(BUILD_OS_DARWIN) */
+
+static boolean
+add_instr_archive (string_list_t* args)
+{
+  extern int profile_type;
+
+  /* Add instrumentation archives */
+  if (instrumentation_invoked != UNDEFINED && instrumentation_invoked) {
+
+    unsigned long f = WHIRL_PROFILE | CG_EDGE_PROFILE | CG_VALUE_PROFILE |
+      CG_STRIDE_PROFILE ;
+    if (!(profile_type & ~f)) {
+      if (profile_type & (CG_EDGE_PROFILE |
+                          CG_VALUE_PROFILE | CG_STRIDE_PROFILE)) {
+        add_library (args,"cginstr");
+      }
+
+      add_library (args, "instr2");
+#ifndef PATH64_ENABLE_PSCRUNTIME
+      if (!option_was_seen(O_static) && !option_was_seen(O__static)) {
+        add_arg(args, "-L%s", current_target->libgcc_s_path);
+        add_library(args, "gcc_s");
+      }
+#endif // PATH64_ENABLE_PSCRUNTIME
+
+      return TRUE;
+    } else {
+      fprintf (stderr, "Unknown profile types %#lx\n", profile_type & ~f);
+    }
+  }
+
+  return FALSE;
+}
+
+static boolean is_huge_lib_needed()
+{
+    HUGEPAGE_DESC desc;
+
+    if (!option_was_seen(O_HP))
+        return FALSE;
+
+    if(instrumentation_invoked == TRUE)
+        return FALSE;
+
+    for (desc = hugepage_desc; desc != NULL; desc = desc->next) {
+        if (desc->alloc == ALLOC_BDT || desc->alloc == ALLOC_HEAP) {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+string_list_t *get_runtime_libraries_ld_flags()
+{
+    string_list_t *flags = init_string_list();
+
+    boolean instr_used = add_instr_archive(flags);
+    boolean huge_lib_used = is_huge_lib_needed();
+
+    if(huge_lib_used) {
+        add_library(flags, "hugetlbfs-psc");
+    }
+
+#ifdef PATH64_ENABLE_PSCRUNTIME
+#ifdef __sun
+    add_string(flags, "-z");
+    add_string(flags, "ignore");
+#else // !__sun
+    add_string(flags, "--as-needed");
+#endif // !__sun
+
+    if((source_lang == L_CC || instr_used) &&
+       !option_was_seen(O_nodefaultlibs) &&
+       !option_was_seen(O_nostdlib) &&
+       !option_was_seen(O_nostdlib__)) {
+
+        // STL library
+        add_library(flags, "stl");
+
+        // C++ support library
+        add_library(flags, "cxxrt");
+
+        // other dependencies
+        add_library(flags, "pthread");
+
+#ifndef  __FreeBSD__
+        add_library(flags, "dl");
+#endif // !__FreeBSD__
+    }
+
+    // static libc should be grouped with libgcc and libeh
+    // because there is loop in dependencies between these libs
+    if (option_was_seen(O_static) || option_was_seen(O__static)) {
+        add_string(flags, "--start-group");
+    }
+
+    if(option_was_seen(O_static_libgcc)) {
+        add_string(flags, "-Bstatic");
+    }
+
+    add_library(flags, "gcc");
+
+    // Exception support library (used by stl and gcc)
+    // staic libc also depends on libeh
+    if(option_was_seen(O_static) ||
+       source_lang == L_CC ||
+       instr_used ||
+       option_was_seen(O_fexceptions)) {
+        add_library(flags, "eh");
+    }
+
+    if(option_was_seen(O_static_libgcc)) {
+        add_string(flags, "-Bdynamic");
+    }
+
+    add_library(flags, "c");
+
+    if (option_was_seen(O_static) || option_was_seen(O__static)) {
+        add_string(flags, "--end-group");
+    }
+
+    // always link with math library (libgcc depends on libm)
+    add_library(flags, "mv");
+    add_library(flags, "mpath");
+    add_library(flags, "m");
+
+#ifdef __sun
+    add_string(flags, "-z");
+    add_string(flags, "record");
+#else // !__sun
+    add_string(flags, "--no-as-needed");
+#endif // !__sun
+
+#else // !PATH64_ENABLE_PSCRUNTIME
+
+    if(source_lang == L_CC || instr_used) {
+        add_arg(flags, "-L%s", current_target->libstdcpp_path);
+        add_library(flags, "stdc++");
+    }
+
+    if (option_was_seen(O_static) || option_was_seen(O__static)){
+        add_string(flags, "--start-group");
+
+        add_arg(flags, "-L%s", current_target->libgcc_path);
+        add_library(flags, "gcc");
+
+        add_arg(flags, "-L%s", current_target->libgcc_eh_path);
+        add_library(flags, "gcc_eh");
+
+        add_library(flags, "c");  /* the above libs should be grouped together */
+
+        add_string(flags, "--end-group");
+
+        if(invoked_lang == L_CC || instr_used) {
+            add_arg(flags, "-L%s", current_target->libsupcpp_path);
+            add_library(flags, "supc++");
+        }
+    }
+#endif
+    return flags;
+}

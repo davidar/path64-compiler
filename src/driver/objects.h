@@ -81,6 +81,10 @@ boolean is_maybe_linker_option (int flag);
 void add_maybe_linker_option (int flag);
 void finalize_maybe_linker_options (boolean is_linker);
 
+/* Returns list of runtime libraries which are needed to be linked,
+   including required ld options (such as --as-needed) */
+string_list_t *get_runtime_libraries_ld_flags();
+
 #ifdef TARG_MIPS
 extern char *sysroot_path_n32;
 extern char *sysroot_path_64;

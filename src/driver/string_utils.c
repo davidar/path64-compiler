@@ -37,6 +37,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <libgen.h>
+#include <stdarg.h>
 #include "string_utils.h"
 
 #define BLANK	' '
@@ -155,6 +156,18 @@ init_string_list (void)
 	return p; 
 }
 
+void
+free_string_list(string_list_t *list)
+{
+        string_item_t *item = list->head;
+        while(item != NULL) {
+                free(item->name);
+                item = item->next;
+        }
+
+        free(list);
+}
+
 /* add string that has already been allocated */
 static void
 add_existing_string (string_list_t *list, char *s)
@@ -191,6 +204,21 @@ add_string (string_list_t *list, const char *s)
 {
 	/* don't worry about blanks in this version of add_string */
 	add_existing_string (list, string_copy(s));
+}
+
+void
+add_arg(string_list_t *args, const char *format, ...)
+{
+        char *arg;
+        va_list ap;
+
+        va_start(ap, format);
+
+        vasprintf(&arg, format, ap);
+        add_string(args, arg);
+        free(arg);
+
+        va_end(ap);
 }
 
 /* add each blank-separated string to list */

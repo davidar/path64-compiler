@@ -70,7 +70,6 @@
 #include "run.h"
 #include "objects.h"
 #include "opt_actions.h"
-#include "profile_type.h"    /* for PROFILE_TYPE */
 #include "get_options.h"
 #include "targets.h"
 
@@ -142,7 +141,6 @@ static void add_command_line_arg(string_list_t *args, char *sourcefile);
 static void do_f90_common_args(string_list_t *args) ;
 static void set_f90_source_form(string_list_t *args,boolean set_line_length) ;
 static void set_stack_size();
-static boolean add_instr_archive (string_list_t* args);
 
 static phases_t
 post_fe_phase (void);
@@ -498,25 +496,6 @@ char *dirname(char *const s)
 
 
 static char *input_source ;	/* src to next phase */
-
-static void add_arg(string_list_t *args, const char *format, ...)
-	__attribute__((format (printf, 2, 3)));
-
-static void
-add_arg(string_list_t *args, const char *format, ...)
-{
-	char *arg;
-	va_list ap;
-
-	va_start(ap, format);
-
-	vasprintf(&arg, format, ap);
-	add_string(args, arg);
-	free(arg);
-
-	va_end(ap);
-}
-
 
 // Returns path to library directory
 
@@ -2059,32 +2038,10 @@ void add_crtend(string_list_t *args) {
 }
 
 
-static boolean is_huge_lib_needed()
-{
-    HUGEPAGE_DESC desc;
-
-    if (!option_was_seen(O_HP))
-        return FALSE;
-
-    if(instrumentation_invoked == TRUE)
-        return FALSE;
-
-    for (desc = hugepage_desc; desc != NULL; desc = desc->next) {
-        if (desc->alloc == ALLOC_BDT || desc->alloc == ALLOC_HEAP) {
-            return TRUE;
-        }
-    }
-
-    return FALSE;
-}
-
-
 static void
 add_final_ld_args (string_list_t *args)
 {
 	char *temp;
-    boolean instr_used = FALSE;
-    boolean huge_lib_used = FALSE;
 
     if(ipa == TRUE) {
         if(option_was_seen(O_static_libgcc)) {
@@ -2131,109 +2088,12 @@ add_final_ld_args (string_list_t *args)
         return;
     }
 
-    instr_used = add_instr_archive(args);
-
-    huge_lib_used = is_huge_lib_needed();
-
-    if(huge_lib_used) {
-        add_library(args, "hugetlbfs-psc");
+    // adding runtime libraries to ld flags
+    {
+        string_list_t *runtime_libs_ld_flags = get_runtime_libraries_ld_flags();
+        append_string_lists(args, runtime_libs_ld_flags);
+        free(runtime_libs_ld_flags);
     }
-
-#ifdef PATH64_ENABLE_PSCRUNTIME
-#ifdef __sun
-    add_arg(args, "-z");
-    add_arg(args, "ignore");
-#else // !__sun
-    add_arg(args, "--as-needed");
-#endif // !__sun
-
-    if((source_lang == L_CC || instr_used) &&
-       !option_was_seen(O_nodefaultlibs) &&
-       !option_was_seen(O_nostdlib) &&
-       !option_was_seen(O_nostdlib__)) {
-    
-        // STL library
-    	add_library(args, "stl");
-    
-        // C++ support library
-        add_library(args, "cxxrt");
-    
-        // other dependencies
-        add_library(args, "pthread");
-
-#ifndef  __FreeBSD__
-        add_library(args, "dl");
-#endif // !__FreeBSD__
-    }
-
-    // static libc should be grouped with libgcc and libeh
-    // because there is loop in dependencies between these libs
-    if (option_was_seen(O_static) || option_was_seen(O__static)) {
-        add_arg(args, "--start-group");
-    }
-
-    if(option_was_seen(O_static_libgcc)) {
-        add_arg(args, "-Bstatic");
-    }
-
-    add_library(args, "gcc");
-
-    // Exception support library (used by stl and gcc)
-    // staic libc also depends on libeh
-    if(option_was_seen(O_static) ||
-       source_lang == L_CC ||
-       instr_used ||
-       option_was_seen(O_fexceptions)) {
-        add_library(args, "eh");
-    }
-
-    if(option_was_seen(O_static_libgcc)) {
-        add_arg(args, "-Bdynamic");
-    }
-
-    add_library(args, "c");
-
-    if (option_was_seen(O_static) || option_was_seen(O__static)) {
-        add_arg(args, "--end-group");
-    }
-
-    // always link with math library (libgcc depends on libm)
-    add_library(args, "mv");
-    add_library(args, "mpath");
-    add_library(args, "m");
-
-#ifdef __sun
-    add_arg(args, "-z");
-    add_arg(args, "record");
-#else // !__sun
-    add_arg(args, "--no-as-needed");
-#endif // !__sun
-
-#else
-    if(source_lang == L_CC || instr_used) {
-        add_arg(args, "-L%s", current_target->libstdcpp_path);
-        add_library(args, "stdc++");
-    }
-
-    if (option_was_seen(O_static) || option_was_seen(O__static)){
-        add_arg(args, "--start-group");
-
-        add_arg(args, "-L%s", current_target->libgcc_path);
-        add_library(args, "gcc");
-
-        add_arg(args, "-L%s", current_target->libgcc_eh_path);
-        add_library(args, "gcc_eh");
-
-        add_library(args, "c");  /* the above libs should be grouped together */
-
-        add_arg(args, "--end-group");
-         
-        if(invoked_lang == L_CC || instr_used) {
-            add_arg(args, "-L%s", current_target->libsupcpp_path);
-            add_library(args, "supc++");
-        }
-    }
-#endif
 	
     if( ! option_was_seen(O_nostartfiles)) add_crtend(args);
 
@@ -2898,39 +2758,6 @@ check_existence_of_phases (void)
 	    break;
 	}
     }
-}
-
-static boolean
-add_instr_archive (string_list_t* args)
-{
-  extern int profile_type;
-
-  /* Add instrumentation archives */
-  if (instrumentation_invoked != UNDEFINED && instrumentation_invoked) {
-
-    unsigned long f = WHIRL_PROFILE | CG_EDGE_PROFILE | CG_VALUE_PROFILE |
-      CG_STRIDE_PROFILE ;
-    if (!(profile_type & ~f)) {
-      if (profile_type & (CG_EDGE_PROFILE |
-			  CG_VALUE_PROFILE | CG_STRIDE_PROFILE)) {
-	add_library (args,"cginstr");
-      }
-
-      add_library (args, "instr2");
-#ifndef PATH64_ENABLE_PSCRUNTIME
-      if (!option_was_seen(O_static) && !option_was_seen(O__static)) {
-        add_arg(args, "-L%s", current_target->libgcc_s_path);
-	add_library(args, "gcc_s");
-      }
-#endif // PATH64_ENABLE_PSCRUNTIME
-
-      return TRUE;
-    } else {
-      fprintf (stderr, "Unknown profile types %#lx\n", profile_type & ~f);
-    }
-  }
-
-  return FALSE;
 }
 
 

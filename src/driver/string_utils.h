@@ -87,14 +87,22 @@ typedef struct string_list_rec {
 /* must call this before using a string list */
 extern string_list_t * init_string_list (void);
 
+/* frees memory for string list */
+extern void free_string_list(string_list_t *list);
+
 /* return number of elements in list */
 extern int string_list_size(const string_list_t *l);
 
 /* add string to end of list */
 extern void add_string (string_list_t *list, const char *s);
 
+/* add formatted string to end of list */
+extern void add_arg(string_list_t *args, const char *format, ...);
+extern void add_arg(string_list_t *args, const char *format, ...)
+        __attribute__((format (printf, 2, 3)));
+
 /* add string after item in list */
-extern void add_after_string (string_list_t *list, string_item_t *item, char *s);
+extern void add_after_string(string_list_t *list, string_item_t *item, char *s);
 
 /* add each blank-separated substring to end of list */
 #ifndef KEY
