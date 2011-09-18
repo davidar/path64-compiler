@@ -93,11 +93,11 @@
 #include <stdlib.h>
 #include <vector>
 #include <stack>
+#include <set>
 
 #include "defs.h"
 #include "stab.h"
 #include "wn.h"
-#include "wn_map.h"
 #include "wn_util.h"
 #include "mempool.h"
 #include "tracing.h"
@@ -178,12 +178,14 @@ pragma_mapped_ids pragmas_supported[NUM_PRAGMAS_SUPPORTED] =
 class WN_Verifier{
   private:
 
+    typedef std::set<WN*> wn_set;
+
     /*------------------------------------------------------
      * Private variable section
      *-----------------------------------------------------*/
 
     MEM_POOL _mem_pool;
-    WN_MAP   _map;
+    wn_set   _visited_wns;
     BOOL     _is_tree_OK;
     WN      *_func;
     std::stack< pragma_stack_type > _pragma_stack; 
@@ -217,7 +219,6 @@ class WN_Verifier{
     BOOL     Are_enclosed_pragmas(WN *wn, WN *parent_wn);
     BOOL     Field_id_valid (WN* wn);
 
-
   public:
              WN_Verifier(WN *wn);
             ~WN_Verifier();
@@ -236,7 +237,6 @@ WN_Verifier::WN_Verifier(WN *wn)
 
   MEM_POOL_Initialize(&_mem_pool, "Verifier_Pool", FALSE);
   MEM_POOL_Push(&_mem_pool);
-  _map = WN_MAP_Create(&_mem_pool);
   
   // Empty WHIRL tree is OK
 
@@ -253,7 +253,6 @@ WN_Verifier::~WN_Verifier(void)
 {
   // Clear and dispose of the memory map
 
-  WN_MAP_Delete(_map);
   MEM_POOL_Pop(&_mem_pool);
   MEM_POOL_Delete(&_mem_pool);
 }
@@ -426,22 +425,22 @@ BOOL WN_Verifier::ST_is_not_NULL(WN *wn, OPCODE op)
 /*-----------------------------------------------------------
  * Check if the WHIRL tree is actually a tree
  * by checking if the current node was visited
- * before. It uses maps to accomplish this, maping a visited
- * node to its parent. If the node was not visited previously
- * the map should return NULL, and not the parent of the node
+ * before. It uses std::set to accomplish this,
+ * storing set of visited nodes.
  *-----------------------------------------------------------*/
 BOOL
 WN_Verifier::Is_WHIRL_tree(WN *wn, WN *parent_wn)
 {
   if (Is_legal_wn_opcode(WN_opcode(wn)) == FALSE)
     return FALSE;
-  if ( WN_MAP_Get(_map, wn) != NULL ) {
+
+  std::pair<wn_set::iterator, bool> res = _visited_wns.insert(wn);
+  if (!res.second) {
     FmtAssert(FALSE, ("WN_verifier ERROR: This is not a WHIRL tree\n\t"
-		      "(0x%x --> 0x%x, 0x%x --> 0x%x).\n",
-		      WN_MAP_Get(_map, wn), wn, parent_wn, wn));
+                      "%p already visited", wn));
     return FALSE;
-  } else
-    WN_MAP_Set(_map, wn, (void *)parent_wn);
+  }
+
   return TRUE;
 }
 
