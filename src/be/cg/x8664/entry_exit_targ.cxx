@@ -157,7 +157,8 @@ void EETARG_Generate_PIC_Entry_Code( BB* bb, OPS* ops )
 
   if (Is_Target_EM64T()    ||
       Is_Target_Wolfdale() ||
-      Is_Target_Core())
+      Is_Target_Core() ||
+      Is_Target_Sandy_Bridge())
   {
     const LABEL_IDX bb_label = Gen_Label_For_BB(bb2);
 

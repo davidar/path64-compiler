@@ -174,8 +174,9 @@ CG_PU_Initialize (WN *wn_pu)
   PU_Has_Nonlocal_Goto_Target = PU_has_nonlocal_goto_label(Get_Current_PU());
 #endif
 #ifdef TARG_X8664
-  if (! cg_load_execute_overridden) {
-    if ((Is_Target_EM64T() || Is_Target_Core() || Is_Target_Wolfdale()) &&
+  if (! cg_load_execute_overridden) {//why iNTEL is different from AMD here
+    if ((Is_Target_EM64T() || Is_Target_Core() || Is_Target_Wolfdale()
+		||Is_Target_Sandy_Bridge()) &&
         PU_src_lang(Get_Current_PU()) != PU_C_LANG) {	// bug 10233
       CG_load_execute = 0;
     } else if (! Is_Target_32bit() &&
