@@ -2088,25 +2088,6 @@ get_platform_abi(void)
 #endif
 }
 
-// Return the numeric value after ':' in a line in /proc/cpuinfo.
-int
-get_num_after_colon (char *str)
-{
-  char *p;
-  int num;
-
-  p = strchr(str, ':');
-  if (p == NULL) {
-    error ("cannot parse /proc/cpuinfo: missing colon");
-  }
-  p++;
-  if (sscanf(p, "%d", &num) == 0) {
-    error ("cannot parse /proc/cpuinfo: missing number after colon");
-  }
-  return num;
-}
-
-
 // Return the CPU target name to default to as a last resort.
 static char *
 get_default_cpu_name (char *msg)
