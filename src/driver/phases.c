@@ -53,6 +53,9 @@
 #include <sys/param.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#ifdef __FreeBSD__
+#include <sys/sysctl.h>
+#endif
 #ifdef _WIN32
 #include <alloca.h>
 #endif
@@ -2771,6 +2774,14 @@ get_gnu_prefix (void)
   char path[MAXPATHLEN];
   int i, j, len, rval;
 
+#if defined(__FreeBSD__)
+  int path_mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
+  size_t path_size = sizeof(path);
+
+  if (sysctl(path_mib, 4, path, &path_size, NULL, 0) != 0) {
+    strncpy(path, orig_program_name, sizeof(path));
+  }
+#else
   /* Look in this special place for a link to the executable.  This only
      works on Linux, but it should work since pathcc runs only on Linux. */
   rval = readlink ("/proc/self/exe", path, sizeof(path));
@@ -2780,6 +2791,7 @@ get_gnu_prefix (void)
   } else {
     path[rval] = '\0';		// readlink doesn't append NULL
   }
+#endif
 
   // Extract command from command path.  If command path is
   // /foo/mips64el-key-linux-pathcc, then command is mips64el-key-linux-pathcc.
