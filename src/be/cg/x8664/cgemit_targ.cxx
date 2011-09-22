@@ -296,12 +296,9 @@ CGEMIT_Prn_Scn_In_Asm (FILE       *asm_file,
       *p = '\0'; // null terminate the string.
       fprintf (asm_file, ", \"%s\"", scn_flags_string);
 #ifndef _WIN32
-#ifndef __FreeBSD__ // FIXME: target os should be checked
       if (Is_Target_64bit() && strcmp (scn_name, ".eh_frame") == 0)
         fprintf (asm_file, ",@unwind");
-      else 
-#endif // __FreeBSD__
-      if (scn_type == SHT_PROGBITS)
+      else if (scn_type == SHT_PROGBITS)
         fprintf (asm_file, ",@progbits");
       else if (scn_type == SHT_NOBITS)
         fprintf (asm_file, ",@nobits");
