@@ -734,9 +734,13 @@ add_target_linker_args(string_list_t *args, boolean is_ipa) {
         if((abi == ABI_M64 || abi == ABI_64) && !is_ipa) {
             add_string(args, "-64");
         }
-#elif defined(__FreeBSD__)
-    add_string(args, (abi == ABI_N32) ? "-melf_i386_fbsd" : "-melf_x86_64_fbsd");
 #else
+#ifdef __FreeBSD__
+        if (!is_ipa) {
+            // XXX ipa_link cannot handle FreeBSD ABI.
+            add_string(args, (abi == ABI_M32) ? "-melf_i386_fbsd" : "-melf_x86_64_fbsd");
+        } else
+#endif
         add_string(args, (abi == ABI_M32) ? "-melf_i386" : "-melf_x86_64");
 #endif
     }
