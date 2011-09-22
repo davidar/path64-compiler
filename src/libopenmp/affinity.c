@@ -27,6 +27,10 @@
 #include "types.h"
 #include "utils.h"
 
+#ifdef __FreeBSD__
+#define __NR_sched_setaffinity SYS_cpuset_setaffinity
+#define __NR_sched_getaffinity SYS_cpuset_getaffinity
+#else
 #ifndef __NR_sched_setaffinity
 /* for distributions that do not provide these in <sys/syscall.h> */
 #if defined __x86_64__
@@ -46,6 +50,7 @@
 #define __NR_sched_getaffinity	242
 #endif
 #endif
+#endif
 
 typedef enum affinity_style_t {
   AFFINITY_UNKNOWN,
@@ -63,7 +68,11 @@ int __pmp_getset_affinity (int nr, pid_t pid, unsigned int len,
 
   if (__pmp_affinity_style == AFFINITY_UNKNOWN ||
       __pmp_affinity_style == AFFINITY_3P) {
+#ifdef __FreeBSD__
+    e = __syscall(nr, CPU_LEVEL_WHICH, CPU_WHICH_PID, -1, len, cpus);
+#else
     e = syscall(nr, 0, len, cpus);
+#endif
     /* __pmp_debug(PMP_DEBUG_INFO,
      *             "__pmp_getset_affinity nr=%d 3P returns %d\n",
      *             nr, e);
@@ -76,7 +85,11 @@ int __pmp_getset_affinity (int nr, pid_t pid, unsigned int len,
 
   if (__pmp_affinity_style == AFFINITY_UNKNOWN ||
       __pmp_affinity_style == AFFINITY_2P) {
+#ifdef __FreeBSD__
+    e = __syscall(nr, CPU_LEVEL_WHICH, CPU_WHICH_PID, -1, len, cpus);
+#else
     e = syscall(nr, 0, cpus);
+#endif
     /* __pmp_debug(PMP_DEBUG_INFO, 
      *             "__pmp_getset_affinity nr=%d 2P returns %d\n",
      *             nr, e);
