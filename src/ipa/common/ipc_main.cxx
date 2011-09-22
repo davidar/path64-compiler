@@ -32,6 +32,9 @@
 
 #define __STDC_LIMIT_MACROS
 #include <stdint.h>
+#ifndef __linux__
+#include <unistd.h>
+#endif
 #include "linker.h"			/* linker headers */
 #include "process_p.h"                    /* For create_tmpdir. */
 
@@ -147,6 +150,7 @@ ipa_dot_so_init ()
 // Returns number of processors on success, otherwise returns 0
 static int get_num_procs (void)
 {
+#ifdef __linux__
   FILE * fp;
   char buf[256];
   int cpus = 0;
@@ -161,6 +165,12 @@ static int get_num_procs (void)
   }
 
   fclose (fp);
+#else
+  int cpus;
+
+  if ((cpus = sysconf(_SC_NPROCESSORS_ONLN)) < 0)
+    return 0;
+#endif
   return cpus;
 }
 #endif // KEY
