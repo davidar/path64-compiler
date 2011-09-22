@@ -151,6 +151,6 @@ __do_global_ctors_aux:
 	.section	.fini, "ax", @progbits
 	call	__do_global_dtors_aux
 
-#if defined(__linux__) && defined(__ELF__)
+#if (defined(__FreeBSD__) || defined(__linux__)) && defined(__ELF__)
     .section .note.GNU-stack,"",@progbits
 #endif

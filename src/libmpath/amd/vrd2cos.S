@@ -767,6 +767,6 @@ movapd	.L__real_3fe0000000000000(%rip),%xmm5		#0.5 for later use
 	add	$0x138,%rsp
 	ret
 
-#if defined(__linux__) && defined(__ELF__)
+#if (defined(__FreeBSD__) || defined(__linux__)) && defined(__ELF__)
     .section .note.GNU-stack,"",@progbits
 #endif
