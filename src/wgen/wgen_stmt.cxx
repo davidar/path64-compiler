@@ -207,6 +207,9 @@ class TYPE_FILTER_ENTRY {
   ST_IDX		st;	// typeinfo
   int			filter;	// action record filter
   friend bool operator== (const TYPE_FILTER_ENTRY&, const TYPE_FILTER_ENTRY&);
+
+  TYPE_FILTER_ENTRY(ST_IDX s, int f):
+      st(s), filter(f) {}
 };
 
 inline bool operator==(const TYPE_FILTER_ENTRY& x, const TYPE_FILTER_ENTRY& y)
@@ -628,12 +631,11 @@ Do_EH_Tables (void)
 // silently calls INITV_Set_ONE() if the value is 1. Then you
 // try to retrieve later using INITV_tc_val(), and you get an
 // assertion failure!
-		if (type_filter_vector[i].st)
-                    INITV_Set_VAL (Initv_Table[st],
-                        Enter_tcon (Host_To_Targ (MTYPE_U4,
-                                type_filter_vector[i].st)), 1);
-		else
-		    INITV_Set_ZERO (Initv_Table[st], MTYPE_U4, 1);
+                FmtAssert(type_filter_vector[i].st != 0,
+                          ("Bad TI in TI table"));
+
+                INITV_Set_SYMOFF(Initv_Table[st], 1,
+                                 type_filter_vector[i].st, 0);
 
                 INITV_IDX filter = New_INITV();
                 INITV_Set_VAL (Initv_Table[filter],
@@ -672,15 +674,21 @@ Do_EH_Tables (void)
         type_filter_vector.clear();
 
 	INITV_IDX prev_st = 0;
-        for (int i=0; i<eh_spec_func_end.size(); ++i)
+
+        for (int i = 0; i < eh_spec_func_end.size(); ++i)
         {
                 INITV_IDX st = New_INITV();
-		FmtAssert (eh_spec_func_end[i] >= 0, ("Invalid eh-spec entry in front-end"));
-		if (eh_spec_func_end[i])
-                    INITV_Set_VAL (Initv_Table[st], Enter_tcon (
-		    	Host_To_Targ (MTYPE_U4, eh_spec_func_end[i])), 1);
-		else
-		    INITV_Set_ZERO (Initv_Table[st], MTYPE_U4, 1);
+                FmtAssert (eh_spec_func_end[i] >= 0, ("Invalid eh-spec entry in front-end"));
+
+                if (eh_spec_func_end[i] > 0)
+                {
+                    INITV_Set_SYMOFF (Initv_Table[st], 1, eh_spec_func_end[i], 0);
+                }
+                else
+                {
+                    // zero separator
+                    INITV_Set_ZERO(Initv_Table[st], MTYPE_I4, 1);
+                }
 
                 if (prev_st == 0)
                 {
@@ -3079,7 +3087,11 @@ Create_handler_list (int scope_index, bool &cleanups_seen)
 
 	ST_IDX st = 0;
 	if (type) st = ST_st_idx (Get_ST (Get_typeinfo_var(type)));
-	INITV_Set_VAL (Initv_Table[type_st], Enter_tcon (Host_To_Targ (MTYPE_U4, st)), 1);
+
+        if (st != 0)
+            INITV_Set_SYMOFF(Initv_Table[type_st], 1, st, 0);
+        else
+            INITV_Set_ZERO(Initv_Table[type_st], MTYPE_U4, 1);
 
 	if (prev_type_st) Set_INITV_next (prev_type_st, type_st);
 	else start = type_st;
@@ -3123,7 +3135,7 @@ lookup_handlers (vector<gs_t> *cleanups)
     {
 	type_st = New_INITV();
 	ST_IDX st = *i;
-	INITV_Set_VAL (Initv_Table[type_st], Enter_tcon (Host_To_Targ (MTYPE_U4, st)), 1);
+        INITV_Set_SYMOFF(Initv_Table[type_st], 1, st, 0);
 
 	if (prev_type_st) Set_INITV_next (prev_type_st, type_st);
 	else start = type_st;
@@ -3356,11 +3368,10 @@ lookup_cleanups (INITV_IDX& iv)
     {
       INITV_IDX ix;
       for (ix = iv; ix != 0; ix = INITV_next (ix)) {
-        int val = TCON_ival (INITV_tc_val (ix));
-        if (val == 0) {
+        if (INITV_kind(ix) == INITVKIND_ZERO)
           break;
-        }
       }
+
       if (ix == 0 && iv != 0) {
         // No catch-all, appending cleanup action
         // Indicate a clean-up action by zero
@@ -3793,11 +3804,9 @@ WGEN_Expand_EH_Spec (gs_t stmt)
           ST_IDX type_st = ST_st_idx (Get_ST ( 
 			Get_typeinfo_var(gs_tree_value(eh_spec))));
           eh_spec_vector.push_back (type_st);
-	  eh_spec_func_end.push_back (type_st);
+          eh_spec_func_end.push_back (type_st);
 
-          TYPE_FILTER_ENTRY e;
-          e.st = type_st;
-          e.filter = 0; // do not compare based on filter
+          TYPE_FILTER_ENTRY e(type_st, 0);
           vector<TYPE_FILTER_ENTRY>::iterator f = find(type_filter_vector.begin(), type_filter_vector.end(), e);
           if (f == type_filter_vector.end())
           {
@@ -3805,8 +3814,10 @@ WGEN_Expand_EH_Spec (gs_t stmt)
       	    type_filter_vector.push_back (e);
 	  }
         }
-        eh_spec_vector.push_back (0); // terminator
-        eh_spec_func_end.push_back (0);
+
+        // zero values are used to separate EH specs for inlined functions
+        eh_spec_vector.push_back(0);
+        eh_spec_func_end.push_back(0);
       }
 #endif
 #ifdef KEY
@@ -4019,34 +4030,28 @@ WGEN_Expand_Handlers_Or_Cleanup (const HANDLER_INFO &handler_info)
         gs_t type = gs_handler_type(t_copy);
         ST_IDX  sym = 0;
 	if (type) sym = ST_st_idx (Get_ST (Get_typeinfo_var(type)));
-        TYPE_FILTER_ENTRY e;
-        e.st = sym;
-        e.filter = 0; // do not compare based on filter
-        vector<TYPE_FILTER_ENTRY>::iterator f = find(type_filter_vector.begin(), type_filter_vector.end(), e);
-        if (f == type_filter_vector.end())
-        {
-	  e.filter = type_filter_vector.size()+1;
-      	  type_filter_vector.push_back (e);
-	  if (e.st)
-	  	Generate_filter_cmp (e.filter, HANDLER_LABEL(t_copy));
-	  else // catch-all, so do not compare filter
-      		WGEN_Stmt_Append (WN_CreateGoto ((ST_IDX) NULL, 
-				HANDLER_LABEL(t_copy)), Get_Srcpos());
-#if 0
-// we shouldn't need the following sort call
-// TODO: verify and remove it.
-	  sort (type_filter_vector.begin(), type_filter_vector.end(), 
-		cmp_types());
-#endif
+
+        int filter = 0;
+
+        if (sym != 0) {
+          // adding type to type_filter_vector if not added
+
+          vector<TYPE_FILTER_ENTRY>::iterator it = find(type_filter_vector.begin(),
+                                                        type_filter_vector.end(),
+                                                        TYPE_FILTER_ENTRY(sym, 0));
+          if (it == type_filter_vector.end()) {
+            filter = type_filter_vector.size() + 1;
+            type_filter_vector.push_back(TYPE_FILTER_ENTRY(sym, filter));
+          } else {
+            filter = it->filter;
+          }
         }
-        else 
-	{
-	  if (e.st)
-	  	Generate_filter_cmp ((*f).filter, HANDLER_LABEL(t_copy));
-	  else // catch-all, so do not compare filter
-      		WGEN_Stmt_Append (WN_CreateGoto ((ST_IDX) NULL, 
-				HANDLER_LABEL(t_copy)), Get_Srcpos());
-	}
+
+        if (sym)
+          Generate_filter_cmp(filter, HANDLER_LABEL(t_copy));
+        else // catch-all, so do not compare filter
+          WGEN_Stmt_Append(WN_CreateGoto ((ST_IDX) NULL,
+                           HANDLER_LABEL(t_copy)), Get_Srcpos());
       }
 
   WGEN_Stmt_Append (

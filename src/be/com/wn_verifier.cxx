@@ -218,6 +218,8 @@ class WN_Verifier{
     BOOL     Load_addr_TY_is_not_NULL(WN *wn, OPCODE op); 
     BOOL     Are_enclosed_pragmas(WN *wn, WN *parent_wn);
     BOOL     Field_id_valid (WN* wn);
+    void     Check_eh_region(WN *wn);
+    void     Check_func_entry_pu(WN *wn);
 
   public:
              WN_Verifier(WN *wn);
@@ -257,6 +259,131 @@ WN_Verifier::~WN_Verifier(void)
   MEM_POOL_Delete(&_mem_pool);
 }
 
+
+// Checks EH region correctness
+void WN_Verifier::Check_eh_region(WN *wn)
+{
+  FmtAssert(WN_operator(wn) == OPR_REGION, ("Invalid wn passed"));
+
+  INITO_IDX ereg_supp_idx = WN_ereg_supp(wn);
+  FmtAssert(ereg_supp_idx != 0, ("Bad ereg_supp inito"));
+
+  INITV_IDX ereg_val_idx = INITO_val(ereg_supp_idx);
+  FmtAssert(ereg_val_idx != 0, ("Bad ereg_supp inito value"));
+
+  // skip dummy ereg_supps for try regions
+  if (INITV_kind(ereg_val_idx) == INITVKIND_LABEL)
+    return;
+
+  FmtAssert(INITV_kind(ereg_val_idx) == INITVKIND_BLOCK,
+            ("ereg_supp value is not a block"));
+
+  // first value in the block should be label for EH region langing pad
+  // or zero for EH regions without linging pad
+
+  INITV_IDX label_initv_idx = INITV_blk(ereg_val_idx);
+  if (INITV_kind(label_initv_idx) == INITVKIND_ZERO) {
+    // EH region without langing pad
+    return;
+  }
+
+  FmtAssert(INITV_kind(label_initv_idx) == INITVKIND_LABEL,
+            ("First val in ereg_supp block is not a label"));
+  FmtAssert(INITV_next(label_initv_idx) != 0,
+            ("ereg_supp does not contain filter types"));
+
+  // getting type info table for current PU
+  std::map<ST*, int> type_info_table;
+  Get_Current_PU().Get_type_info_table(type_info_table);
+
+  for (INITV_IDX filter = INITV_next(label_initv_idx);
+       filter != 0; filter = INITV_next(filter)) {
+
+    switch (INITV_kind(filter)) {
+    case INITVKIND_ZERO:
+      // catch-all filter
+      break;
+
+    case INITVKIND_VAL:
+      // should be < 0 (EH spec filter)
+      FmtAssert(TCON_ival(INITV_tc_val(Initv_Table[filter])) < 0,
+                ("Invalid integer value in ereg_supp"));
+
+      break;
+
+    case INITVKIND_SYMOFF:
+      {
+        // Type info for EH filter
+        ST_IDX ti_idx = INITV_st(filter);
+        FmtAssert(ti_idx != 0, ("Invalid ti ST in ereg_supp"));
+
+        // looking for ST in type info table
+        FmtAssert(type_info_table.find(&St_Table[ti_idx]) != type_info_table.end(),
+                  ("EH region filter is not in PU TI table"));
+      }
+      break;
+
+    default:
+      FmtAssert(false, ("Invalid INITV kind in ereg_supp"));
+      break;
+    }
+  }
+}
+
+
+// Checks EH spec for PU
+void Check_pu_eh_spec(PU_IDX pu)
+{
+  PU::eh_spec_vector spec_list;
+  PU::type_info_table type_info;
+
+  Pu_Table[pu].Get_eh_spec(spec_list);
+  Pu_Table[pu].Get_type_info_table(type_info);
+
+  for (PU::eh_spec_vector::const_iterator it = spec_list.begin();
+       it != spec_list.end(); ++it) {
+
+      if (*it == NULL) {
+          // zero separator
+          continue;
+      }
+
+      PU::type_info_table::const_iterator ti_it = type_info.find(*it);
+      FmtAssert(ti_it != type_info.end(),
+                ("EH spec ST is not in TI table"));
+  }
+
+  // last item in EH spec should be zero
+  if (!spec_list.empty())
+      FmtAssert(spec_list.back() == NULL,
+                ("Last value in EH spec should be zero"));
+}
+
+
+// Check type info table for PU
+void Check_pu_type_info_table(PU_IDX pu)
+{
+  PU::type_info_table type_info_table;
+  Pu_Table[pu].Get_type_info_table(type_info_table);
+}
+
+
+// Checks PU for FUNC_ENTRY
+void WN_Verifier::Check_func_entry_pu(WN *wn)
+{
+  FmtAssert(WN_operator(wn) == OPR_FUNC_ENTRY, ("Invalid wn"));
+
+  ST *pu_st = WN_st(wn);
+  FmtAssert(pu_st != NULL, ("Bad ST for FUNC_ENTRY"));
+
+  PU_IDX pu = ST_pu(pu_st);
+  FmtAssert(pu != 0, ("Bad PU for FUNC_ENTRY"));
+
+  Check_pu_eh_spec(pu);
+  Check_pu_type_info_table(pu);
+}
+
+
 /*----------------------------------------------------------
  * This is the main driver of the verifier. It traverses the
  * tree calling appropriate verification procedures when the
@@ -281,6 +408,7 @@ WN_Verifier::WN_traverse_tree(WN *wn, WN *parent_wn)
     switch(OPCODE_operator(op))
     {
       case OPR_FUNC_ENTRY:
+            Check_func_entry_pu(wn);
       case OPR_XGOTO:
       case OPR_ALTENTRY:
 	    // check that TY should not be null 
@@ -364,6 +492,10 @@ WN_Verifier::WN_traverse_tree(WN *wn, WN *parent_wn)
 	   // Check pragma scoping
            _is_tree_OK &= Are_enclosed_pragmas(wn,parent_wn);
            break;
+      case OPR_REGION:
+           // Check EH region
+           if (WN_region_kind(wn) == REGION_KIND_EH)
+             Check_eh_region(wn);
       default:
 	  //check if the opcode is legal
 	  _is_tree_OK &= Is_legal_wn_opcode(op);

@@ -2751,6 +2751,85 @@ Init_Constab ()
 }
 
 
+void PU::Get_eh_spec(eh_spec_vector & eh_spec) const
+{
+    INITO_IDX misc = PU_misc_info(*this);
+    if (misc == 0)
+        return;
+
+    INITO_IDX inito_idx = TCON_uval(INITV_tc_val(
+            INITV_next(INITV_next(INITV_next(INITO_val(misc))))));
+
+    if (inito_idx == 0) {
+        // no eh spec
+        return;
+    }
+
+    INITV_IDX block = INITO_val(inito_idx);
+    FmtAssert(INITV_kind(block) == INITVKIND_BLOCK,
+              ("Invalid EH spec table"));
+
+    for (INITV_IDX entry = INITV_blk(block);
+         entry != 0; entry = INITV_next(entry)) {
+
+        if (INITV_kind(entry) == INITVKIND_SYMOFF) {
+            ST_IDX st = INITV_st(entry);
+            FmtAssert(st != 0, ("null ST in EH spec table"));
+            eh_spec.push_back(&St_Table[st]);
+        } else if (INITV_kind(entry) == INITVKIND_ZERO) {
+            // zero EH spec separator
+            eh_spec.push_back(NULL);
+        } else {
+            FmtAssert(false, ("Invalid EH spec table entry"));
+        }
+    }
+}
+
+
+void PU::Get_type_info_table(type_info_table & type_info) const
+{
+    INITO_IDX misc = PU_misc_info(*this);
+    if (misc == 0)
+        return;
+
+    INITO_IDX inito_idx = TCON_uval(INITV_tc_val(
+            INITV_next(INITV_next(INITO_val(misc)))));
+
+    if (inito_idx == 0) {
+        // no type info table
+        return;
+    }
+
+    INITV_IDX block = INITO_val(inito_idx);
+
+    while(block != 0) {
+        FmtAssert(INITV_kind(block) == INITVKIND_BLOCK,
+                  ("Invalid TI table"));
+
+        INITV_IDX st_initv = INITV_blk(block);
+        FmtAssert(st_initv != 0, ("Invalid TI table"));
+        INITV_IDX filter_initv = INITV_next(st_initv);
+        FmtAssert(filter_initv != 0, ("Invalid TI table"));
+
+        FmtAssert(INITV_kind(st_initv) == INITVKIND_SYMOFF,
+                  ("Invalid TI table"));
+        FmtAssert(INITV_kind(filter_initv) == INITVKIND_VAL,
+                  ("Invalid TI table"));
+
+        ST_IDX st_idx = INITV_st(st_initv);
+        int filter = TCON_ival(INITV_tc_val(filter_initv));
+
+        FmtAssert(st_idx != 0, ("null ST in TI table"));
+
+        std::pair<type_info_table::iterator, bool> res =
+                type_info.insert(std::make_pair(&St_Table[st_idx], filter));
+        FmtAssert(res.second, ("Duplicated ST in TI table"));
+
+        block = INITV_next(block);
+    }
+}
+
+
 #ifdef Is_True_On
 
 //

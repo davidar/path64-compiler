@@ -43,6 +43,9 @@
 #ifndef symtab_defs_INCLUDED
 #define symtab_defs_INCLUDED
 
+#include <map>
+#include <vector>
+
 // Note:
 //
 // The comments in this file are intentionally brief.  For detail description,
@@ -748,6 +751,14 @@ struct PU
 
     void Print (FILE *f) const;
 
+    typedef std::vector<ST*> eh_spec_vector;
+    typedef std::map<ST*, int> type_info_table;
+
+    // Fills EH spec for PU
+    void Get_eh_spec(eh_spec_vector &) const;
+
+    // Filles type info table for PU
+    void Get_type_info_table(type_info_table &) const;
 }; // PU
 
 

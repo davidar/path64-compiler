@@ -2128,12 +2128,12 @@ IPO_INLINE::Process_Op_Code (TREE_ITER& iter, IPO_INLINE_AUX& aux)
 		    break;
 		ttable = INITV_next (ttable);
 	    }
-	    FmtAssert (filter == current_filter, ("No matching ST for exception filter in callee typeinfo-table"));
+            FmtAssert (filter == current_filter, ("No matching ST for exception filter in callee typeinfo-table"));
 	    ST_IDX current_st = 0;
 	    {
 	      INITV_IDX i = INITV_blk (ttable);
 	      FmtAssert (INITV_kind (i) != INITVKIND_ZERO, ("Unexpected 0 st_idx for cmp operand"));
-	      current_st = TCON_uval (INITV_tc_val (i));
+              current_st = INITV_st(i);
 	    }
 #ifdef Is_True_On
 	    {// DGLOBAL: user defined types. EXTERN: builtin types like 'char'
@@ -2149,10 +2149,8 @@ IPO_INLINE::Process_Op_Code (TREE_ITER& iter, IPO_INLINE_AUX& aux)
 	    while (ttable)
 	    {
 		INITV_IDX i = INITV_blk (ttable);
-		if (INITV_kind (i) == INITVKIND_ZERO)
-		    search = 0;
-		else
-	    	    search = TCON_uval (INITV_tc_val (i));
+                FmtAssert (INITV_kind (i) == INITVKIND_SYMOFF, ("Bad TI table"));
+                search = INITV_st (i);
 		if (search == current_st)
 		    break;
 		ttable = INITV_next (ttable);
@@ -3547,14 +3545,20 @@ IPO_INLINE::Merge_EH_Spec_Tables (void)
 
     blk = INITV_blk (INITO_val (callee_spec));
     mUINT32 callee_spec_size=0;
-    vector<ST_IDX> callee_spec_types;
+    vector<ST*> callee_spec_types;
     while (blk)
     {
+        if (INITV_kind(blk) == INITVKIND_ZERO)
+        {
+            // zero separator
+            callee_spec_types.push_back (NULL);
+        }
+        else if (INITV_kind(blk) == INITVKIND_SYMOFF)
+        {
+            callee_spec_types.push_back (&St_Table[INITV_st (blk)]);
+        }
+
     	callee_spec_size++;
-	if (INITV_kind (blk) == INITVKIND_ZERO)
-	    callee_spec_types.push_back (0);
-	else
-	    callee_spec_types.push_back (TCON_uval (INITV_tc_val (blk)));
 	blk = INITV_next (blk);
     }
     if (!Callee_node()->EH_spec_size())
@@ -3572,12 +3576,13 @@ IPO_INLINE::Merge_EH_Spec_Tables (void)
     	blk = INITV_blk (INITO_val (caller_spec));
     else
     	blk = 0;	// no specification in caller
+
     mUINT32 caller_spec_size=0;
     INITV_IDX last_ti = INITV_IDX_ZERO;
     while (blk)
     {
-    	caller_spec_size++;
-	last_ti = blk;
+        caller_spec_size++;
+        last_ti = blk;
 	blk = INITV_next (blk);
     }
     if (!Caller_node()->EH_spec_size())
@@ -3587,16 +3592,22 @@ IPO_INLINE::Merge_EH_Spec_Tables (void)
 #endif
 
     INITV_IDX first_insert = INITV_IDX_ZERO, prev_insert = INITV_IDX_ZERO;
-    for (vector<ST_IDX>::iterator i = callee_spec_types.begin();
+    for (vector<ST*>::iterator i = callee_spec_types.begin();
     	 i != callee_spec_types.end();
 	 i++)
     {
 	INITV_IDX insert = New_INITV();
-	if (*i == 0)
-	  INITV_Set_ZERO (Initv_Table[insert], MTYPE_U4, 1);
-	else
-	  INITV_Set_VAL (Initv_Table[insert], 
-		         Enter_tcon (Host_To_Targ (MTYPE_U4, *i)), 1);
+
+        if (*i == NULL)
+        {
+            // zero separator
+            INITV_Set_ZERO (Initv_Table[insert], MTYPE_I4, 1);
+        }
+        else
+        {
+            INITV_Set_SYMOFF (Initv_Table[insert], 1, ST_st_idx(*i), 0);
+        }
+
         if (prev_insert)
 	    Set_INITV_next (prev_insert, insert);
 	else
@@ -3629,7 +3640,7 @@ IPO_INLINE::Merge_EH_Spec_Tables (void)
 void
 IPO_INLINE::Merge_EH_Typeinfo_Tables (void)
 {
-    vector<ST_IDX> callee_typeinfos, caller_typeinfos;
+    vector<ST*> callee_typeinfos, caller_typeinfos;
     INITV_IDX start, blk, last_blk=0;
     if (!PU_cxx_lang (Callee_node()->Get_PU()))
       return;
@@ -3645,13 +3656,12 @@ IPO_INLINE::Merge_EH_Typeinfo_Tables (void)
     blk = INITO_val (callee_ttable);
     while (blk)
     {
-	INITV_IDX ti = INITV_blk (blk);
-	if (INITV_kind (ti) == INITVKIND_ZERO)
-	  callee_typeinfos.push_back (0);
-	else
-          callee_typeinfos.push_back (TCON_uval (INITV_tc_val (ti)));
+        INITV_IDX ti = INITV_blk (blk);
+        FmtAssert (INITV_kind(ti) == INITVKIND_SYMOFF, ("Bad TI table"));
+        callee_typeinfos.push_back (&St_Table[INITV_st(ti)]);
         blk = INITV_next (blk);
     }
+
     // caller side
     // change tables temporarily
     Set_Tables (Caller_node());
@@ -3662,10 +3672,8 @@ IPO_INLINE::Merge_EH_Typeinfo_Tables (void)
     while (blk)
     {
 	INITV_IDX ti = INITV_blk (blk);
-	if (INITV_kind (ti) == INITVKIND_ZERO)
-	  caller_typeinfos.push_back (0);
-	else
-          caller_typeinfos.push_back (TCON_uval (INITV_tc_val (ti)));
+        FmtAssert (INITV_kind(ti) == INITVKIND_SYMOFF, ("Invalid TI table"));
+        caller_typeinfos.push_back (&St_Table[INITV_st(ti)]);
         last_blk = blk;
         blk = INITV_next (blk);
     }
@@ -3713,18 +3721,14 @@ IPO_INLINE::Merge_EH_Typeinfo_Tables (void)
     {
         FmtAssert (last_blk, ("EH Tables processing error in inliner"));
         int filter = last_caller_filter+1;
-        vector<ST_IDX>::iterator i = callee_typeinfos.begin();
+        vector<ST*>::iterator i = callee_typeinfos.begin();
         for (; i!=callee_typeinfos.end(); ++i)
         {
             if (!std::binary_search (caller_typeinfos.begin(),
                                      caller_typeinfos.end(), (*i)))
             { // insert the entry
-		INITV_IDX st = New_INITV();
-		if (*i == 0)
-		  INITV_Set_ZERO (Initv_Table[st], MTYPE_U4, 1);
-		else
-                  INITV_Set_VAL (Initv_Table[st],
-			       Enter_tcon (Host_To_Targ (MTYPE_U4, *i)), 1);
+                INITV_IDX st = New_INITV();
+                INITV_Set_SYMOFF (Initv_Table[st], 1, ST_st_idx(*i), 0);
                 INITV_IDX f = New_INITV();
                 INITV_Set_VAL (Initv_Table[f],
                         Enter_tcon (Host_To_Targ (MTYPE_U4, filter)), 1);
