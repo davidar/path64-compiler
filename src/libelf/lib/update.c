@@ -936,7 +936,7 @@ elf_update(Elf *elf, Elf_Cmd cmd) {
 
     if (elf->e_fd == -1) {
         seterr(ERROR_FDMISMATCH);
-        return NULL;
+        return 0;
     }
 
     elf_assert(elf->e_magic == ELF_MAGIC);

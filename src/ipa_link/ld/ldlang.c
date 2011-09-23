@@ -2814,7 +2814,7 @@ stricpy (char *dest, char *src)
    from haystack.  */
 
 static void
-strcut (char *haystack, char *needle)
+strcut (char *haystack, const char *needle)
 {
   haystack = strstr (haystack, needle);
 
@@ -2833,7 +2833,7 @@ strcut (char *haystack, char *needle)
    Return a value indicating how "similar" they are.  */
 
 static int
-name_compare (char *first, char *second)
+name_compare (char *first, const char *second)
 {
   char *copy1;
   char *copy2;

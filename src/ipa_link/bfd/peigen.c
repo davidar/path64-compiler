@@ -497,7 +497,7 @@ static void
 add_data_entry (bfd * abfd,
 		struct internal_extra_pe_aouthdr *aout,
 		int idx,
-		char *name,
+                const char *name,
 		bfd_vma base)
 {
   asection *sec = bfd_get_section_by_name (abfd, name);
@@ -1006,7 +1006,7 @@ _bfd_pei_swap_scnhdr_out (bfd * abfd, void * in, void * out)
   return ret;
 }
 
-static char * dir_names[IMAGE_NUMBEROF_DIRECTORY_ENTRIES] =
+static const char * dir_names[IMAGE_NUMBEROF_DIRECTORY_ENTRIES] =
 {
   N_("Export Directory [.edata (or where ever we found it)]"),
   N_("Import Directory [parts of .idata]"),

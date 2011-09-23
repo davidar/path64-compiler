@@ -7430,7 +7430,7 @@ elfcore_maybe_make_sect (bfd *abfd, char *name, asection *sect)
    Both pseudosections have identical contents. */
 bfd_boolean
 _bfd_elfcore_make_pseudosection (bfd *abfd,
-				 char *name,
+                                 const char *name,
 				 size_t size,
 				 ufile_ptr filepos)
 {

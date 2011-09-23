@@ -132,7 +132,7 @@ binary_get_symtab_upper_bound (bfd *abfd ATTRIBUTE_UNUSED)
 /* Create a symbol name based on the bfd's filename.  */
 
 static char *
-mangle_name (bfd *abfd, char *suffix)
+mangle_name (bfd *abfd, const char *suffix)
 {
   bfd_size_type size;
   char *buf;

@@ -948,7 +948,7 @@ parse_args (unsigned argc, char **argv)
 	case 'L':
 	  ldfile_add_library_path (optarg, TRUE);
 	  break;
-	case 'l':
+        case 'l':
 	  lang_add_input_file (optarg, lang_input_file_is_l_enum, NULL);
 	  break;
 	case 'M':

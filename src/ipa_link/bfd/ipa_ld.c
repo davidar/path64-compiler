@@ -96,10 +96,9 @@ static int active_pid;
 
 static mode_t cmask = 0;	    /* file creation mode mask */
 
-static string thisfile = __FILE__;
 
-static char *default_path = "/usr/ia64-sgi-linux/lib/gcc-lib/ia64-sgi-linux/sgicc-1.0";
-static char *env_name = "LD_LIBRARY_PATH";
+static const char *default_path = "/usr/ia64-sgi-linux/lib/gcc-lib/ia64-sgi-linux/sgicc-1.0";
+static const char *env_name = "LD_LIBRARY_PATH";
 
 static string *tmp_list = 0;
 static int tmp_list_size = 0;
@@ -156,7 +155,7 @@ void msg (int type, int msg_id, ...) {return;}
 
 	 *******************************************************/
 char *
-ipa_copy_of (char *str)
+ipa_copy_of (const char *str)
 {
     register int len;
     register char *p;
@@ -176,7 +175,7 @@ ipa_copy_of (char *str)
 
 	 *******************************************************/
 string
-concat_names(const string name1, const string name2)
+concat_names(const_string name1, const_string name2)
 {
     char *mangled_name = NULL;
     int len = strlen(name1)+strlen(name2)+1;
@@ -522,7 +521,7 @@ create_unique_file (const string path, char suffix)
     FREE (p);
 
     if ((fd = creat (new_path, 0666 & ~cmask)) == -1) {
-	perror(new_path);
+        perror(new_path);
 	exit(1);
     }
 
@@ -545,20 +544,19 @@ get_command_line(bfd *abfd,
 		 string out_path, 
 		 int *arg_count)
 {
-    static string default_compilation_flags[] = DEFAULT_COMPILATION_FLAGS;
+    static const_string default_compilation_flags[] = DEFAULT_COMPILATION_FLAGS;
     int i;
     int argc = 0;
     string *old_argv;
     string *new_argv;
     Elf_Internal_Ehdr *ehdr = elf_elfheader (abfd);
-    asection *p_asec;
 
-    for (i = 1; i < ehdr->e_shnum; i++) {
+    for (i = 1; i < (int)ehdr->e_shnum; i++) {
     	Elf_Internal_Shdr *p_shdr = elf_elfsections (abfd)[i];
 
 	if (p_shdr->sh_info == WT_COMP_FLAGS) {
 	    char *base_addr;
-	    int j;
+            int j;
 	    ELF_WORD *args;
 
 	    if (p_shdr->sh_size <= 1)
@@ -572,7 +570,7 @@ get_command_line(bfd *abfd,
 	    MALLOC_ASSERT (old_argv);
 	    
 	    for (j = 0; j < argc; j++) {
-		OBJ_ASSERT (args[j] < p_shdr->sh_size, abfd,
+                OBJ_ASSERT (args[j] < (ELF_WORD)p_shdr->sh_size, abfd,
 			    "invalid WT_COMP_FLAGS WHIRL section");
 		old_argv[j] = base_addr + args[j];
 	    }
@@ -619,12 +617,10 @@ extract_archive_member (bfd *abfd, string path)
 {
     int fd = -1;
     int mode = 0644;
-    pointer addr = (pointer)-1;
-    struct areltdata *p_areltdata = (struct areltdata *)abfd->arelt_data;
+    //pointer addr = (pointer)-1;
     struct ar_hdr *p_hdr = arch_hdr(abfd);
     size_t parsed_size;
     char *buf;
-    int ret;
 
     parsed_size = strtol (p_hdr->ar_size, NULL, 10);
     if ((fd = OPEN (path, O_WRONLY|O_CREAT|O_TRUNC, mode)) != -1) {

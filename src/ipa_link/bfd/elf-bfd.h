@@ -1723,7 +1723,7 @@ extern void _bfd_elf_init_2_index_sections
   (bfd *, struct bfd_link_info *);
 
 extern bfd_boolean _bfd_elfcore_make_pseudosection
-  (bfd *, char *, size_t, ufile_ptr);
+  (bfd *, const char *, size_t, ufile_ptr);
 extern char *_bfd_elfcore_strndup
   (bfd *, char *, size_t);
 

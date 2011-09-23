@@ -2202,7 +2202,7 @@ struct reloc_howto_struct
      bfd *, char **);
 
   /* The textual name of the relocation type.  */
-  char *name;
+  const char *name;
 
   /* Some formats record a relocation addend in the section contents
      rather than with the relocation.  For ELF formats this is the
@@ -4906,7 +4906,7 @@ typedef struct bfd_link_info _bfd_link_info;
 typedef struct bfd_target
 {
   /* Identifies the kind of target, e.g., SunOS4, Ultrix, etc.  */
-  char *name;
+  const char *name;
 
  /* The "flavour" of a back end is a general indication about
     the contents of a file.  */

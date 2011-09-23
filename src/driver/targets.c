@@ -2,7 +2,7 @@
   Copyright (C) 2010 PathScale Inc. All Rights Reserved.
 */
 
-#ifdef __linux
+#if defined(__linux) && !defined(_GNU_SOURCE)
 #define _GNU_SOURCE /* For *asprintf */
 #endif
 

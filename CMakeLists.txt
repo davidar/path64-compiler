@@ -19,7 +19,7 @@ include(${Path64_SOURCE_DIR}/cmake/Modules/ConfigureChecks.cmake)
 
 # Force the build_type=debug flags to sane values overriding users choices
 SET(CMAKE_C_FLAGS_DEBUG  "-O0 -g -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
-SET(CMAKE_CXX_FLAGS_DEBUG  "-O0 -g -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
+SET(CMAKE_CXX_FLAGS_DEBUG  "-Wno-deprecated -O0 -g -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
 SET(CMAKE_Fortran_FLAGS_DEBUG  "-O0 -g3 -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
 
 # Using -mno-sse3 flag for release build if PATH64_ENABLE_PSCRUNTIME=ON
@@ -29,7 +29,7 @@ endif()
 
 # Force the build_type=release flags to -O2 -DNDEBUG values overriding default cmake -O3
 SET(CMAKE_C_FLAGS_RELEASE  "-O2 -DNDEBUG ${SSE_FLAGS}" CACHE STRING "Flags used by the compiler during release builds." FORCE)
-SET(CMAKE_CXX_FLAGS_RELEASE  "-O2 -DNDEBUG ${SSE_FLAGS}" CACHE STRING "Flags used by the compiler during release builds." FORCE)
+SET(CMAKE_CXX_FLAGS_RELEASE  "-Wno-deprecated -O2 -DNDEBUG ${SSE_FLAGS}" CACHE STRING "Flags used by the compiler during release builds." FORCE)
 SET(CMAKE_Fortran_FLAGS_RELEASE  "-O2 -DNDEBUG ${SSE_FLAGS}" CACHE STRING "Flags used by the compiler during release builds." FORCE)
 
 
