@@ -62,6 +62,7 @@
 #include "driver_defs.h"
 #include "run.h"
 #include "profile_type.h"    /* for PROFILE_TYPE */
+#include "targets.h"
 
 #include "sys/elf_whirl.h"
 
