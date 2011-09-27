@@ -2067,7 +2067,7 @@ add_final_ld_args (string_list_t *args)
     extern boolean link_with_mathlib;
     if ((link_with_mathlib || source_lang == L_CC) && 
         option_was_seen(O_m64) && 
-        strcmp(target_cpu, "em64t") && strcmp(target_cpu, "anyx86"))
+        strcmp(target_cpu, "em64t") && strcmp(target_cpu, "generic"))
         // Bug 4680 - Link with libacml_mv by default.
         add_library(args, "acml_mv");
 #endif
