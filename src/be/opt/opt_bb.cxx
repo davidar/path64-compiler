@@ -1059,7 +1059,7 @@ BB_NODE::Clonable(BOOL allow_loop_cloning, const BVECTOR *cr_vol_map)
   }
 
   // if BB contains label whose address is stored, cannot clone
-  if ( Labnam() > 0 && (LABEL_addr_saved( Labnam() ) && !LABEL_inline_addr_saved(Labnam())) )
+  if ( Labnam() > 0 && LABEL_addr_saved( Labnam() ) )
     return FALSE;
 
   // iterate through each statement in this bb

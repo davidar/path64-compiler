@@ -1603,13 +1603,6 @@ inline void
 Clear_LABEL_addr_saved (LABEL& l)	{ l.flags &= ~LABEL_ADDR_SAVED; }
 
 inline BOOL
-LABEL_inline_addr_saved (const LABEL &l) {return l.flags & LABEL_ADDR_INLINE_SAVED;}
-inline void
-Set_LABEL_inline_addr_saved(LABEL &l)  {l.flags |= LABEL_ADDR_INLINE_SAVED;}
-inline void
-Clear_LABEL_inline_addr_saved (LABEL &l) {l.flags &= ~LABEL_ADDR_INLINE_SAVED;}
-
-inline BOOL
 LABEL_addr_passed (const LABEL& l)	{ return l.flags & LABEL_ADDR_PASSED;}
 inline void
 Set_LABEL_addr_passed (LABEL& l)	{ l.flags |= LABEL_ADDR_PASSED; }

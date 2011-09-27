@@ -1649,7 +1649,6 @@ IPO_INLINE::Pre_Process_Caller (LABEL_IDX& return_label)
       
     LABEL &label = New_LABEL (Caller_level (), return_label);
     label.flags |= LABEL_ADDR_SAVED;
-	label.flags |= LABEL_ADDR_INLINE_SAVED;
 } // IPO_INLINE::Pre_Process_Caller() 
 
 
@@ -4498,7 +4497,6 @@ IPO_INLINE::Post_Process_Caller (IPO_INLINE_AUX& aux)
     if (IPA_Enable_DST) {
       LABEL &label = New_LABEL (Caller_level (), aux.entry_label);
       label.flags |= LABEL_ADDR_SAVED;
-	  label.flags |= LABEL_ADDR_INLINE_SAVED;
     } else
       aux.entry_label = 0;
 

@@ -878,22 +878,6 @@ Clear_LABEL_addr_saved (const LABEL_IDX lbi)
 	Clear_LABEL_addr_saved(Label_Table[lbi]);
 }
 inline BOOL
-LABEL_inline_addr_saved (const LABEL_IDX lbi)
-{
-	return (LABEL_inline_addr_saved(Label_Table[lbi]));
-}
-inline void
-Set_LABEL_inline_addr_saved (const LABEL_IDX lbi)
-{
-	Set_LABEL_inline_addr_saved(Label_Table[lbi]);
-}
-inline void
-Clear_LABEL_inline_addr_saved (const LABEL_IDX lbi)
-{
-	Clear_LABEL_inline_addr_saved(Label_Table[lbi]);
-}
-
-inline BOOL
 LABEL_addr_passed (const LABEL_IDX lbi)
 {
 	return (LABEL_addr_passed(Label_Table[lbi]));
