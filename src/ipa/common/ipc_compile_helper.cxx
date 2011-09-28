@@ -151,7 +151,7 @@ extern "C" {
 // Allow ipa_link to call the error routines.
 
 void
-Ipalink_Set_Error_Phase (char *name)
+Ipalink_Set_Error_Phase (const char *name)
 {
   Set_Error_Phase (name);
 }

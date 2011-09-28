@@ -944,72 +944,27 @@ Last_Node (WN_TREE_ITER<PRE_ORDER, WN*> i)
 }
 
 #ifdef KEY
-// TODO: We don't need to replace the stidx with the summary table index.
-//       We can just use the old-stidx -> new-stidx map in IPA.
 template <PROGRAM program>
 void
 SUMMARIZE<program>::Process_eh_globals (void)
 {
-    if (!(PU_src_lang (Get_Current_PU()) & PU_CXX_LANG) || 
-    	!PU_misc_info (Get_Current_PU()))
-    	return;
-    INITV_IDX i = INITV_next (INITV_next (INITO_val (PU_misc_info (Get_Current_PU()))));
-    INITO_IDX idx = TCON_uval (INITV_tc_val(i));
-    if (idx)	// typeinfo
+    PU::type_info_table type_table;
+    Get_Current_PU().Get_type_info_table(type_table);
+
+    for (PU::type_info_table::const_iterator it = type_table.begin();
+         it != type_table.end(); ++it)
     {
-      INITO* ino = &Inito_Table[idx];
-      INITV_IDX blk = INITO_val (*ino);
-      do
-      {
-        INITV_IDX st_entry = INITV_blk (blk);
-	ST_IDX st_idx = 0;
-	if (INITV_kind (st_entry) != INITVKIND_ZERO)
-	{
-	  st_idx = TCON_uval (INITV_tc_val (st_entry));
-	  FmtAssert (st_idx != 0, ("Invalid st idx"));
-	}
-	if (st_idx <= 0)
-	{
-	  blk = INITV_next (blk);
-	  continue;
-	}
-	INT32 index = Get_symbol_index (&St_Table [st_idx]);
-	INITV_IDX filter = INITV_next (st_entry); // for backup
-	FmtAssert (index >= 0, ("Unexpected summary id for eh symbol"));
-	INITV_Set_VAL (Initv_Table[st_entry], Enter_tcon (
-	               Host_To_Targ (MTYPE_U4, index)), 1);
-        Set_INITV_next (st_entry, filter);
-	blk = INITV_next (blk);
-      } while (blk);
+        Get_symbol_index(it->first);
     }
 
-    i = INITV_next (i);
-    idx = TCON_uval (INITV_tc_val (i));
-    if (idx)	// eh-spec
+    PU::eh_spec_vector eh_spec;
+    Get_Current_PU().Get_eh_spec(eh_spec);
+
+    for (PU::eh_spec_vector::const_iterator it = eh_spec.begin();
+         it != eh_spec.end(); ++it)
     {
-      INITO* ino = &Inito_Table[idx];
-      INITV_IDX st_entry = INITV_blk (INITO_val (*ino));
-      do
-      {
-	ST_IDX st_idx = 0;
-	if (INITV_kind (st_entry) != INITVKIND_ZERO)
-	{
-          st_idx = TCON_uval (INITV_tc_val (st_entry));
-	  FmtAssert (st_idx > 0, ("Invalid eh-spec entry"));
-	}
-	if (st_idx == 0)
-	{
-	  st_entry = INITV_next (st_entry);
-	  continue;
-	}
-	INT32 index = Get_symbol_index (&St_Table[st_idx]);
-	INITV_IDX next = INITV_next (st_entry); // for backup
-	FmtAssert (index >= 0, ("Unexpected summary id for eh symbol"));
-	INITV_Set_VAL (Initv_Table[st_entry], Enter_tcon (
-	               Host_To_Targ (MTYPE_U4, index)), 1);
-	Set_INITV_next (st_entry, next);
-        st_entry = INITV_next (st_entry);
-      } while (st_entry);
+        if (*it != NULL)
+            Get_symbol_index(*it);
     }
 }
 
@@ -1035,19 +990,10 @@ SUMMARIZE<program>::Process_eh_region (WN * wn)
     INITV_IDX types = INITV_next (INITV_blk (blk));
     for (; types; types = INITV_next (types))
     {
-      int sym = 0;
-      if (INITV_kind (types) != INITVKIND_ZERO)
-        sym = TCON_uval (INITV_tc_val (types));
-      if (sym > 0)
+      if (INITV_kind (types) == INITVKIND_SYMOFF)
       {
-      	INT32 index = Get_symbol_index (&St_Table[sym]);
-	INITV_IDX next = INITV_next (types);	// for backup
-	// We don't expect index==0 since at least Process_eh_globals is 
-	// called before this.
-	FmtAssert (index > 0, ("Unexpected summary id for eh symbol"));
-	INITV_Set_VAL (Initv_Table[types], Enter_tcon (
-		       Host_To_Targ (MTYPE_U4, index)), 1);
-	Set_INITV_next (types, next);
+        ST_IDX sym = INITV_st (types);
+        Get_symbol_index (&St_Table[sym]);
       }
     }
 }

@@ -40,7 +40,7 @@
 
 */
 
-#ifdef __linux
+#if defined(__linux) && !defined(_GNU_SOURCE)
 #define _GNU_SOURCE /* For *asprintf */
 #endif
 
@@ -2010,11 +2010,11 @@ static struct
 } supported_cpu_types[] = {
 //  CPU			Target		ABI      SSE2   SSE3   3DNow! SSSE3  SSE4a  SSE4.1 SSE4.2 AVX
 //  -------------------+---------------+--------+------+------+------+------+------+------+------+-----
-  { "any_64bit_x86",	"anyx86",	ABI_M64,  TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE },
-  { "any_32bit_x86",	"anyx86",	ABI_M32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE },
-  { "i386",		"anyx86",	ABI_M32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE },
-  { "i486",		"anyx86",	ABI_M32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE },
-  { "i586",		"anyx86",	ABI_M32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE },
+  { "any_64bit_x86",	"generic",	ABI_M64,  TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE },
+  { "any_32bit_x86",	"generic",	ABI_M32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE },
+  { "i386",		"generic",	ABI_M32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE },
+  { "i486",		"generic",	ABI_M32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE },
+  { "i586",		"generic",	ABI_M32, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE },
   { "athlon",		"athlon",	ABI_M32, FALSE, FALSE,  TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
   { "athlon-mp",	"athlon",	ABI_M32, FALSE, FALSE,  TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
   { "athlon-xp",	"athlon",	ABI_M32, FALSE, FALSE,  TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
@@ -2110,10 +2110,10 @@ get_default_cpu_name (char *msg)
   char *abi_name = NULL;
 
   if (get_platform_abi() == ABI_M64) {
-    cpu_name = "anyx86";
+    cpu_name = "generic";
     abi_name = "64-bit";
   } else {
-    cpu_name = "anyx86";
+    cpu_name = "generic";
     abi_name = "32-bit";
   }
 
@@ -2418,11 +2418,11 @@ Get_x86_ISA ()
 
   // Get a more specific cpu name.
   if (!strcmp(target_cpu, "auto")) {		// auto
-    target_cpu = get_x86_auto_cpu_name();	// may return anyx86
+    target_cpu = get_x86_auto_cpu_name();	// may return generic
     if (target_cpu == NULL)
       return;
   }
-  if (!strcmp(target_cpu, "anyx86")) {		// anyx86
+  if (!strcmp(target_cpu, "generic")) {		// generic
     // Need ABI to select any_32bit_x86 or any_64bit_x86 ISA.
     if (abi == UNDEFINED) {
       if (get_platform_abi() == ABI_M64) {

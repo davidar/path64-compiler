@@ -330,7 +330,7 @@ Targ_Name ( TARGET_PROCESSOR b)
     case TARGET_wolfdale: return "Wolfdale"; 
     case TARGET_pentium4: return "Pentium4";
     case TARGET_xeon: return "Xeon";
-    case TARGET_anyx86: return "Anyx86";
+    case TARGET_anyx86: return "Generic";
     case TARGET_barcelona: return "Barcelona";
 	case TARGET_sandy: return "Sandy Bridge";
     default:
@@ -506,7 +506,7 @@ Prepare_Target ( void )
       if (!Target_SSE2_Set && !Target_SSE3_Set)
         Target_SSE3 = TRUE;
     }
-    else if ( strcasecmp ( Processor_Name, "anyx86" ) == 0 ) {
+    else if ( strcasecmp ( Processor_Name, "generic" ) == 0 ) {
       targ = TARGET_anyx86;
     }
     else if (strcasecmp ( Processor_Name, "sandy") == 0){

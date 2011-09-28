@@ -104,6 +104,7 @@
 
 typedef void *pointer;
 typedef char *string;
+typedef const char *const_string;
 
 /* These are taken from ipc_sumtab_merge.h in the ipa tree. */
 
@@ -250,10 +251,10 @@ extern void
 msg (int , int , ...);
 
 extern char *
-ipa_copy_of(char *);
+ipa_copy_of(const char *);
 
 extern string
-concat_names(const string, const string);
+concat_names(const_string, const_string);
 
 extern int
 do_compile (string *);

@@ -7715,7 +7715,7 @@ Target_Name (TARGET_PROCESSOR t)
     case TARGET_wolfdale: return "wolfdale";
     case TARGET_pentium4: return "pentium4";
     case TARGET_xeon: return "xeon";
-    case TARGET_anyx86: return "anyx86";
+    case TARGET_anyx86: return "generic";
 	case TARGET_sandy: return "sandy";
     default: Fail_FmtAssertion ("Add support for %s", Targ_Name (t));
   }

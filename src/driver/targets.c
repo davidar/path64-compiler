@@ -2,7 +2,7 @@
   Copyright (C) 2010 PathScale Inc. All Rights Reserved.
 */
 
-#ifdef __linux
+#if defined(__linux) && !defined(_GNU_SOURCE)
 #define _GNU_SOURCE /* For *asprintf */
 #endif
 
@@ -98,6 +98,11 @@ char *target_phase_path() {
         free(root_prefix);
 
     return lib_path;
+}
+
+
+const char *target_include_path() {
+    return current_target->include_path;
 }
 
 

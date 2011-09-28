@@ -375,34 +375,6 @@ Rename_Call_To_Cloned_PU (IPA_NODE *caller,
 #if defined(KEY) && !defined(_STANDALONE_INLINER) && !defined(_LIGHTWEIGHT_INLINER)
 static void Fixup_EHinfo_In_PU (IPA_NODE* node, WN * w = NULL)
 {
-  if (w && WN_operator(w) == OPR_REGION && WN_region_is_EH (w) &&
-      WN_block_empty (WN_region_pragmas (w)))
-  {
-    int sym_size;
-    SUMMARY_SYMBOL * sym_array = IPA_get_symbol_file_array (node->File_Header(), sym_size);
-    Is_True (sym_array != NULL, ("Missing SUMMARY_SYMBOL section"));
-    INITV_IDX blk = INITO_val (WN_ereg_supp (w));
-    // ipl may create multiple copies of the same region, so keep track if
-    // a region has been updated
-    if (INITV_flags (Initv_Table[blk]) != INITVFLAGS_UPDATED)
-    {
-      Set_INITV_flags (blk, INITVFLAGS_UPDATED);
-      INITV_IDX types = INITV_next (INITV_blk (blk));
-      for (; types; types = INITV_next (types))
-      {
-        if (INITV_kind (types) == INITVKIND_ZERO)
-          continue;
-        int index = TCON_uval (INITV_tc_val (types));
-        if (index <= 0) continue;
-        ST_IDX new_idx = sym_array[index].St_idx();
-        INITV_IDX next = INITV_next (types);        // for backup
-        INITV_Set_VAL (Initv_Table[types], Enter_tcon (
-                       Host_To_Targ (MTYPE_U4, new_idx)), 1);
-        Set_INITV_next (types, next);
-      }
-    }
-  }
-
   if (w == NULL)
     w = node->Whirl_Tree (FALSE);
 

@@ -36,7 +36,7 @@
 
 */
 
-#ifdef __linux
+#if defined(__linux) && !defined(_GNU_SOURCE)
 #define _GNU_SOURCE /* For *asprintf */
 #endif
 
@@ -62,6 +62,7 @@
 #include "driver_defs.h"
 #include "run.h"
 #include "profile_type.h"    /* for PROFILE_TYPE */
+#include "targets.h"
 
 #include "sys/elf_whirl.h"
 

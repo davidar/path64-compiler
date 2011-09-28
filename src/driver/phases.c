@@ -41,7 +41,7 @@
 
 */
 
-#ifdef __linux
+#if defined(__linux) && !defined(_GNU_SOURCE)
 #define _GNU_SOURCE /* For *asprintf */
 #endif
 
@@ -917,6 +917,8 @@ void add_std_includes(string_list_t *args) {
     exe_dir = get_executable_dir();
     root = directory_path(exe_dir);
     free(exe_dir);
+
+    add_inc_path(args, target_include_path());
 
     if (!option_was_seen(O_nostdinc__)) {
         add_inc_path(args, "%s/include/" PSC_FULL_VERSION, root);
@@ -2074,7 +2076,7 @@ add_final_ld_args (string_list_t *args)
     extern boolean link_with_mathlib;
     if ((link_with_mathlib || source_lang == L_CC) && 
         option_was_seen(O_m64) && 
-        strcmp(target_cpu, "em64t") && strcmp(target_cpu, "anyx86"))
+        strcmp(target_cpu, "em64t") && strcmp(target_cpu, "generic"))
         // Bug 4680 - Link with libacml_mv by default.
         add_library(args, "acml_mv");
 #endif

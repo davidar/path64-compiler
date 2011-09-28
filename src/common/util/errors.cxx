@@ -1398,6 +1398,8 @@ DevWarn( const char *fmt, ... )
     vfprintf ( stderr, fmt, args );
     fprintf ( stderr, "\n" );
     fflush ( stderr );
+    va_end(args);
+    va_start ( args, fmt );
   }
  
   /* Then write to error file if enabled: */
@@ -1406,6 +1408,8 @@ DevWarn( const char *fmt, ... )
     vfprintf ( Error_File, fmt, args );
     fprintf ( Error_File, "\n" );
     fflush ( Error_File );
+    va_end(args);
+    va_start ( args, fmt );
   }
 
   /* Finally write to trace file: */

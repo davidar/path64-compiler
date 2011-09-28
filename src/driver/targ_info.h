@@ -11,6 +11,7 @@ typedef struct targ_info_t_ {
     const char *arch_name;      // Architecture name
     const char *abi_name;       // ABI name
     ABI abi;                    // ABI
+    const char *include_path;   // Path to system includes
     const char *crt_path;       // Path to CRT runtime
     const char *crtbegin_path;  // Path to crtbegin/crtend
 #ifdef __linux__
