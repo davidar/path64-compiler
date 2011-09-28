@@ -463,8 +463,8 @@ public:
    struct {
       OPERATOR          wn_operator : 8;  /* 8 bits of operator       */
       TYPE_ID           rtype       : 6;  /* result */
-      mUINT32           kid_count   :14; /* gives kid_count for free */
-      mINT64            map_id      :30;
+      mUINT32           kid_count   :16; /* gives kid_count for free */
+      mINT64            map_id      :28;
       TYPE_ID           desc        : 6;  /* descriptor type */
    } common;
 
