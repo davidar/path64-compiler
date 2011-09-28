@@ -240,6 +240,9 @@ path64_set_multiarch_sources(cg_sources mips
 path64_add_multiarch_library(cg STATIC cg_sources)
 path64_add_multiarch_multiarch_dependencies(cg targinfo be-com)
 path64_multiarch_link_multiarch_libraries(cg comutil)
+if(PATH64_LIBDWARF_PATH)
+    path64_set_multiarch_property(cg LINK_FLAGS "-L ${PATH64_LIBDWARF_PATH}")
+endif()
 path64_multiarch_link_libraries(cg dwarf elfutil elf)
 
 path64_add_multiarch_dependencies(cg generate_preg_list generate_topcode)
