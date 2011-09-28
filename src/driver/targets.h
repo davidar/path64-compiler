@@ -27,6 +27,10 @@ char *target_library_path();
 char *target_phase_path();
 
 
+// Returns target include path
+const char *target_include_path();
+
+
 // Returns path to target runtime path (location of crtX.o)
 const char *target_runtime_path();
 

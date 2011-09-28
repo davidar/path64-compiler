@@ -8,6 +8,7 @@ function(generate_targ_info config_name output)
         set(arch ${_PATH64_TARGET_ARCH_${targ}})
         set(abi_name ${_PATH64_TARGET_BITS_${targ}})
         set(abi ${_PATH64_TARGET_ABI_${targ}})
+        set(include_path ${PSC_INCLUDE_PATH_${targ}})
         set(crt_path ${PSC_CRT_PATH_${targ}})
         set(crtbegin_path ${PSC_CRTBEGIN_PATH_${targ}})
 
@@ -19,6 +20,14 @@ function(generate_targ_info config_name output)
 
         if(NOT IS_ABSOLUTE "${crt_path}")
             message(FATAL_ERROR "CRT path for target '${targ}' must be absolute. Specified value: '${crt_path}'")
+        endif()
+
+        if("${include_path}" STREQUAL "")
+            message(FATAL_ERROR "Include path for target '${targ}' is not specified. Please set PSC_INCLUDE_PATH_${targ} variable")
+        endif()
+
+        if(NOT IS_ABSOLUTE "${include_path}")
+            message(FATAL_ERROR "Include path for target '${targ}' must be absolute. Specified value: '${include_path}'")
         endif()
 
         # check files only for native config
@@ -62,7 +71,7 @@ function(generate_targ_info config_name output)
             set(first false)
         endif()
     
-        set(TARGET_DEFINITIONS "${TARGET_DEFINITIONS}\t{\"${targ}\",\t\"${arch}\",\t\"${abi_name}\",\t${abi},\t\"${crt_path}\",\t\"${crtbegin_path}\"")
+        set(TARGET_DEFINITIONS "${TARGET_DEFINITIONS}\t{\"${targ}\",\t\"${arch}\",\t\"${abi_name}\",\t${abi},\t\"${include_path}\",\t\"${crt_path}\",\t\"${crtbegin_path}\"")
     
         if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
             set(TARGET_DEFINITIONS "${TARGET_DEFINITIONS},\t\"${dyn_linker}\"")
@@ -364,6 +373,21 @@ foreach(targ ${PATH64_ENABLE_TARGETS})
     endif()
 endforeach()
 
+
+# setting default paths to include dirs
+foreach(targ ${PATH64_ENABLE_TARGETS})
+    set(include_path_name "PSC_INCLUDE_PATH_${targ}")
+    set(include_path "${${include_path_name}}")
+
+    if("${include_path}" STREQUAL "")
+        if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
+            set(${include_path_name} "/usr/include/${targ}-linux-gnu")
+        else()
+            set(${include_path_name} "/usr/include")
+        endif()
+    endif()
+endforeach()
+
 add_driver("" ${hash_style_supported})
 
 
@@ -371,7 +395,17 @@ add_driver("" ${hash_style_supported})
 
 if("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
 
-    # deb configuration - for debian based distros
+    # deb configuration - for debian multiarch distros with multiarch includes
+    set(PSC_INCLUDE_PATH_x86_64 "/usr/include/x86_64-linux-gnu")
+    set(PSC_INCLUDE_PATH_x86_32 "/usr/include")
+    set(PSC_CRT_PATH_x86_64 "/usr/lib/x86_64-linux-gnu")
+    set(PSC_CRT_PATH_x86_32 "/usr/lib32")
+    add_driver("deb_multiarch_includes" "TRUE")
+
+    set(PSC_INCLUDE_PATH_x86_64 "/usr/include")
+    set(PSC_INCLUDE_PATH_x86_32 "/usr/include")
+
+    # deb configuration - for debian multiarch distros
     set(PSC_CRT_PATH_x86_64 "/usr/lib/x86_64-linux-gnu")
     set(PSC_CRT_PATH_x86_32 "/usr/lib32")
     add_driver("deb_multiarch" "TRUE")

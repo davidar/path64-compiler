@@ -101,6 +101,11 @@ char *target_phase_path() {
 }
 
 
+const char *target_include_path() {
+    return current_target->include_path;
+}
+
+
 const char *target_runtime_path() {
     return current_target->crt_path;
 }
