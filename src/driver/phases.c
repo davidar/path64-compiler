@@ -918,8 +918,6 @@ void add_std_includes(string_list_t *args) {
     root = directory_path(exe_dir);
     free(exe_dir);
 
-    add_inc_path(args, target_include_path());
-
     if (!option_was_seen(O_nostdinc__)) {
         add_inc_path(args, "%s/include/" PSC_FULL_VERSION, root);
     }
@@ -949,6 +947,7 @@ void add_std_includes(string_list_t *args) {
         }
     }
 
+    add_inc_path(args, target_include_path());
     add_inc_path(args, "%s/lib/" PSC_FULL_VERSION "/include", root);
     free(root);
 }
