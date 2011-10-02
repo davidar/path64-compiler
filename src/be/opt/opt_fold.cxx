@@ -508,7 +508,7 @@ FOLD::CR_Simplify_Expr(CODEREP *cr)
 	  tmp->Set_opnd(0,k0);
 	  tmp->Set_opnd(1,k1);
 	  result = fold_htable->Rehash(tmp);
-	} else
+	} else {
 #if !defined( KEY)
 	  result = NOHASH;
 #else // bug 8581
@@ -516,6 +516,7 @@ FOLD::CR_Simplify_Expr(CODEREP *cr)
 	  if (result == NOHASH)
 	    result = Combine_bits_all_zero_test(cr);
 #endif
+	}
       }
 
    } else if (numkids == 3) {	// trinary operators
