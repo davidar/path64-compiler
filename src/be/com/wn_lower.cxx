@@ -6597,6 +6597,7 @@ static BOOL has_call(WN *expr)
 static WN *lower_store(WN *block, WN *tree, LOWER_ACTIONS actions)
 {
   BOOL kids_lowered = FALSE;	/* becomes TRUE when kids are lowered */
+  INT16 i;
 
   Is_True(OPCODE_is_store(WN_opcode(tree)),
 	  ("expected store node, not %s", OPCODE_name(WN_opcode(tree))));
@@ -7247,11 +7248,11 @@ static WN *lower_store(WN *block, WN *tree, LOWER_ACTIONS actions)
 	      ("MMLDID of Return_Val_Preg cannot be rhs of MSTORE"));
     }
 
+    for (i = 0; i < WN_kid_count(tree); i++)
+      WN_kid(tree,i) = lower_expr(block, WN_kid(tree,i), actions);
+
     if (Align_Object)
     {
-      INT16 i;
-      for (i = 0; i < WN_kid_count(tree); i++)
-        WN_kid(tree,i) = lower_expr(block, WN_kid(tree,i), actions);
 
       tree = improve_Malignment(tree, WN_kid1(tree), WN_kid2(tree),
 				WN_store_offset(tree));
