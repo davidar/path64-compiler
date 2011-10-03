@@ -171,7 +171,7 @@ ipa_compile_init ()
 #else
     int retval;
 
-    if (retval = readlink ("/proc/self/exe", my_cc, sizeof(my_cc))) >= 0) {
+    if (retval = readlink ("/proc/self/exe", my_cc, sizeof(my_cc)) >= 0) {
       my_cc[retval] = '\0';	// readlink doesn't append NULL
 #endif
 
