@@ -35,7 +35,7 @@
 
 #ifdef _LIBELF_XTND_EXPANDED_DATA
 #pragma weak xlate_expand_reg_info2_xtnd = _xlate_expand_reg_info2_xtnd
-#elif defined(BUILD_OS_DARWIN)
+#elif defined(XLATE_DISABLE_PRAGMA_WEAK)
 #else
 #pragma weak xlate_expand_reg_info2 = _xlate_expand_reg_info2
 #endif
