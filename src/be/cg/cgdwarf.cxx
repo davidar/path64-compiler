@@ -1731,6 +1731,11 @@ put_string_type (DST_flag flag, DST_STRING_TYPE *attr, Dwarf_P_Die die)
   }
 }
 
+static void
+put_namespace(DST_NAMESPACE *attr, Dwarf_P_Die die) {
+  put_name (DST_NAMESPACE_name(attr), die, pb_none);
+}
+
 #ifdef KEY
 static void
 put_namelist (DST_NAMELIST *attr, Dwarf_P_Die die)
@@ -1884,6 +1889,9 @@ Write_Attributes (
       break;
     case DW_TAG_namelist_item:
       put_namelist_item (DST_ATTR_IDX_TO_PTR(iattr, DST_NAMELIST_ITEM), die);
+      break;
+    case DW_TAG_namespace:
+      put_namespace(DST_ATTR_IDX_TO_PTR(iattr, DST_NAMESPACE), die);
       break;
 #ifdef KEY /* Bug 3507 */
     case DW_TAG_imported_declaration:

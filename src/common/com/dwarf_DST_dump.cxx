@@ -1012,7 +1012,13 @@ DST_put_subroutine_type(DST_flag flag, DST_SUBROUTINE_TYPE *attr)
       DST_put_string(" prototyped");
 }
 
-
+static void
+DST_put_namespace(DST_flag flag, DST_NAMESPACE *attr)
+{
+   DST_put_string(":namespace:");
+   DST_put_decl(DST_NAMESPACE_decl(attr));
+   DST_put_string_attribute(" name", DST_NAMESPACE_name(attr));
+}
       
    /*------------------------------------------------
     * Dump routines for info, and include files/dirs
@@ -1180,6 +1186,9 @@ DST_dump_info(INT32        indentation,
       DST_put_subroutine_type(
          flag, 
 	 DST_ATTR_IDX_TO_PTR(iattr, DST_SUBROUTINE_TYPE));
+      break;
+   case DW_TAG_namespace:
+      DST_put_namespace(flag, DST_ATTR_IDX_TO_PTR(iattr, DST_NAMESPACE));
       break;
    default:
       DST_put_INT32_attribute(">>> Unprintable DW_TAG", tag);

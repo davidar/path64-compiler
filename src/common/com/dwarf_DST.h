@@ -1258,6 +1258,20 @@ typedef struct DST_namelist_item
 
 #define DST_NAMELIST_ITEM_decl(attr) ((attr)->decl)
 #define DST_NAMELIST_ITEM_name(attr) ((attr)->name)
+
+/* [tag==DW_TAG_namelist_item]
+*/
+typedef struct DST_namespace
+{
+   USRCPOS      decl;      /* Source location */
+   DST_STR_IDX  name;      /* Name of type */
+   DST_CHILDREN  child;       /* The file-scope decls/defs */
+} DST_NAMESPACE;
+
+#define DST_NAMESPACE_decl(attr) ((attr)->decl)
+#define DST_NAMESPACE_name(attr) ((attr)->name)
+#define DST_NAMESPACE_first_child(attr) ((attr)->child.first)
+#define DST_NAMESPACE_last_child(attr) ((attr)->child.last)
 #endif
 
 

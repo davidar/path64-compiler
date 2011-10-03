@@ -140,6 +140,11 @@ DST_get_ptr_to_firstChildField(DST_INFO *parent)
                       DST_ATTR_IDX_TO_PTR(attr, DST_SUBROUTINE_TYPE));
       break;
 
+   case DW_TAG_namespace:
+      field_ptr = &DST_NAMESPACE_first_child(
+                      DST_ATTR_IDX_TO_PTR(attr, DST_NAMESPACE));
+      break;
+
    default:
       field_ptr = NULL;
       break; 
@@ -237,6 +242,11 @@ DST_get_ptr_to_lastChildField(DST_INFO *parent)
    case DW_TAG_subroutine_type:
       field_ptr = &DST_SUBROUTINE_TYPE_last_child(
                       DST_ATTR_IDX_TO_PTR(attr, DST_SUBROUTINE_TYPE));
+      break;
+
+   case DW_TAG_namespace:
+      field_ptr = &DST_NAMESPACE_last_child(
+                      DST_ATTR_IDX_TO_PTR(attr, DST_NAMESPACE));
       break;
 
    default:
