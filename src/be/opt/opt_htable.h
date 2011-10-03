@@ -366,10 +366,10 @@ private:
       OPERATOR  _opr:8;	             //
       ISOP_FLAG isop_flags:22;	     
       PROPAGATABILITY propagatability:2; // used during copy propagation
-      mUINT32   kid_count:14;        // number of kids
+      mUINT32   kid_count:16;        // number of kids
       MTYPE     _asm_input_dtyp:6;                  // data type
       MTYPE     _asm_input_dsctyp:6;                // descriptor type for various opcode
-      mINT32    _unused:6;	     // unused
+      mINT32    _unused:4;	     // unused
       mUINT8    max_depth;           // used in estimating rehash cost (SSAPRE)
       IDTYPE    _temp_id:24;         // processing this CR in new PRE step1
       CODEREP  *kids[3];             // array of kid pointers
