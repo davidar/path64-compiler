@@ -33,6 +33,10 @@
 #include <sys/param.h>
 #include <unistd.h>
 
+#ifdef __FreeBSD__
+#include <sys/sysctl.h>
+#endif
+
 #include "cxx_memory.h" 
 #include "erglob.h"     
 #include "ipa_option.h" 
@@ -152,17 +156,24 @@ ipa_compile_init ()
   static const char* cc_name_base = tmp_cc_name_base;
   static char my_cc[MAXPATHLEN];
   char *where_am_i = getenv("COMPILER_BIN");
-  int retval;
 
   if (where_am_i) {
     tmp_cc_name_base = where_am_i;
     cc_name_base = where_am_i;
   }
 
-  if (my_cc[0] == '\0' &&
-      (retval = readlink ("/proc/self/exe", my_cc, sizeof(my_cc))) >= 0) {
+  if (my_cc[0] == '\0') {
+#ifdef __FreeBSD__
+    int my_cc_mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
+    size_t my_cc_size = sizeof(my_cc);
 
+    if (sysctl(my_cc_mib, 4, my_cc, &my_cc_size, NULL, 0) == 0) {
+#else
+    int retval;
+
+    if (retval = readlink ("/proc/self/exe", my_cc, sizeof(my_cc))) >= 0) {
       my_cc[retval] = '\0';	// readlink doesn't append NULL
+#endif
 
       if (ipc_looks_like (my_cc, PSC_NAME_PREFIX "cc") ||
 	  ipc_looks_like (my_cc, PSC_NAME_PREFIX "CC") ||
@@ -202,6 +213,7 @@ ipa_compile_init ()
 	      }
 	  }
       }
+    }
   }
   
 

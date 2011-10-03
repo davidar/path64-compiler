@@ -60,7 +60,7 @@ static char *err_host_tab_rcs_id = "$Source$ $Revision$";
 #endif /* MONGOOSE_BE */
 
 #ifndef MODULE_NAME
-#error "MODULE_NAME macro is not defined
+#error "MODULE_NAME macro is not defined"
 #endif // MODULE_NAME
 
 #define PHASES_NAME Phases_ ## MODULE_NAME

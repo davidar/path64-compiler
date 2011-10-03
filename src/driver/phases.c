@@ -53,6 +53,9 @@
 #include <sys/param.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#ifdef __FreeBSD__
+#include <sys/sysctl.h>
+#endif
 #ifdef _WIN32
 #include <alloca.h>
 #endif
@@ -731,9 +734,13 @@ add_target_linker_args(string_list_t *args, boolean is_ipa) {
         if((abi == ABI_M64 || abi == ABI_64) && !is_ipa) {
             add_string(args, "-64");
         }
-#elif defined(__FreeBSD__)
-    add_string(args, (abi == ABI_N32) ? "-melf_i386_fbsd" : "-melf_x86_64_fbsd");
 #else
+#ifdef __FreeBSD__
+        if (!is_ipa) {
+            // XXX ipa_link cannot handle FreeBSD ABI.
+            add_string(args, (abi == ABI_M32) ? "-melf_i386_fbsd" : "-melf_x86_64_fbsd");
+        } else
+#endif
         add_string(args, (abi == ABI_M32) ? "-melf_i386" : "-melf_x86_64");
 #endif
     }
@@ -911,8 +918,6 @@ void add_std_includes(string_list_t *args) {
     root = directory_path(exe_dir);
     free(exe_dir);
 
-    add_inc_path(args, target_include_path());
-
     if (!option_was_seen(O_nostdinc__)) {
         add_inc_path(args, "%s/include/" PSC_FULL_VERSION, root);
     }
@@ -942,6 +947,7 @@ void add_std_includes(string_list_t *args) {
         }
     }
 
+    add_inc_path(args, target_include_path());
     add_inc_path(args, "%s/lib/" PSC_FULL_VERSION "/include", root);
     free(root);
 }
@@ -2773,6 +2779,14 @@ get_gnu_prefix (void)
   char path[MAXPATHLEN];
   int i, j, len, rval;
 
+#if defined(__FreeBSD__)
+  int path_mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1 };
+  size_t path_size = sizeof(path);
+
+  if (sysctl(path_mib, 4, path, &path_size, NULL, 0) != 0) {
+    strncpy(path, orig_program_name, sizeof(path));
+  }
+#else
   /* Look in this special place for a link to the executable.  This only
      works on Linux, but it should work since pathcc runs only on Linux. */
   rval = readlink ("/proc/self/exe", path, sizeof(path));
@@ -2782,6 +2796,7 @@ get_gnu_prefix (void)
   } else {
     path[rval] = '\0';		// readlink doesn't append NULL
   }
+#endif
 
   // Extract command from command path.  If command path is
   // /foo/mips64el-key-linux-pathcc, then command is mips64el-key-linux-pathcc.

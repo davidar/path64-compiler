@@ -92,7 +92,7 @@ ffopen(const char *name, int flags, ...)
  */
 	va_start(ap, flags);
 	if (narg >= 3)
-#if defined(BUILD_OS_DARWIN)
+#if defined(BUILD_OS_DARWIN) || defined(__FreeBSD__)
 		mode	= (mode_t) va_arg(ap, int);
 #else /* defined(BUILD_OS_DARWIN) */
 		mode	= va_arg(ap, mode_t);

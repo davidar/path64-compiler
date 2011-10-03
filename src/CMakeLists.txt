@@ -46,11 +46,11 @@ IF(PATH64_ENABLE_IPA)
 ENDIF()
 
 # TODO : Threading and other things need to be ported
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+IF(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     IF(PATH64_ENABLE_OPENMP)
         ADD_SUBDIRECTORY(libopenmp)
     ENDIF()
-ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+ENDIF()
 ADD_SUBDIRECTORY(libfi)
 
 # All the math stuff seems to be built from libmpath

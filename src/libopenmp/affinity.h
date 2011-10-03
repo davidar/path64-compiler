@@ -34,6 +34,7 @@
 #endif
 #include <sched.h>
 #if defined(__FreeBSD__)
+#include <sys/param.h>
 #include <sys/cpuset.h>
 #define cpu_set_t cpuset_t
 #endif

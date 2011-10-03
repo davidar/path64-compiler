@@ -1706,6 +1706,6 @@ movapd	%xmm1,%xmm7				#x1
 .L__vrdacgf:
 	jmp		.L__final_check
 
-#if defined(__linux__) && defined(__ELF__)
+#if (defined(__FreeBSD__) || defined(__linux__)) && defined(__ELF__)
     .section .note.GNU-stack,"",@progbits
 #endif

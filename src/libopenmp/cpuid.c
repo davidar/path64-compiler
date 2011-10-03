@@ -86,6 +86,8 @@ static uint32_t __cpuid_get_eflags ()
 #if defined(BUILD_OS_DARWIN)
   /* Assembler and compiler are out of synch unless we use 16 bit type */
   unsigned short int reg;
+#elif defined(__FreeBSD__)
+  register_t reg;
 #else /* defined(BUILD_OS_DARWIN) */
   uintreg_t reg;
 #endif /* defined(BUILD_OS_DARWIN) */
@@ -103,6 +105,8 @@ static void __cpuid_set_eflags (uint32_t eflags)
 #if defined(BUILD_OS_DARWIN)
   /* Assembler and compiler are out of synch unless we use 16 bit type */
   unsigned short int reg = (unsigned short int) eflags;
+#elif defined(__FreeBSD__)
+  register_t reg = (uintreg_t) eflags;
 #else /* defined(BUILD_OS_DARWIN) */
   uintreg_t reg = (uintreg_t) eflags;
 #endif /* defined(BUILD_OS_DARWIN) */

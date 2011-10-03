@@ -95,7 +95,7 @@ endif()
 
 set(link_flags "")
 if(PATH64_LIBDWARF_PATH)
-    set(link_flags "${link_flags} -L ${PATH64_LIBDWARF_PATH}")
+    set(link_flags "${link_flags} -L ${PATH64_LIBDWARF_PATH} -Wl,-rpath,${PATH64_LIBDWARF_PATH}")
 endif()
 path64_multiarch_link_libraries(be-exec dwarf)
 

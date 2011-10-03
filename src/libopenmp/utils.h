@@ -29,8 +29,12 @@
 #include "types.h"
 #include <assert.h>
 
+#ifndef MAX
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
+#endif
+#ifndef MIN
 #define MIN(a,b) (((a) < (b)) ? (a) : (b))
+#endif
 
 #define PMP_DEBUG_NONE 0x00
 #define PMP_DEBUG_ALL 0x01

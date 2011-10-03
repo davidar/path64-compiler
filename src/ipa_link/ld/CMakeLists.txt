@@ -62,7 +62,7 @@ eelf_x86_64_fbsd.c )
 # /bin/sh ../src/ipa_link/ld/genscripts.${SHELL_EXT} "../src/ipa_link/ld" "/opt/pathscale/lib" "/opt/pathscale" "/opt/pathscale" x86_64-unknown-linux-gnu x86_64-unknown-linux-gnu x86_64-unknown-linux-gnu "elf_x86_64 elf_i386" "/usr/local/lib /lib /usr/lib" no i386linux "i386-unknown-linux-gnuaout" # Makes ei386linux.c
 
 
-set_property(SOURCE ldmain.c PROPERTY COMPILE_DEFINITIONS DEFAULT_EMULATION="elf_x86_64";SCRIPTDIR="${INSTALL_DIR}/x86_64-unknown-linux-gnu/lib";BINDIR="${INSTALL_DIR}/bin";TOOLBINDIR="${INSTALL_DIR}/x86_64-unknown-linux-gnu/bin";TARGET="x86_64-unknown-linux-gnu";TARGET_SYSTEM_ROOT="")
+set_property(SOURCE ldmain.c PROPERTY COMPILE_DEFINITIONS DEFAULT_EMULATION="elf_x86_64";SCRIPTDIR="${INSTALL_DIR}/${PSC_TARGET}/lib";BINDIR="${INSTALL_DIR}/bin";TOOLBINDIR="${INSTALL_DIR}/${PSC_TARGET}/bin";TARGET="${PSC_TARGET}";TARGET_SYSTEM_ROOT="")
 
 # I don't know if this is needed to pull in libiberty
 FOREACH(f
@@ -89,9 +89,14 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DI
 
 path64_set_multiarch_sources(ld_srcs COMMON ${LD_SRCS})
 path64_add_multiarch_executable(ipa_link ld_srcs)
-if(${EXPORT_DYNAMIC_SUPPORTED} MATCHES "yes")
-    path64_set_multiarch_property(ipa_link LINK_FLAGS "-Wl,--export-dynamic")
+set(link_flags "")
+if(PATH64_LIBDWARF_PATH)
+    set(link_flags "${link_flags} -L ${PATH64_LIBDWARF_PATH} -Wl,-rpath,${PATH64_LIBDWARF_PATH}")
 endif()
+if(${EXPORT_DYNAMIC_SUPPORTED} MATCHES "yes")
+    set(link_flags "${link_flags} -Wl,--export-dynamic")
+endif()
+path64_set_multiarch_property(ipa_link LINK_FLAGS "${link_flags}")
 path64_multiarch_link_multiarch_libraries(ipa_link ipa)
 path64_multiarch_link_libraries(ipa_link bfd iberty ${libdl})
 path64_add_dependencies_from_multiarch(compiler-stage ipa_link)

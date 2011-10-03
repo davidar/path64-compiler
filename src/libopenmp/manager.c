@@ -32,7 +32,7 @@
 #include <assert.h>
 #include <dirent.h>	/* bizarre header trick to find PTHREAD_STACK_MIN */
 #include <errno.h>
-#if defined(BUILD_OS_DARWIN)
+#if defined(BUILD_OS_DARWIN) || defined(__FreeBSD__)
 #include <unistd.h>
 #include <limits.h>
 #else /* defined(BUILD_OS_DARWIN) */
