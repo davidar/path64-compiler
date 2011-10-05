@@ -1,15 +1,12 @@
 
 set(winlib_SRC
 	"mmap.c"
-	"rawmemchr.c"
 	"readlink.c"
 	"rlimit.c"
-	"strtok_r.c"
 	"stubs.c"
 	"symlink.c"
-	"times.c"
 	"timersub.c"
-	"uname.c"
+	"times.c"
 	"unix2winpath.c"
 	"wait.c"
 	"win2unixpath.c")
