@@ -42,16 +42,17 @@ function(generate_targ_info config_name output)
 					"file '${crt_path}/crt1.o' does not exist. Please check CRT path for target '${targ}'")
 			endif()
 
-			if(NOT EXISTS "${crt_path}/crti.o")
-				message(FATAL_ERROR
-					"file '${crt_path}/crti.o' does not exist. Please check CRT path for target '${targ}'")
-			endif()
+			if(NOT MINGW)
+				if(NOT EXISTS "${crt_path}/crti.o")
+					message(FATAL_ERROR
+						"file '${crt_path}/crti.o' does not exist. Please check CRT path for target '${targ}'")
+				endif()
 
-			if(NOT EXISTS "${crt_path}/crtn.o")
-				message(FATAL_ERROR
-					"file '${crt_path}/crtn.o' does not exist. Please check CRT path for target '${targ}'")
+				if(NOT EXISTS "${crt_path}/crtn.o")
+					message(FATAL_ERROR
+						"file '${crt_path}/crtn.o' does not exist. Please check CRT path for target '${targ}'")
+				endif()
 			endif()
-
 		endif()
 
 

@@ -100,6 +100,13 @@ int mregparm = 0;
 boolean msseregparm = FALSE;
 #endif
 
+#ifdef __MINGW32__
+/* MinGW */
+#define CRTI_NAME "/crt2.o"
+#else
+#define CRTI_NAME "/crti.o"
+#endif
+
 boolean multiple_source_files = FALSE;
 
 boolean keep_mp = FALSE;
@@ -1826,7 +1833,7 @@ add_file_args (string_list_t *args, phases_t index)
 	       } else {
 		   crt1_path = concat_strings(runtime_path, "/crt1.o");
 	       }
-               char *crti_path = concat_strings(runtime_path, "/crti.o");
+               char *crti_path = concat_strings(runtime_path, CRTI_NAME);
                char *cb_path = target_crtbegin_path();
                char *crtbegin_path = concat_strings(cb_path, "/crtbegin.o");
                free(cb_path);
@@ -1841,7 +1848,7 @@ add_file_args (string_list_t *args, phases_t index)
 
 		       } else {
                const char *runtime_path = target_runtime_path();
-               char *crti_path = concat_strings(runtime_path, "/crti.o");
+               char *crti_path = concat_strings(runtime_path, CRTI_NAME);
                char *cb_path = target_crtbegin_path();
                char *crtbeginS_path = concat_strings(cb_path, "/crtbeginS.o");
                free(cb_path);
@@ -1901,7 +1908,7 @@ add_file_args (string_list_t *args, phases_t index)
             const char *runtime_path = target_runtime_path();
             char *cb_path = target_crtbegin_path();
             char *crt1_path = concat_strings(runtime_path, "/crt1.o");
-            char *crti_path = concat_strings(runtime_path, "/crti.o");
+            char *crti_path = concat_strings(runtime_path, CRTI_NAME);
             char *crtbegin_path = concat_strings(cb_path, "/crtbegin.o");
             free(cb_path);
 
@@ -2034,7 +2041,11 @@ add_file_args (string_list_t *args, phases_t index)
 void add_crtend(string_list_t *args) {
     char *cb_path = target_crtbegin_path();
     const char *runtime_path = target_runtime_path();
+#ifdef __MINGW32__
+    char *crtn_path = concat_strings(runtime_path, "/libmsvcrt.a");
+#else
     char *crtn_path = concat_strings(runtime_path, "/crtn.o");
+#endif
     const char *crtend_name = ((shared != DSO_SHARED) && (shared != RELOCATABLE)) ?
                               "/crtend.o" :
                               "/crtendS.o";
