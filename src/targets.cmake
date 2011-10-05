@@ -453,6 +453,9 @@ function(path64_add_library_for_target name target type src_base_path)
 				target_flags
 				"${path64_multitarget_property_${name}_COMPILE_FLAGS} ${path64_multitarget_property_${name}_${target}_COMPILE_FLAGS}")
 
+
+
+
 			# Gettings language flags
 			string(REPLACE " " ";" lang_flags "${CMAKE_${src_lang}_FLAGS}")
 
@@ -514,6 +517,8 @@ function(path64_add_library_for_target name target type src_base_path)
 				string(LENGTH "${oname}" str_len)
 				math(EXPR str_len "${str_len} - 1")
 				string(SUBSTRING "${oname}" 1 ${str_len} oname)
+			elseif(WIN32 AND oname MATCHES "^.:")
+				file(RELATIVE_PATH oname "${CMAKE_SOURCE_DIR}" "${oname}")
 			endif()
 
 			# Getting object output name and making path to it
