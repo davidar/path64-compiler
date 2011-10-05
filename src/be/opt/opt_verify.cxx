@@ -443,6 +443,8 @@ Cur_stmt_is_entry_chi(void)
 {
 #ifdef Is_True_On
   return (cur_stmt->Opr() == OPR_OPT_CHI);
+#else
+  return TRUE;
 #endif
 }
 
