@@ -35,6 +35,20 @@ ifstream infile;
 
 static const size_t npos = (size_t)-1;
 
+void replace(string const& placeholder, string const& real, string & line) {
+	const size_t placeholder_size = placeholder.size();
+	size_t start = line.find(placeholder);
+	while (start != string::npos) {
+		line.replace(start, placeholder_size, real);
+		start = line.find(placeholder);
+	}
+}
+
+void replacePlaceholders(string & line) {
+	replace("-seepeepee", "-cpp", line);
+	replace("-EFFY", "-FE", line);
+}
+
 int next()
 {
     string line, str;
@@ -45,6 +59,7 @@ int next()
 
     /* Read a line into field[0] */
     if (!getline(infile, line)) return 0;
+	replacePlaceholders(line);
     field.push_back(line);
 
     NF = 0;
