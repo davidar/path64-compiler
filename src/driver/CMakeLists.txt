@@ -314,7 +314,7 @@ set_property(TARGET
 
 # Detecting gcc and configuring sort_options script
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows" AND NOT (${CMAKE_GENERATOR} MATCHES "MSYS"))
 
 	add_executable(sort_options sort_options.cpp)
 	get_target_property(sort_options_exe sort_options LOCATION)
