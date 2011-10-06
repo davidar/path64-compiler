@@ -1,4 +1,7 @@
 
+#ifdef __MINGW32__
+#include <sys/types.h> /* for pid_t */
+#endif
 #include_next <fcntl.h>
 
 struct flock {
