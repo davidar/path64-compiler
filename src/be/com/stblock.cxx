@@ -95,7 +95,7 @@
  *
  * ====================================================================
  */
-extern INT16
+extern INT32
 Adjusted_Alignment(ST *sym)
 {
   if (ST_class(sym) == CLASS_BLOCK)
