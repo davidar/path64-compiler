@@ -2829,9 +2829,9 @@ ETABLE::Bottom_up_cr(STMTREP *stmt, INT stmt_kid_num, CODEREP *cr,
 	    if (same_base && WOPT_Enable_Ivar_PRE && cr->Ivar_has_e_num()) {
 #if defined( KEY)
 	      if (WOPT_Enable_Preserve_Mem_Opnds && opc != OPCODE_UNKNOWN &&
+		   MTYPE_is_float(OPCODE_rtype(opc)) &&
 		  (OPCODE_operator(opc) == OPR_ADD ||
 		   OPCODE_operator(opc) == OPR_SUB ||
-		   MTYPE_is_float(OPCODE_rtype(opc)) &&
 		   OPCODE_operator(opc) == OPR_MPY)) {
 	      }
 	      else
@@ -3420,8 +3420,8 @@ ETABLE::Recursive_rehash_and_replace(CODEREP           *x,
     if (WOPT_Enable_Preserve_Mem_Opnds && opc != OPCODE_UNKNOWN &&
 	MTYPE_is_float(OPCODE_rtype(opc)) &&
 	(OPCODE_operator(opc) == OPR_ADD ||
-	 OPCODE_operator(opc) == OPR_MPY ||
-	 OPCODE_operator(opc) == OPR_SUB)) {
+	 OPCODE_operator(opc) == OPR_SUB ||
+	 OPCODE_operator(opc) == OPR_MPY)) {
     }
     else
 #endif
