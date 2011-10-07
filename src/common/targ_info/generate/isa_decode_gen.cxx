@@ -52,6 +52,13 @@
 #include "gen_util.h"
 #include "isa_decode_gen.h"
 
+#ifdef _WIN32
+#include <stdint.h>
+typedef uintptr_t unsigned_ptr_type;
+#else
+typedef unsigned long unsigned_ptr_type;
+#endif
+
 typedef enum { INST_STATE, UNIT_STATE } STATE_TYPE;
 
 typedef enum {
@@ -188,7 +195,7 @@ void Transitions(STATE state, ...)
       exit(EXIT_FAILURE);
     }
     transition = va_arg(ap, STATE);
-    if ((unsigned long)transition < TOP_count) {
+    if (unsigned_ptr_type(transition) < TOP_count) {
       fprintf(stderr, "### Error: transition %d of %s looks like it should be Final()\n",
 		      n, state->u.i.tag);
       exit(EXIT_FAILURE);
