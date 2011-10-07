@@ -51,19 +51,32 @@
  *
  * ====================================================================
  */
+#ifdef __MINGW32__
+#include <basetsd.h>
+#endif
 
 #if (defined(HOST_SGI) || defined(__GNUC__) || defined(_MSC_VER))
 typedef signed int	INT;	/* The natural integer on the host */
+
+#ifndef __MINGW32__
 typedef signed int	INT8;	/* Use the natural integer FIXME: Not portable */
 typedef signed int 	INT16;	/* Use the natural integer - FIXME: This is not correct or portable */
 typedef int32_t 	INT32;	/* The natural integer matches */
 typedef int64_t 	INT64;	
 typedef uintptr_t 	INTPTR;	/* Integer the same size as pointer*/
+#else
+typedef INT_PTR		INTPTR;
+#endif
+
 typedef unsigned int	UINT;	/* The natural integer on the host */
+
+#ifndef __MINGW32__
 typedef unsigned int 	UINT8;	/* Use the natural integer FIXME: Not portable */
 typedef unsigned int	UINT16;	/* Use the natural integer */
 typedef uint32_t	UINT32;	/* The natural integer matches */
 typedef uint64_t	UINT64;
+#endif
+
 typedef int		BOOL;	/* Natural size Boolean value... which should be bool, but was defined int a long time ago */
 #ifdef __sun
 typedef signed char	mINT8;	/* int8_t defined as unsigned on osol when -funsigned-char option is specified */
