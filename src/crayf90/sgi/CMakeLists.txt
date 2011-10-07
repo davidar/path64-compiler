@@ -94,8 +94,8 @@ include_directories(
 
 add_custom_command(
     OUTPUT ${Path64_BINARY_DIR}/bin/pathf90
-    COMMAND ${CMAKE_COMMAND} -E create_symlink pathcc ${Path64_BINARY_DIR}/bin/pathf90
-    COMMAND ${CMAKE_COMMAND} -E create_symlink pathcc ${Path64_BINARY_DIR}/bin/pathf95
+    COMMAND ${CMAKE_COMMAND} -E ${LINK_COPY} pathcc ${Path64_BINARY_DIR}/bin/pathf90
+    COMMAND ${CMAKE_COMMAND} -E ${LINK_COPY} pathcc ${Path64_BINARY_DIR}/bin/pathf95
     DEPENDS ${Path64_BINARY_DIR}/bin/pathcc
 )
 
