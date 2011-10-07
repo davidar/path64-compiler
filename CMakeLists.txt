@@ -348,6 +348,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${Path64_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${Path64_BINARY_DIR}/lib)
 
 file(MAKE_DIRECTORY ${Path64_BINARY_DIR}/lib)
+# TODO this doesn't work on windows so can't run from an unmodified build tree (?)
 execute_process(COMMAND
 	${CMAKE_COMMAND}
 	-E
