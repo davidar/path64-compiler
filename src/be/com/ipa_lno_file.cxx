@@ -544,7 +544,7 @@ INT IPA_LNO_READ_FILE::Check_Section_Headers()
     if (sec->sh_addralign & (sec->sh_addralign - 1))
       return IPALNO_FORMAT_ERROR;
     if (sec->sh_addralign >1 &&
-      (long)(baseaddr + sec->sh_offset) & ((sec->sh_addralign - 1)))
+      (intptr_t)(baseaddr + sec->sh_offset) & ((sec->sh_addralign - 1)))
       return IPALNO_FORMAT_ERROR;
 
     // Search for and verify the revision string 
@@ -628,9 +628,9 @@ INT IPA_LNO_READ_FILE::Check_Elf_Header()
       return IPALNO_FORMAT_ERROR;
     shdr = (Elf64_Shdr *) (baseaddr + ehdr->e_shoff);
 #if defined(__GNUC__)
-    if ((long) shdr & (__alignof__(Elf64_Shdr) - 1))
+    if ((intptr_t) shdr & (__alignof__(Elf64_Shdr) - 1))
 #else
-    if ((long) shdr & (__builtin_alignof(Elf64_Shdr) - 1))
+    if ((intptr_t) shdr & (__builtin_alignof(Elf64_Shdr) - 1))
 #endif
       return IPALNO_FORMAT_ERROR;
     return IPALNO_SUCCESS;
