@@ -637,7 +637,7 @@ public:
     void Clear_pu_flag (TY_PU_FLAGS f)
       {
         u2.flags.pu_flags &= ~f;
-#ifndef _LP64
+#ifdef _LP64
         u2.flags.unused = 0;
 #endif // _LP64
       }
