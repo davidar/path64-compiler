@@ -888,18 +888,18 @@ void Verify_MP_Lowered::Verify_No_MP(WN *tree)
     if ((opr == OPR_PRAGMA || opr == OPR_XPRAGMA) &&
         WN_pragmas[WN_pragma(wn)].users & PUSER_MP)
       Fail_FmtAssertion("Verify_MP_Lowered: unlowered MP pragma %d, "
-          "node %#lx, tree %#lx", WN_pragma(wn), (unsigned long) wn,
-          (unsigned long) tree);
+          "node %#lx, tree %#lx", WN_pragma(wn), (uintptr_t) wn,
+          (uintptr_t) tree);
 
     if (opr == OPR_IF && WN_Is_If_MpVersion(wn))
       Fail_FmtAssertion("Verify_MP_Lowered: unlowered MP IF, node %#lx, "
-          "tree %#lx", (unsigned long) wn, (unsigned long) tree);
+          "tree %#lx", (uintptr_t) wn, (uintptr_t) tree);
 
     BOOL first_and_last;
     if (Is_Nonpod_Finalization_IF(wn, &first_and_last))
       Fail_FmtAssertion("Verify_MP_Lowered: unlowered non-POD finalization "
                         "IF, node %#lx, tree %#lx",
-			(unsigned long) wn, (unsigned long) tree);
+			(uintptr_t) wn, (uintptr_t) tree);
   }
 }
 
