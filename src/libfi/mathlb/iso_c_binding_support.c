@@ -87,7 +87,9 @@ _C_f_pointera1(void **cptr, DopeVectorType *fptr, int8_t *shape) {
   if (fptr->n_dim) {
     /* shape could be assumed-size, so no way to check that its length
      * matches rank of fptr */
-    unsigned stride_mult = 1;
+    /* stride multiplier is in units of 32bits */
+    /* this probably fails for derived types and char sequences */
+    unsigned stride_mult = (fptr->type_lens.int_len > 32 ? fptr->type_lens.int_len / 32 : 1);
     int i = 0;
     for (; i < fptr->n_dim; i += 1) {
       int32_t extent = shape[i];
@@ -120,7 +122,9 @@ _C_f_pointera2(void **cptr, DopeVectorType *fptr, int16_t *shape) {
   if (fptr->n_dim) {
     /* shape could be assumed-size, so no way to check that its length
      * matches rank of fptr */
-    unsigned stride_mult = 1;
+    /* stride multiplier is in units of 32bits */
+    /* this probably fails for derived types and char sequences */
+    unsigned stride_mult = (fptr->type_lens.int_len > 32 ? fptr->type_lens.int_len / 32 : 1);
     int i = 0;
     for (; i < fptr->n_dim; i += 1) {
       int32_t extent = shape[i];
@@ -153,7 +157,9 @@ _C_f_pointera4(void **cptr, DopeVectorType *fptr, int32_t *shape) {
   if (fptr->n_dim) {
     /* shape could be assumed-size, so no way to check that its length
      * matches rank of fptr */
-    unsigned stride_mult = 1;
+    /* stride multiplier is in units of 32bits */
+    /* this probably fails for derived types and char sequences */
+    unsigned stride_mult = (fptr->type_lens.int_len > 32 ? fptr->type_lens.int_len / 32 : 1);
     int i = 0;
     for (; i < fptr->n_dim; i += 1) {
       int32_t extent = shape[i];
@@ -186,7 +192,9 @@ _C_f_pointera8(void **cptr, DopeVectorType *fptr, int64_t *shape) {
   if (fptr->n_dim) {
     /* shape could be assumed-size, so no way to check that its length
      * matches rank of fptr */
-    unsigned stride_mult = 1;
+    /* stride multiplier is in units of 32bits */
+    /* this probably fails for derived types and char sequences */
+    unsigned stride_mult = (fptr->type_lens.int_len > 32 ? fptr->type_lens.int_len / 32 : 1);
     int i = 0;
     for (; i < fptr->n_dim; i += 1) {
       int32_t extent = shape[i];
