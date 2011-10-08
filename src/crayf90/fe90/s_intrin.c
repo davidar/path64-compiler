@@ -6013,11 +6013,11 @@ void    loc_intrinsic(opnd_type     *result_opnd,
 	      PRINTMSG(arg_info_list[info_idx1].line, found_error, Error,
 		       arg_info_list[info_idx1].col, AT_OBJ_NAME_PTR(*spec_idx));
 
+	  }
 	/* For now, call external procedure because giving Loc_Opr a
 	 * result type of type(c_ptr) blows up elsewhere in the front
 	 * end. Sigh. See also table entry in p_driver.c */
-	      goto EXIT;
-	  }
+	  goto EXIT;
       }
 #endif /* KEY Bug 14150 */
 
