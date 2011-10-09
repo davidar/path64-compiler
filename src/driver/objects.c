@@ -176,7 +176,9 @@ add_object (int flag, char *arg)
 		/* when -lm, implicitly add extra math libraries */
 		if ((strcmp(arg, "m") == 0 ||
 		     strcmp(arg, "mpath") == 0)	// bug 5184
-		    && ! option_was_seen(O_fbootstrap_hack)) {
+		    && !option_was_seen(O_fbootstrap_hack)
+                    && !option_was_seen(O_nodefaultlibs)
+                    && !option_was_seen(O_nostdlib)) {
 			/* add -lmv -lmblah */
 			add_library(objects, "mv");
 #ifdef TARG_MIPS
