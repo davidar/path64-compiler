@@ -86,6 +86,11 @@ function(path64_get_host_target res_var)
 endfunction()
 
 
+if(NOT PATH64_ENABLE_TARGETS AND "${CMAKE_SYSTEM_NAME}" STREQUAL "SunOS")
+    # defaulting to x86_64 on solaris
+    set(PATH64_ENABLE_TARGETS "x86_64")
+endif()
+    
 # Defaulting to host target if PATH64_ENABLE_TARGETS is not specified
 if(NOT PATH64_ENABLE_TARGETS)
     path64_get_host_target(PATH64_ENABLE_TARGETS)
