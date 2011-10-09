@@ -2105,66 +2105,75 @@ add_final_ld_args (string_list_t *args)
 	
     if( ! option_was_seen(O_nostartfiles)) add_crtend(args);
 
-	if (shared != RELOCATABLE) {
-	    if (invoked_lang == L_f90) {
-		if (!option_was_seen(O_shared)) {
-			add_library(args, PSC_NAME_PREFIX "fstart");
-		}
-		add_library(args, PSC_NAME_PREFIX "fortran");
-		if (!option_was_seen(O_shared)) {
-			add_library(args, PSC_NAME_PREFIX "fstart");
-		}
-		if (! option_was_seen(O_fbootstrap_hack)) {
-		  add_string(args, "-lmv");
-#ifdef TARG_MIPS
-          if (is_target_arch_MIPS()) {
-		    if (ffast_math_prescan == 1) {  // Bug 14245
-		      // Link with libscm and open64 libmpath before libm
-		      add_string(args, "-lscm");
-		      add_string(args, "-lm" PSC_NAME_PREFIX);
-		    }
-          } else {
-#endif // TARG_MIPS
-		    add_string(args, "-lm" PSC_NAME_PREFIX);
-#ifdef TARG_MIPS
-          }
-#endif // TARG_MIPS
-		}
-		add_string(args, "-lm");
-		if (! option_was_seen(O_fbootstrap_hack)) {
-		  add_library(args, "mv");
-#ifdef TARG_MIPS
-        if (is_target_arch_MIPS()) {
-		  if (ffast_math_prescan == 1) {  // Bug 14245
-		    // Link with libscm and open64 libmpath before libm
-		    add_library(args, "scm");
-		    add_library(args, "m" PSC_NAME_PREFIX);
-		  }
-        } else {
-#endif // TARG_MIPS
-		  add_library(args, "m" PSC_NAME_PREFIX);
-#ifdef TARG_MIPS
-        }
-#endif // TARG_MIPS
-		}
-		add_library(args, "m");
-	    }
-	    if (option_was_seen(O_mp) ||
-		option_was_seen(O_apo) ||	// bug 6334
-		option_was_seen(O_fopenmp)) {
-                add_string(args, "-lopenmp");
+    if (shared != RELOCATABLE) {
+        if (invoked_lang == L_f90) {
+            if (!option_was_seen(O_shared)) {
+            	add_library(args, PSC_NAME_PREFIX "fstart");
             }
 
-            if (option_was_seen (O_fprofile_arcs))
-                add_string(args, "-lgcov");    // bug 12754
-  // bug 4230
-	    if (option_was_seen(O_pthread) ||
-		option_was_seen(O_mp) ||
-		option_was_seen(O_fopenmp) ||
-		option_was_seen(O_apo)) {	// bug 6334
-		add_string(args, "-lpthread");
-	    }
-	}
+            add_library(args, PSC_NAME_PREFIX "fortran");
+
+            if (!option_was_seen(O_shared)) {
+            	add_library(args, PSC_NAME_PREFIX "fstart");
+            }
+
+            if (! option_was_seen(O_fbootstrap_hack)) {
+                add_string(args, "-lmv");
+
+#ifdef TARG_MIPS
+                if (is_target_arch_MIPS()) {
+                    if (ffast_math_prescan == 1) {  // Bug 14245
+                        // Link with libscm and open64 libmpath before libm
+                        add_string(args, "-lscm");
+                        add_string(args, "-lm" PSC_NAME_PREFIX);
+                    }
+                } else {
+#endif // TARG_MIPS
+                    add_string(args, "-lm" PSC_NAME_PREFIX);
+#ifdef TARG_MIPS
+                }
+#endif // TARG_MIPS
+            }
+
+            add_string(args, "-lm");
+            
+            if (! option_was_seen(O_fbootstrap_hack)) {
+                add_library(args, "mv");
+#ifdef TARG_MIPS
+                if (is_target_arch_MIPS()) {
+                    if (ffast_math_prescan == 1) {  // Bug 14245
+                        // Link with libscm and open64 libmpath before libm
+                        add_library(args, "scm");
+                        add_library(args, "m" PSC_NAME_PREFIX);
+                    }
+                } else {
+#endif // TARG_MIPS
+                    add_library(args, "m" PSC_NAME_PREFIX);
+#ifdef TARG_MIPS
+                }
+#endif // TARG_MIPS
+            }
+
+            add_library(args, "m");
+        }
+    
+        if (option_was_seen(O_mp) ||
+            option_was_seen(O_apo) ||	// bug 6334
+            option_was_seen(O_fopenmp)) {
+            add_string(args, "-lopenmp");
+        }
+    
+        if (option_was_seen (O_fprofile_arcs))
+            add_string(args, "-lgcov");    // bug 12754
+    
+        // bug 4230
+        if (option_was_seen(O_pthread) ||
+            option_was_seen(O_mp) ||
+            option_was_seen(O_fopenmp) ||
+            option_was_seen(O_apo)) {	// bug 6334
+            add_string(args, "-lpthread");
+        }
+    }
 
     // Put pscrt & gcc after all the libraries that are built with PathScale
     // compilers, since those libraries could use PathScale routines.
@@ -2176,11 +2185,11 @@ add_final_ld_args (string_list_t *args)
 
 #if !defined(PATH64_ENABLE_PSCRUNTIME)
     if(option_was_seen(O_static) || option_was_seen(O__static)) {
-    	add_arg(args, "-L%s", current_target->libgcc_path);
-    	add_library(args, "gcc");
+        add_arg(args, "-L%s", current_target->libgcc_path);
+        add_library(args, "gcc");
     } else {
-    	add_arg(args, "-L%s", current_target->libgcc_s_path);
-    	add_library(args, "gcc_s");
+        add_arg(args, "-L%s", current_target->libgcc_s_path);
+        add_library(args, "gcc_s");
     }
 #endif
 
