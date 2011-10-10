@@ -362,10 +362,10 @@ int main (INT argc, char *argv[])
     progname = basename (argv[0]);
     // weird linux bug with basename where it doesn't strip the leading /
     if (*progname == '/') ++progname;
-    a2b = (strcmp (progname, "ir_a2b") == 0);
-    b2a = (strcmp (progname, "ir_b2a") == 0);
-    sel = (strcmp (progname, "ir_sel") == 0);
-    all = (strcmp (progname, "ir_all") == 0);
+    a2b = (strncmp (progname, "ir_a2b", 6) == 0);
+    b2a = (strncmp (progname, "ir_b2a", 6) == 0);
+    sel = (strncmp (progname, "ir_sel", 6) == 0);
+    all = (strncmp (progname, "ir_all", 6) == 0);
 
     if (sizeof(EXT_EXE) > 1) {
         a2b = a2b || (strcmp (progname, FN_EXE("ir_a2b")) == 0);
