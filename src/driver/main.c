@@ -1074,6 +1074,10 @@ prescan_options (int argc, char *argv[])
       ipa_conflict_option = argv[i];
     } else if (!strcmp(argv[i], "-fbgen")) {
       ipa_conflict_option = argv[i];
+    } else if (!strcmp(argv[i], "-nodefaultlibs")) {
+      add_option_seen(O_nodefaultlibs);
+    } else if (!strcmp(argv[i], "-nostdlib")) {
+      add_option_seen(O_nostdlib);
     }
 #if 0
     // Disable for SiCortex 5069: allow -g -ipa
