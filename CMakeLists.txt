@@ -399,7 +399,11 @@ else()
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	set(SHELL_EXT cmd)
+	if(${CMAKE_GENERATOR} MATCHES "MSYS")
+		set(SHELL_EXT sh)
+	else()
+		set(SHELL_EXT cmd)
+	endif()
 	set(SYMLINK_COMMAND ${CMAKE_COMMAND} -E copy_if_different)
 	set(PATH64_AUXILARY_LD_FLAGS '"-FIXME"')
 	# ADD_DEFINITIONS(-DPSC_FULL_VERSION="${PSC_FULL_VERSION}")
@@ -407,6 +411,7 @@ else()
 	set(SHELL_EXT sh)
 	set(SYMLINK_COMMAND ${CMAKE_COMMAND} -E create_symlink)
 endif()
+
 # build runtime search paths
 include(${Path64_SOURCE_DIR}/cmake/Modules/GCCRuntimeDirs.cmake)
 
