@@ -66,7 +66,7 @@ gs_t program;
 /* [SC] ST define this in libfereconf. */
 /*       MAX_DEBUG_LEVEL        2  :: Defined in flags.h */
 # define DEF_DEBUG_LEVEL        0
-INT Debug_Level = DEF_DEBUG_LEVEL;	/* -gn: debug level */
+INT8 Debug_Level = DEF_DEBUG_LEVEL;	/* -gn: debug level */
 int wgen_pic;
 extern void WGEN_Weak_Finish(void);
 extern void WGEN_Expand_Top_Level_Decl(gs_t);
