@@ -1156,12 +1156,12 @@ CG_DEP_Oper_Latency(TOP pred_oper, TOP succ_oper, CG_DEP_KIND kind, UINT8 opnd)
 // See "cg_dep_graph.h" for interface description.
 // -----------------------------------------------------------------------
 //
-INT16 
+INT 
 CG_DEP_Latency(OP *pred, OP *succ, CG_DEP_KIND kind, UINT8 opnd)
 {
   TOP popcode = OP_code(pred);
   TOP sopcode = OP_code(succ);
-  INT16 latency = CG_DEP_Oper_Latency(popcode, sopcode, kind, opnd);
+  INT latency = CG_DEP_Oper_Latency(popcode, sopcode, kind, opnd);
 
   if (OP_load(pred) && kind == CG_DEP_REGIN) {
     INT32 ld_latency_adjust = 0;

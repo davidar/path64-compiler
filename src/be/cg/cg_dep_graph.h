@@ -318,7 +318,7 @@
  *  CG_DEP_REGIN) using the given operand number <opnd> (used only for
  *  REGIN/REGANTI kinds).
  *
- *    INT16 CG_DEP_Latency(OP *pred, OP *succ, CG_DEP_KIND kind, UINT8 opnd)
+ *    INT CG_DEP_Latency(OP *pred, OP *succ, CG_DEP_KIND kind, UINT8 opnd)
  *
  *  To inquire about the latencies of operators without OPs, use:
  *
@@ -705,7 +705,7 @@ void CG_DEP_Trace_Op_SCC_Arcs(OP *op);
 
 void CG_DEP_Delete_Graph(void *item);
 
-INT16 CG_DEP_Latency(OP *pred, OP *succ, CG_DEP_KIND kind, UINT8 opnd);
+INT CG_DEP_Latency(OP *pred, OP *succ, CG_DEP_KIND kind, UINT8 opnd);
 INT16 CG_DEP_Oper_Latency(TOP              pred_oper, 
 			  TOP              succ_oper,
 			  CG_DEP_KIND      kind, 
