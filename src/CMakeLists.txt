@@ -52,8 +52,20 @@ endif()
 add_subdirectory(libfi)
 
 # Check to see if -Wl,-x aka -Wl,--discard-all is supported - it isn't on gold
-include(CheckCCompilerFlag)
-check_c_compiler_flag("-Wl,-x" LINKER_SUPPORTS_DISCARD_ALL)
+if(NOT DEFINED LINKER_SUPPORTS_DISCARD_ALL)
+	message(STATUS "Checking if linker ${CMAKE_LINKER} supports -x...")
+	execute_process(COMMAND ${CMAKE_LINKER} -x
+		ERROR_VARIABLE _linker_discard_all_error
+		OUTPUT_QUIET)
+	if(_linker_discard_all_error MATCHES "unknown option")
+		set(LINKER_SUPPORTS_DISCARD_ALL no)
+	else()
+		set(LINKER_SUPPORTS_DISCARD_ALL yes)
+	endif()
+	set(LINKER_SUPPORTS_DISCARD_ALL "${LINKER_SUPPORTS_DISCARD_ALL}" CACHE INTERNAL "Does linker support -x flag, aka --discard-all?")
+	message(STATUS "Checking if linker ${CMAKE_LINKER} supports -x... ${LINKER_SUPPORTS_DISCARD_ALL}")
+endif()
+
 if(LINKER_SUPPORTS_DISCARD_ALL)
 	set(LINK_FLAG_DISCARD_ALL "-Wl,-x")
 else()
