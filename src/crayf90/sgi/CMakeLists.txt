@@ -94,6 +94,11 @@ add_custom_command(OUTPUT
 	${SYMLINK_COMMAND}
 	pathcc
 	${Path64_BINARY_DIR}/bin/pathf90
+	DEPENDS
+	${Path64_BINARY_DIR}/bin/pathcc)
+
+add_custom_command(OUTPUT
+	${Path64_BINARY_DIR}/bin/pathf95
 	COMMAND
 	${SYMLINK_COMMAND}
 	pathcc
@@ -103,7 +108,8 @@ add_custom_command(OUTPUT
 
 add_custom_target(fortran_driver
 	DEPENDS
-	${Path64_BINARY_DIR}/bin/pathf90)
+	${Path64_BINARY_DIR}/bin/pathf90
+	${Path64_BINARY_DIR}/bin/pathf95)
 
 
 path64_set_multiarch_sources(mfef95_sources
