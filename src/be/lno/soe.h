@@ -364,8 +364,8 @@ public:
 
   BOOL Is_Consistent();
   void Mark_Redundant (BOOL *is_redundant);
-  INT16 Mark_Simple_Redundant(BOOL *is_redundant);
-  INT16 Mark_New_Redundant(BOOL *is_redundant);
+  INT Mark_Simple_Redundant(BOOL *is_redundant);
+  INT Mark_New_Redundant(BOOL *is_redundant);
   BOOL Copy_To_Work();
   void Add_Work_Le();
   void Add_Work_Le_Non_Simple_Redundant();
