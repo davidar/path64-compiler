@@ -150,7 +150,16 @@ string(REGEX REPLACE "^([0-9]+).+$" "\\1" PSC_MAJOR_VERSION ${TMPVERSION})
 string(REGEX REPLACE "^[0-9]+\\.([0-9]+).*$" "\\1" PSC_MINOR_VERSION ${TMPVERSION})
 
 IF(NOT PSC_TARGET)
-    string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}-pathscale-${CMAKE_SYSTEM_NAME}" PSC_TARGET)
+    path64_get_host_arch(arch)
+    IF("${arch}" STREQUAL "x8664")
+        set(arch "x86_64")
+    ELSEIF("${arch}" STREQUAL "x8632")
+        set(arch "i386")
+    ENDIF()
+    string(TOLOWER "${arch}-unknown-${CMAKE_SYSTEM_NAME}" PSC_TARGET)
+    IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+        set(PSC_TARGET "${PSC_TARGET}-gnu")
+    ENDIF()
 ENDIF()
 
 # Checking that CRT paths are specified for all targets

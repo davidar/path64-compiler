@@ -62,11 +62,13 @@ eelf_x86_64_fbsd.c )
 # /bin/sh ../src/ipa_link/ld/genscripts.${SHELL_EXT} "../src/ipa_link/ld" "/opt/pathscale/lib" "/opt/pathscale" "/opt/pathscale" x86_64-unknown-linux-gnu x86_64-unknown-linux-gnu x86_64-unknown-linux-gnu "elf_x86_64 elf_i386" "/usr/local/lib /lib /usr/lib" no i386linux "i386-unknown-linux-gnuaout" # Makes ei386linux.c
 
 
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set_property(SOURCE ldmain.c PROPERTY COMPILE_DEFINITIONS DEFAULT_EMULATION="elf_x86_64";SCRIPTDIR="${INSTALL_DIR}/x86_64-unknown-linux-gnu/lib";BINDIR="${INSTALL_DIR}/bin";TOOLBINDIR="${INSTALL_DIR}/x86_64-unknown-linux-gnu/bin";TARGET="x86_64-unknown-linux-gnu";TARGET_SYSTEM_ROOT="")
-ELSE()
-    set_property(SOURCE ldmain.c PROPERTY COMPILE_DEFINITIONS DEFAULT_EMULATION="elf_x86_64";SCRIPTDIR="${INSTALL_DIR}/${PSC_TARGET}/lib";BINDIR="${INSTALL_DIR}/bin";TOOLBINDIR="${INSTALL_DIR}/${PSC_TARGET}/bin";TARGET="${PSC_TARGET}";TARGET_SYSTEM_ROOT="")
+path64_get_host_arch(arch)
+IF("${arch}" STREQUAL "x8664")
+    set(arch "x86_64")
+ELSEIF("${arch}" STREQUAL "x8632")
+    set(arch "i386")
 ENDIF()
+set_property(SOURCE ldmain.c PROPERTY COMPILE_DEFINITIONS DEFAULT_EMULATION="elf_${arch}";SCRIPTDIR="${INSTALL_DIR}/${PSC_TARGET}/lib";BINDIR="${INSTALL_DIR}/bin";TOOLBINDIR="${INSTALL_DIR}/${PSC_TARGET}/bin";TARGET="${PSC_TARGET}";TARGET_SYSTEM_ROOT="")
 
 # I don't know if this is needed to pull in libiberty
 FOREACH(f
