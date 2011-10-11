@@ -520,7 +520,7 @@ else()
 
 	if(PATH64_ENABLE_CXX)
 		add_custom_command(OUTPUT
-			${Path64_BINARY_DIR}/bin/pathCC
+			${Path64_BINARY_DIR}/bin/pathCC${CMAKE_EXECUTABLE_SUFFIX}
 			${Path64_BINARY_DIR}/lib/${PSC_FULL_VERSION}
 			DEPENDS
 			pathcc
@@ -528,13 +528,13 @@ else()
 			# TODO does this work with LINK_COPY on windows?
 			COMMAND
 			${SYMLINK_COMMAND}
-			pathcc
-			${Path64_BINARY_DIR}/bin/pathCC)
+			pathcc${CMAKE_EXECUTABLE_SUFFIX}
+			${Path64_BINARY_DIR}/bin/pathCC${CMAKE_EXECUTABLE_SUFFIX})
 
 		add_custom_target(stageit-driver
 			ALL
 			DEPENDS
-			${Path64_BINARY_DIR}/bin/pathCC)
+			${Path64_BINARY_DIR}/bin/pathCC${CMAKE_EXECUTABLE_SUFFIX})
 
 		add_dependencies(compiler-stage stageit-driver)
 
