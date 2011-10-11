@@ -29,9 +29,8 @@ ADD_SUBDIRECTORY(common/targ_info)
 ADD_SUBDIRECTORY(common/util)
 ADD_SUBDIRECTORY(be)
 
-#Hack for Window building
-IF((${CMAKE_SYSTEM_NAME} MATCHES "Windows"))
-ELSE() 
+IF(NOT WIN32)
+    # libpscrt not yet ported to Windows
     ADD_SUBDIRECTORY(libpscrt)
 ENDIF()
 
@@ -68,8 +67,7 @@ ADD_SUBDIRECTORY(libm)
 ADD_SUBDIRECTORY(libmpath)
 
 #Hack for Window building
-IF((${CMAKE_SYSTEM_NAME} MATCHES "Windows")) 
-ELSE()
+IF(NOT WIN32)
     ADD_SUBDIRECTORY(instrumentation)
     ADD_SUBDIRECTORY(arith)
 ENDIF()
