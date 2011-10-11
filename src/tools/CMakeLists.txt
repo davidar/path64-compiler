@@ -1,2 +1,2 @@
-ADD_SUBDIRECTORY(assign)
-ADD_SUBDIRECTORY(explain)
+add_subdirectory(assign)
+add_subdirectory(explain)

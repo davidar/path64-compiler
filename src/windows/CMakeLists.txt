@@ -1,2 +1,2 @@
 
-ADD_SUBDIRECTORY(winlib)
+add_subdirectory(winlib)

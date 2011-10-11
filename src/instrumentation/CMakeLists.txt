@@ -1,1 +1,1 @@
-ADD_SUBDIRECTORY(libinstr2)
+add_subdirectory(libinstr2)

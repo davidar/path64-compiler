@@ -1,6 +1,7 @@
 # build rtkutils.a and a couple custom commands
 
-SET(PATHSCALE_RTKUTILS_SRCS   	"utils_memory.c"
+set(PATHSCALE_RTKUTILS_SRCS
+	"utils_memory.c"
 	"utils_print.c"
 	"utils_debug.c"
 	"utils_option.c"
@@ -10,9 +11,7 @@ SET(PATHSCALE_RTKUTILS_SRCS   	"utils_memory.c"
 	"libUtilsOptions.c"
 	"libUtilsVersion.c")
 
-INCLUDE_DIRECTORIES(
-	.
-	)
+include_directories(.)
 
 
 add_library(rtkutils STATIC ${PATHSCALE_RTKUTILS_SRCS})

@@ -1,10 +1,7 @@
 
 
-INCLUDE_DIRECTORIES(../include/cmplrs)
+include_directories(../include/cmplrs)
 
 
-ADD_LIBRARY(cmplrs STATIC
-            array_alloc.c
-            make_depend.c
-        )
+add_library(cmplrs STATIC array_alloc.c make_depend.c)
 

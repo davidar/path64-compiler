@@ -1,99 +1,99 @@
-PROJECT(PATHSCALE)
+project(PATHSCALE)
 
-SET(CMAKE_C_FLAGS "-D_LANGUAGE_C ${CMAKE_C_FLAGS}")
-SET(CMAKE_CXX_FLAGS "-D_LANGUAGE_C_PLUS_PLUS ${CMAKE_CXX_FLAGS}")
+set(CMAKE_C_FLAGS "-D_LANGUAGE_C ${CMAKE_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "-D_LANGUAGE_C_PLUS_PLUS ${CMAKE_CXX_FLAGS}")
 
-SET(CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES "m;c")
+set(CMAKE_Fortran_IMPLICIT_LINK_LIBRARIES "m;c")
 
-INCLUDE(includes.cmake)
+include(includes.cmake)
 
 # Fake target that depends on all be components
 add_custom_target(be-all)
 add_dependencies(compiler-stage be-all)
 
 #Hack for Window building
-IF((${CMAKE_SYSTEM_NAME} MATCHES "Windows"))
-ELSE() 
-    ADD_SUBDIRECTORY(csu)
-ENDIF()
+if((${CMAKE_SYSTEM_NAME} MATCHES "Windows" ))
+else()
+	add_subdirectory(csu)
+endif()
 
-ADD_SUBDIRECTORY(common/com)
-ADD_SUBDIRECTORY(driver)
-ADD_SUBDIRECTORY(libcif)
-ADD_SUBDIRECTORY(libcmplrs)
-ADD_SUBDIRECTORY(libelf)
-ADD_SUBDIRECTORY(libelfutil)
-ADD_SUBDIRECTORY(common/rtkutils)
-ADD_SUBDIRECTORY(common/targ_info/parser/gensyn)
-ADD_SUBDIRECTORY(common/targ_info)
-ADD_SUBDIRECTORY(common/util)
-ADD_SUBDIRECTORY(be)
+add_subdirectory(common/com)
+add_subdirectory(driver)
+add_subdirectory(libcif)
+add_subdirectory(libcmplrs)
+add_subdirectory(libelf)
+add_subdirectory(libelfutil)
+add_subdirectory(common/rtkutils)
+add_subdirectory(common/targ_info/parser/gensyn)
+add_subdirectory(common/targ_info)
+add_subdirectory(common/util)
+add_subdirectory(be)
 
-IF(NOT WIN32)
-    # libpscrt not yet ported to Windows
-    ADD_SUBDIRECTORY(libpscrt)
-ENDIF()
+if(NOT WIN32)
+	# libpscrt not yet ported to Windows
+	add_subdirectory(libpscrt)
+endif()
 
-IF(PATH64_ENABLE_GNU_FRONTEND)
-    ADD_SUBDIRECTORY(wgen)
-ENDIF()
+if(PATH64_ENABLE_GNU_FRONTEND)
+	add_subdirectory(wgen)
+endif()
 
-ADD_SUBDIRECTORY(ipa)
+add_subdirectory(ipa)
 
-IF(PATH64_ENABLE_IPA)
-    ADD_SUBDIRECTORY(ipa_link)
-ENDIF()
+if(PATH64_ENABLE_IPA)
+	add_subdirectory(ipa_link)
+endif()
 
 # TODO : Threading and other things need to be ported
-IF(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    IF(PATH64_ENABLE_OPENMP)
-        ADD_SUBDIRECTORY(libopenmp)
-    ENDIF()
-ENDIF()
-ADD_SUBDIRECTORY(libfi)
+if(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+	if(PATH64_ENABLE_OPENMP)
+		add_subdirectory(libopenmp)
+	endif()
+endif()
+add_subdirectory(libfi)
 
 # Check to see if -Wl,-x aka -Wl,--discard-all is supported - it isn't on gold
 include(CheckCCompilerFlag)
 check_c_compiler_flag("-Wl,-x" LINKER_SUPPORTS_DISCARD_ALL)
 if(LINKER_SUPPORTS_DISCARD_ALL)
-    set(LINK_FLAG_DISCARD_ALL "-Wl,-x")
+	set(LINK_FLAG_DISCARD_ALL "-Wl,-x")
 else()
-    set(LINK_FLAG_DISCARD_ALL)
+	set(LINK_FLAG_DISCARD_ALL)
 endif()
 
 # All the math stuff seems to be built from libmpath
 # libmv == vector math functions
-ADD_SUBDIRECTORY(libm)
-ADD_SUBDIRECTORY(libmpath)
+add_subdirectory(libm)
+add_subdirectory(libmpath)
 
 #Hack for Window building
-IF(NOT WIN32)
-    ADD_SUBDIRECTORY(instrumentation)
-    ADD_SUBDIRECTORY(arith)
-ENDIF()
+if(NOT WIN32)
+	add_subdirectory(instrumentation)
+	add_subdirectory(arith)
+endif()
 
 # TODO : Can't determine linking method
 
-IF(${PATH64_ENABLE_FORTRAN})
-INCLUDE(libF77/config.cmake)
-ADD_SUBDIRECTORY(libpathfortran)
-ADD_SUBDIRECTORY(crayf90)
-ADD_SUBDIRECTORY(f95_coco)
-ENDIF(${PATH64_ENABLE_FORTRAN})
+if(${PATH64_ENABLE_FORTRAN})
+	include(libF77/config.cmake)
+	add_subdirectory(libpathfortran)
+	add_subdirectory(crayf90)
+	add_subdirectory(f95_coco)
+endif()
 
-ADD_SUBDIRECTORY(ir_tools)
-ADD_SUBDIRECTORY(tools)
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-# This is for huge pages on linux
-     ADD_SUBDIRECTORY(libhugetlbfs)
-ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+add_subdirectory(ir_tools)
+add_subdirectory(tools)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+	# This is for huge pages on linux
+	add_subdirectory(libhugetlbfs)
+endif()
 # TODO : Pull in code for superpages on FBSD
 # TODO : Pull in integrate with MPSS (Multiple Page Size Support) on Solaris
 # http://hub.opensolaris.org/bin/download/Project+muskoka/virtual_memory/opensolarisvm1.pdf
 # http://docs.sun.com/app/docs/doc/816-0210/6m6nb7mf1?a=view
 # http://cvs.opensolaris.org/source/xref/onnv/onnv-gate/usr/src/uts/sun4/os/startup.c
-# 
+#
 
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-     ADD_SUBDIRECTORY(windows)
-ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+	add_subdirectory(windows)
+endif()

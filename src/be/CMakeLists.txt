@@ -1,68 +1,56 @@
-INCLUDE_DIRECTORIES(
-  ${PATHSCALE_BINARY_DIR}/common/targ_info
-  ${PATHSCALE_BINARY_DIR}/be
-  be
-  cg
-  com
-  lno
-  opt
-  prompf_anl
-  region
-  vho
-  whirl2c
-  whirl2f
-  purple2
-  .
+include_directories(${PATHSCALE_BINARY_DIR}/common/targ_info
+	${PATHSCALE_BINARY_DIR}/be
+	be
+	cg
+	com
+	lno
+	opt
+	prompf_anl
+	region
+	vho
+	whirl2c
+	whirl2f
+	purple2
+	.
 
-  cg/gra_mon
-  cg/swp
+	cg/gra_mon
+	cg/swp
 
-  ../dfgforise
-  ../ipa/common
-  ../ipa/local
-  ../ipa/main/analyze
-  ../ipa/main/optimize
+	../dfgforise
+	../ipa/common
+	../ipa/local
+	../ipa/main/analyze
+	../ipa/main/optimize
 
-  ../ipa_link/include
+	../ipa_link/include
 
-  ../common/com
-  ../common/instrument
-  ../common/targ_info/access
-  ../common/util
-  ../common/stl  
-  ../common/targ_info/parser/inc/
+	../common/com
+	../common/instrument
+	../common/targ_info/access
+	../common/util
+	../common/stl
+	../common/targ_info/parser/inc/
 
-
-  ${PATHSCALE_BINARY_DIR}/../GCC/gcc
-  ../include
-  )
+	${PATHSCALE_BINARY_DIR}/../GCC/gcc
+	../include)
 
 
-ADD_DEFINITIONS(
-  -funsigned-char
-   ${PATH64_STDC_FORMAT_MACROS}
-)
+add_definitions(-funsigned-char ${PATH64_STDC_FORMAT_MACROS})
 
-IF(PATH64_ENABLE_VALGRIND)
-ADD_DEFINITIONS(
-  -DMONGOOSE_BE
-  -DBACK_END
-  -D__MIPS_AND_IA64_ELF_H
-  )
-ELSE(PATH64_ENABLE_VALGRIND)
-ADD_DEFINITIONS(
-  -DNO_VALGRIND
-  -DMONGOOSE_BE
-  -DBACK_END
-  -D__MIPS_AND_IA64_ELF_H
-  )
-ENDIF(PATH64_ENABLE_VALGRIND)
+if(PATH64_ENABLE_VALGRIND)
+	add_definitions(-DMONGOOSE_BE -DBACK_END -D__MIPS_AND_IA64_ELF_H)
+else()
+	add_definitions(-DNO_VALGRIND
+		-DMONGOOSE_BE
+		-DBACK_END
+		-D__MIPS_AND_IA64_ELF_H)
+endif()
 
-ADD_SUBDIRECTORY(com)
-ADD_SUBDIRECTORY(be)
-ADD_SUBDIRECTORY(cg)
-ADD_SUBDIRECTORY(lno)
-ADD_SUBDIRECTORY(opt)
-ADD_SUBDIRECTORY(whirl2c)
-ADD_SUBDIRECTORY(whirl2f)
-ADD_SUBDIRECTORY(prompf_anl)
+add_subdirectory(com)
+add_subdirectory(be)
+add_subdirectory(cg)
+add_subdirectory(lno)
+add_subdirectory(opt)
+add_subdirectory(whirl2c)
+add_subdirectory(whirl2f)
+add_subdirectory(prompf_anl)

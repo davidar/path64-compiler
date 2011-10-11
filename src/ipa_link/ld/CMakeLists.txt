@@ -1,37 +1,36 @@
-ADD_DEFINITIONS(-DHAVE_CONFIG_H=1)
-INCLUDE_DIRECTORIES(BEFORE
-  ${BFD_SOURCE_DIR}
-  ${BFD_SOURCE_DIR}/include
-  ${BFD_SOURCE_DIR}/../include
-  ${CMAKE_CURRENT_BINARY_DIR}
-  .
-)
+add_definitions(-DHAVE_CONFIG_H=1)
+include_directories(BEFORE
+	${BFD_SOURCE_DIR}
+	${BFD_SOURCE_DIR}/include
+	${BFD_SOURCE_DIR}/../include
+	${CMAKE_CURRENT_BINARY_DIR}
+	.)
 
-SET(LD_SRCS
-ldgram.c 
-ldlex.c 
-lexsup.c
-ldlang.c
-mri.c
-ldctor.c
-ldwrite.c
-ldexp.c
-ldemul.c
-ldver.c
-ldmisc.c
-ldfile.c
-ldcref.c
-ldmain.c
-eelf_x86_64.c
-eelf_i386.c
-ei386linux.c
-eelf32btsmip.c
-eelf32btsmipn32.c
-eelf32ltsmip.c
-eelf32ltsmipn32.c
-eelf64btsmip.c
-eelf64ltsmip.c
-eelf_x86_64_fbsd.c )
+set(LD_SRCS
+	ldgram.c
+	ldlex.c
+	lexsup.c
+	ldlang.c
+	mri.c
+	ldctor.c
+	ldwrite.c
+	ldexp.c
+	ldemul.c
+	ldver.c
+	ldmisc.c
+	ldfile.c
+	ldcref.c
+	ldmain.c
+	eelf_x86_64.c
+	eelf_i386.c
+	ei386linux.c
+	eelf32btsmip.c
+	eelf32btsmipn32.c
+	eelf32ltsmip.c
+	eelf32ltsmipn32.c
+	eelf64btsmip.c
+	eelf64ltsmip.c
+	eelf_x86_64_fbsd.c)
 
 # Auto generated crap is annoying and they should just do things correctly
 # ldemul-list.h
@@ -63,44 +62,100 @@ eelf_x86_64_fbsd.c )
 
 
 path64_get_host_arch(arch)
-IF("${arch}" STREQUAL "x8664")
-    set(arch "x86_64")
-ELSEIF("${arch}" STREQUAL "x8632")
-    set(arch "i386")
-ENDIF()
-set_property(SOURCE ldmain.c PROPERTY COMPILE_DEFINITIONS DEFAULT_EMULATION="elf_${arch}";SCRIPTDIR="${INSTALL_DIR}/${PSC_TARGET}/lib";BINDIR="${INSTALL_DIR}/bin";TOOLBINDIR="${INSTALL_DIR}/${PSC_TARGET}/bin";TARGET="${PSC_TARGET}";TARGET_SYSTEM_ROOT="")
+if("${arch}" STREQUAL "x8664")
+	set(arch "x86_64")
+elseif("${arch}" STREQUAL "x8632")
+	set(arch "i386")
+endif()
+set_property(SOURCE
+	ldmain.c
+	PROPERTY
+	COMPILE_DEFINITIONS
+	DEFAULT_EMULATION=
+	"elf_${arch}"
+	;SCRIPTDIR=
+	"${INSTALL_DIR}/${PSC_TARGET}/lib"
+	;BINDIR=
+	"${INSTALL_DIR}/bin"
+	;TOOLBINDIR=
+	"${INSTALL_DIR}/${PSC_TARGET}/bin"
+	;TARGET=
+	"${PSC_TARGET}"
+	;TARGET_SYSTEM_ROOT=
+	"")
 
 # I don't know if this is needed to pull in libiberty
-FOREACH(f
-    ASPRINTF ATEXIT BASENAME BSEARCH CALLOC CLOCK GETCWD
-    GETPAGESIZE INDEX INSQUE MKSTEMPS MEMCHR MEMCMP MEMCPY MEMMOVE MEMPCPY
-    MEMSET PUTENV RANDOM RENAME RINDEX SIGSETMASK STRCASECMP SETENV STPCPY
-    STPNCPY STRCHR STRDUP STRNCASECMP STRNDUP STRRCHR STRSTR STRTOD STRTOL
-    STRTOUL STRVERSCMP TMPNAM VASPRINTF VFPRINTF VPRINTF VSPRINTF STRERROR
-    STRSIGNAL FFS SNPRINTF VSNPRINTF
-    )
-  # Removed from above list:
-  #   WAITPID WAIT3 WAIT4 SYSMP __FSETLOCKING GETRUSAGE ON_EXIT TIMES
-  #   PSTAT_GETSTATIC PSTAT_GETDYNAMIC GETSYSINFO TABLE PSIGNAL SYSCONF
-  #   REALPATH SYSCTL SBRK CANONICALIZE_FILE_NAME GETTIMEOFDAY
-  IF(NOT HAVE_${f})
-    STRING(TOLOWER "${f}" SRC)
-    LIST(APPEND iberty_SRCS ${SRC}.c)
-  ENDIF(NOT HAVE_${f})
-ENDFOREACH(f)
+foreach(f
+	ASPRINTF
+	ATEXIT
+	BASENAME
+	BSEARCH
+	CALLOC
+	CLOCK
+	GETCWD
+	GETPAGESIZE
+	INDEX
+	INSQUE
+	MKSTEMPS
+	MEMCHR
+	MEMCMP
+	MEMCPY
+	MEMMOVE
+	MEMPCPY
+	MEMSET
+	PUTENV
+	RANDOM
+	RENAME
+	RINDEX
+	SIGSETMASK
+	STRCASECMP
+	SETENV
+	STPCPY
+	STPNCPY
+	STRCHR
+	STRDUP
+	STRNCASECMP
+	STRNDUP
+	STRRCHR
+	STRSTR
+	STRTOD
+	STRTOL
+	STRTOUL
+	STRVERSCMP
+	TMPNAM
+	VASPRINTF
+	VFPRINTF
+	VPRINTF
+	VSPRINTF
+	STRERROR
+	STRSIGNAL
+	FFS
+	SNPRINTF
+	VSNPRINTF)
+	# Removed from above list:
+	#   WAITPID WAIT3 WAIT4 SYSMP __FSETLOCKING GETRUSAGE ON_EXIT TIMES
+	#   PSTAT_GETSTATIC PSTAT_GETDYNAMIC GETSYSINFO TABLE PSIGNAL SYSCONF
+	#   REALPATH SYSCTL SBRK CANONICALIZE_FILE_NAME GETTIMEOFDAY
+	if(NOT HAVE_${f})
+		string(TOLOWER "${f}" SRC)
+		list(APPEND iberty_SRCS ${SRC}.c)
+	endif()
+endforeach()
 
 #ADD_LIBRARY(iberty ${iberty_SRCS})
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
+	${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 path64_set_multiarch_sources(ld_srcs COMMON ${LD_SRCS})
 path64_add_multiarch_executable(ipa_link ld_srcs)
 set(link_flags "")
 if(PATH64_LIBDWARF_PATH)
-    set(link_flags "${link_flags} -L ${PATH64_LIBDWARF_PATH} -Wl,-rpath,${PATH64_LIBDWARF_PATH}")
+	set(link_flags
+		"${link_flags} -L ${PATH64_LIBDWARF_PATH} -Wl,-rpath,${PATH64_LIBDWARF_PATH}")
 endif()
 if(${EXPORT_DYNAMIC_SUPPORTED} MATCHES "yes")
-    set(link_flags "${link_flags} -Wl,--export-dynamic")
+	set(link_flags "${link_flags} -Wl,--export-dynamic")
 endif()
 path64_set_multiarch_property(ipa_link LINK_FLAGS "${link_flags}")
 path64_multiarch_link_multiarch_libraries(ipa_link ipa)

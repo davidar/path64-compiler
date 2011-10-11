@@ -1,15 +1,21 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
-PROJECT(GAT C)
+cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+project(GAT C)
 
-SET(GAT_AS as)
+set(GAT_AS as)
 
-FOREACH(test weak weakref)
-  ADD_CUSTOM_TARGET(test_${test} echo DEPENDS ${GAT_BINARY_DIR}/${test}.o)
-  ADD_CUSTOM_COMMAND(OUTPUT ${GAT_BINARY_DIR}/${test}.o
-    COMMAND ${GAT_AS}
-    ARGS -o
-    "${GAT_BINARY_DIR}/${test}.o"
-    "${GAT_SOURCE_DIR}/${test}.s"
-    DEPENDS ${GAT_SOURCE_DIR}/${test}.s
-    )
-ENDFOREACH(test)
+foreach(test weak weakref)
+	add_custom_target(test_${test}
+		echo
+		DEPENDS
+		${GAT_BINARY_DIR}/${test}.o)
+	add_custom_command(OUTPUT
+		${GAT_BINARY_DIR}/${test}.o
+		COMMAND
+		${GAT_AS}
+		ARGS
+		-o
+		"${GAT_BINARY_DIR}/${test}.o"
+		"${GAT_SOURCE_DIR}/${test}.s"
+		DEPENDS
+		${GAT_SOURCE_DIR}/${test}.s)
+endforeach()

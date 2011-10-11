@@ -1,7 +1,5 @@
-ADD_SUBDIRECTORY(sgi)
-ADD_SUBDIRECTORY(fe90)
-IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
-ADD_DEFINITIONS(
-        -D_DEBUG
-	)
-ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
+add_subdirectory(sgi)
+add_subdirectory(fe90)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	add_definitions(-D_DEBUG)
+endif()

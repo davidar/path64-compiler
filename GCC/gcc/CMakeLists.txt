@@ -1,604 +1,1011 @@
 #-----------------------------------------------------------------------------
-INCLUDE("${GCCCONFIG_SOURCE_DIR}/gcc_make_config_h.cmake")
+include("${GCCCONFIG_SOURCE_DIR}/gcc_make_config_h.cmake")
 
-INCLUDE_DIRECTORIES(BEFORE
-  ${GCC_SOURCE_DIR}/include
-  ${GCC_SOURCE_DIR}/libcpp/include
-  ${GCC_SOURCE_DIR}/libdecnumber
-  ${GCC_SOURCE_DIR}/gcc
-  ${GCC_SOURCE_DIR}/gcc/config
-  ${GCC_BINARY_DIR}/gcc
-  ${GCC_SOURCE_DIR}/libspin)
+include_directories(BEFORE
+	${GCC_SOURCE_DIR}/include
+	${GCC_SOURCE_DIR}/libcpp/include
+	${GCC_SOURCE_DIR}/libdecnumber
+	${GCC_SOURCE_DIR}/gcc
+	${GCC_SOURCE_DIR}/gcc/config
+	${GCC_BINARY_DIR}/gcc
+	${GCC_SOURCE_DIR}/libspin)
 
-ADD_DEFINITIONS(-DIN_GCC -DHAVE_CONFIG_H)
+add_definitions(-DIN_GCC -DHAVE_CONFIG_H)
 
-INCLUDE_REGULAR_EXPRESSION("^([^ri]|i[^n]|in[^s]|ins[^n]|insn[^-]|r[^t]|rt[^l]|rtl[^.])")
+include_regular_expression("^([^ri]|i[^n]|in[^s]|ins[^n]|insn[^-]|r[^t]|rt[^l]|rtl[^.])")
 
-IF(PATH64_ENABLE_CXX)
-  SUBDIRS(cp)
-ENDIF()
+if(PATH64_ENABLE_CXX)
+	subdirs(cp)
+endif()
 
 #-----------------------------------------------------------------------------
 # Load the platform configuration.
-IF(EXISTS "${GCCCONFIG_BINARY_DIR}/gcc_platform.cmake")
-  INCLUDE("${GCCCONFIG_BINARY_DIR}/gcc_platform.cmake")
-ELSE(EXISTS "${GCCCONFIG_BINARY_DIR}/gcc_platform.cmake")
-  MESSAGE(FATAL_ERROR "Cannot find gcc_platform.cmake.")
-ENDIF(EXISTS "${GCCCONFIG_BINARY_DIR}/gcc_platform.cmake")
+if(EXISTS "${GCCCONFIG_BINARY_DIR}/gcc_platform.cmake")
+	include("${GCCCONFIG_BINARY_DIR}/gcc_platform.cmake")
+else()
+	message(FATAL_ERROR "Cannot find gcc_platform.cmake.")
+endif()
 
 # Default the target-machine variables that were not explicitly set.
-IF(NOT tm_file)
-  SET(tm_file ${cpu_type}/${cpu_type}.h)
-ENDIF(NOT tm_file)
-IF(NOT md_file)
-  SET(md_file ${cpu_type}/${cpu_type}.md)
-ENDIF(NOT md_file)
-IF(NOT out_file)
-  SET(out_file ${cpu_type}/${cpu_type}.c)
-ENDIF(NOT out_file)
+if(NOT tm_file)
+	set(tm_file ${cpu_type}/${cpu_type}.h)
+endif()
+if(NOT md_file)
+	set(md_file ${cpu_type}/${cpu_type}.md)
+endif()
+if(NOT out_file)
+	set(out_file ${cpu_type}/${cpu_type}.c)
+endif()
 
-SET(build_auto auto-host.h) # or auto-build.h for cross compiling?
+set(build_auto auto-host.h)	# or auto-build.h for cross compiling?
 
-SET(tm_file ${tm_file} defaults.h)
-SET(tm_p_file ${tm_p_file} tm-preds.h)
-SET(host_xm_file auto-host.h ansidecl.h ${host_xm_file})
-SET(build_xm_file ${build_auto} ansidecl.h ${build_xm_file})
-SET(xm_file auto-host.h ansidecl.h ${xm_file})
+set(tm_file ${tm_file} defaults.h)
+set(tm_p_file ${tm_p_file} tm-preds.h)
+set(host_xm_file auto-host.h ansidecl.h ${host_xm_file})
+set(build_xm_file ${build_auto} ansidecl.h ${build_xm_file})
+set(xm_file auto-host.h ansidecl.h ${xm_file})
 
 # Build file and include lists.
-FOREACH(m host_ build_ "")
-  SET(${m}xm_include_list)
-  SET(${m}xm_file_list)
-  FOREACH(f ${${m}xm_file})
-    IF("${f}" MATCHES "^ansidecl\\.h")
-      LIST(APPEND ${m}xm_include_list ${f})
-      LIST(APPEND ${m}xm_file_list ${GCC_SOURCE_DIR}/include/${f})
-    ELSEIF("${f}" MATCHES "^auto-(build|host)\\.h$")
-      LIST(APPEND ${m}xm_include_list ${f})
-      LIST(APPEND ${m}xm_file_list ${GCC_BINARY_DIR}/gcc/${f})
-    ELSE("${f}" MATCHES "^ansidecl\\.h")
-      LIST(APPEND ${m}xm_include_list config/${f})
-      LIST(APPEND ${m}xm_file_list ${GCC_SOURCE_DIR}/gcc/config/${f})
-    ENDIF("${f}" MATCHES "^ansidecl\\.h")
-  ENDFOREACH(f)
-ENDFOREACH(m)
+foreach(m host_ build_ "")
+	set(${m}xm_include_list)
+	set(${m}xm_file_list)
+	foreach(f ${${m}xm_file})
+		if("${f}" MATCHES "^ansidecl\\.h")
+			list(APPEND ${m}xm_include_list ${f})
+			list(APPEND ${m}xm_file_list ${GCC_SOURCE_DIR}/include/${f})
+		elseif("${f}" MATCHES "^auto-(build|host)\\.h$")
+			list(APPEND ${m}xm_include_list ${f})
+			list(APPEND ${m}xm_file_list ${GCC_BINARY_DIR}/gcc/${f})
+		else()
+			list(APPEND ${m}xm_include_list config/${f})
+			list(APPEND ${m}xm_file_list ${GCC_SOURCE_DIR}/gcc/config/${f})
+		endif()
+	endforeach()
+endforeach()
 
-SET(tm_include_list options.h)
-SET(tm_file_list)
-FOREACH(f ${tm_file})
-  IF("${f}" MATCHES "^defaults\\.h$")
-    LIST(APPEND tm_include_list ${f})
-    LIST(APPEND tm_file_list ${GCC_SOURCE_DIR}/gcc/${f})
-  ELSE("${f}" MATCHES "^defaults\\.h$")
-    LIST(APPEND tm_include_list config/${f})
-    LIST(APPEND tm_file_list ${GCC_SOURCE_DIR}/gcc/config/${f})
-  ENDIF("${f}" MATCHES "^defaults\\.h$")
-ENDFOREACH(f)
+set(tm_include_list options.h)
+set(tm_file_list)
+foreach(f ${tm_file})
+	if("${f}" MATCHES "^defaults\\.h$")
+		list(APPEND tm_include_list ${f})
+		list(APPEND tm_file_list ${GCC_SOURCE_DIR}/gcc/${f})
+	else()
+		list(APPEND tm_include_list config/${f})
+		list(APPEND tm_file_list ${GCC_SOURCE_DIR}/gcc/config/${f})
+	endif()
+endforeach()
 
-SET(tm_p_include_list)
-SET(tm_p_file_list)
-FOREACH(f ${tm_p_file})
-  IF("${f}" MATCHES "^tm-preds\\.h$")
-    LIST(APPEND tm_p_include_list ${f})
-    LIST(APPEND tm_p_file_list ${GCC_SOURCE_DIR}/gcc/${f})
-  ELSE("${f}" MATCHES "^tm-preds\\.h$")
-    LIST(APPEND tm_p_include_list config/${f})
-    LIST(APPEND tm_p_file_list ${GCC_SOURCE_DIR}/gcc/config/${f})
-  ENDIF("${f}" MATCHES "^tm-preds\\.h$")
-ENDFOREACH(f)
+set(tm_p_include_list)
+set(tm_p_file_list)
+foreach(f ${tm_p_file})
+	if("${f}" MATCHES "^tm-preds\\.h$")
+		list(APPEND tm_p_include_list ${f})
+		list(APPEND tm_p_file_list ${GCC_SOURCE_DIR}/gcc/${f})
+	else()
+		list(APPEND tm_p_include_list config/${f})
+		list(APPEND tm_p_file_list ${GCC_SOURCE_DIR}/gcc/config/${f})
+	endif()
+endforeach()
 
 # Find the platform-specific sources.
-MACRO(FIND_EXTRA_SRCS objs var)
-  STRING(REGEX REPLACE "\\.o" ".c" EXTRA_SRCS "${objs}")
-  FOREACH(f ${EXTRA_SRCS})
-    IF(EXISTS ${GCC_SOURCE_DIR}/gcc/config/${f})
-      SET(${var} ${${var}} ${GCC_SOURCE_DIR}/gcc/config/${f})
-    ELSE(EXISTS ${GCC_SOURCE_DIR}/gcc/config/${f})
-      IF(EXISTS ${GCC_SOURCE_DIR}/gcc/config/${cpu_type}/${f})
-        SET(${var} ${${var}} ${GCC_SOURCE_DIR}/gcc/config/${cpu_type}/${f})
-      ELSE(EXISTS ${GCC_SOURCE_DIR}/gcc/config/${cpu_type}/${f})
-        IF(EXISTS ${GCC_SOURCE_DIR}/gcc/${f})
-          SET(${var} ${${var}} ${GCC_SOURCE_DIR}/gcc/${f})
-        ELSE(EXISTS ${GCC_SOURCE_DIR}/gcc/${f})
-          MESSAGE(SEND_ERROR "Cannot find platform-specific source ${f}.")
-        ENDIF(EXISTS ${GCC_SOURCE_DIR}/gcc/${f})
-      ENDIF(EXISTS ${GCC_SOURCE_DIR}/gcc/config/${cpu_type}/${f})
-    ENDIF(EXISTS ${GCC_SOURCE_DIR}/gcc/config/${f})
-  ENDFOREACH(f)
-ENDMACRO(FIND_EXTRA_SRCS)
-FIND_EXTRA_SRCS("${extra_objs}" extra_srcs)
-FIND_EXTRA_SRCS("${c_target_objs}" c_target_srcs)
-FIND_EXTRA_SRCS("${cxx_target_objs}" cxx_target_srcs)
-FIND_EXTRA_SRCS("${out_host_hook_obj}" host_hook_srcs)
+macro(FIND_EXTRA_SRCS objs var)
+	string(REGEX REPLACE "\\.o" ".c" EXTRA_SRCS "${objs}")
+	foreach(f ${EXTRA_SRCS})
+		if(EXISTS ${GCC_SOURCE_DIR}/gcc/config/${f})
+			set(${var} ${${var}} ${GCC_SOURCE_DIR}/gcc/config/${f})
+		else()
+			if(EXISTS ${GCC_SOURCE_DIR}/gcc/config/${cpu_type}/${f})
+				set(${var} ${${var}} ${GCC_SOURCE_DIR}/gcc/config/${cpu_type}/${f})
+			else()
+				if(EXISTS ${GCC_SOURCE_DIR}/gcc/${f})
+					set(${var} ${${var}} ${GCC_SOURCE_DIR}/gcc/${f})
+				else()
+					message(SEND_ERROR "Cannot find platform-specific source ${f}.")
+				endif()
+			endif()
+		endif()
+	endforeach()
+endmacro()
+find_extra_srcs("${extra_objs}" extra_srcs)
+find_extra_srcs("${c_target_objs}" c_target_srcs)
+find_extra_srcs("${cxx_target_objs}" cxx_target_srcs)
+find_extra_srcs("${out_host_hook_obj}" host_hook_srcs)
 
-SET(MD_FILE ${GCC_SOURCE_DIR}/gcc/config/${md_file})
+set(MD_FILE ${GCC_SOURCE_DIR}/gcc/config/${md_file})
 
 #-----------------------------------------------------------------------------
 # Generate configuration header files.
 
-GCC_MAKE_CONFIG_H(bconfig.h GCC_BCONFIG_H "${build_xm_defines}" "${build_xm_include_list}" "${target_cpu_default}")
-GCC_MAKE_CONFIG_H(config.h GCC_CONFIG_H "${host_xm_defines}" "${host_xm_include_list}" "${target_cpu_default}")
-GCC_MAKE_CONFIG_H(tconfig.h GCC_TCONFIG_H "USED_FOR_TARGET;${xm_defines}" "${xm_include_list}" "${target_cpu_default}")
-GCC_MAKE_CONFIG_H(tm_p.h GCC_TM_P_H "" "${tm_p_include_list}" "${target_cpu_default}")
-GCC_MAKE_CONFIG_H(tm.h GCC_TM_H "${tm_defines}" "${tm_include_list}" "${target_cpu_default}")
+gcc_make_config_h(bconfig.h
+	GCC_BCONFIG_H
+	"${build_xm_defines}"
+	"${build_xm_include_list}"
+	"${target_cpu_default}")
+gcc_make_config_h(config.h
+	GCC_CONFIG_H
+	"${host_xm_defines}"
+	"${host_xm_include_list}"
+	"${target_cpu_default}")
+gcc_make_config_h(tconfig.h
+	GCC_TCONFIG_H
+	"USED_FOR_TARGET;${xm_defines}"
+	"${xm_include_list}"
+	"${target_cpu_default}")
+gcc_make_config_h(tm_p.h
+	GCC_TM_P_H
+	""
+	"${tm_p_include_list}"
+	"${target_cpu_default}")
+gcc_make_config_h(tm.h
+	GCC_TM_H
+	"${tm_defines}"
+	"${tm_include_list}"
+	"${target_cpu_default}")
 
 #-----------------------------------------------------------------------------
 # Rules to generate options.h and options.c
 
-SET(ALL_OPT_FILES
-  ${GCC_SOURCE_DIR}/gcc/c.opt
-  ${GCC_SOURCE_DIR}/gcc/common.opt
-  )
-FOREACH(f ${extra_options})
-  LIST(APPEND ALL_OPT_FILES ${GCC_SOURCE_DIR}/gcc/config/${f})
-ENDFOREACH(f)
+set(ALL_OPT_FILES
+	${GCC_SOURCE_DIR}/gcc/c.opt
+	${GCC_SOURCE_DIR}/gcc/common.opt)
+foreach(f ${extra_options})
+	list(APPEND ALL_OPT_FILES ${GCC_SOURCE_DIR}/gcc/config/${f})
+endforeach()
 
 # Find an awk tool.
-IF(WIN32 AND NOT CYGWIN)
-  SET(AWK_EXECUTABLE "${GCC_SOURCE_DIR}/config_cmake/nawk.exe")
-ELSE(WIN32 AND NOT CYGWIN)
-  # Prefer GNU awk at any location over the native awk if possible.
-  # The native awk on opensolaris causes opt-gather.awk to sort incorrectly.
-  FIND_PROGRAM(AWK_EXECUTABLE NAMES gawk)
-  FIND_PROGRAM(AWK_EXECUTABLE NAMES awk)
-  MARK_AS_ADVANCED(AWK_EXECUTABLE)
-ENDIF(WIN32 AND NOT CYGWIN)
+if(WIN32 AND NOT CYGWIN)
+	set(AWK_EXECUTABLE "${GCC_SOURCE_DIR}/config_cmake/nawk.exe")
+else()
+	# Prefer GNU awk at any location over the native awk if possible.
+	# The native awk on opensolaris causes opt-gather.awk to sort incorrectly.
+	find_program(AWK_EXECUTABLE NAMES gawk)
+	find_program(AWK_EXECUTABLE NAMES awk)
+	mark_as_advanced(AWK_EXECUTABLE)
+endif()
 
-ADD_CUSTOM_COMMAND(OUTPUT ${GCC_BINARY_DIR}/gcc/optionlist
-  COMMAND ${AWK_EXECUTABLE} -f ${GCC_SOURCE_DIR}/gcc/opt-gather.awk ${ALL_OPT_FILES} > optionlist
-  DEPENDS ${GCC_SOURCE_DIR}/gcc/opt-gather.awk ${ALL_OPT_FILES}
-  )
+add_custom_command(OUTPUT
+	${GCC_BINARY_DIR}/gcc/optionlist
+	COMMAND
+	${AWK_EXECUTABLE}
+	-f
+	${GCC_SOURCE_DIR}/gcc/opt-gather.awk
+	${ALL_OPT_FILES}
+	>
+	optionlist
+	DEPENDS
+	${GCC_SOURCE_DIR}/gcc/opt-gather.awk
+	${ALL_OPT_FILES})
 
-ADD_CUSTOM_COMMAND(OUTPUT ${GCC_BINARY_DIR}/gcc/options.h
-  COMMAND ${AWK_EXECUTABLE} -f ${GCC_SOURCE_DIR}/gcc/opt-functions.awk -f ${GCC_SOURCE_DIR}/gcc/opth-gen.awk < optionlist > options.h
-  DEPENDS ${GCC_SOURCE_DIR}/gcc/opt-functions.awk ${GCC_SOURCE_DIR}/gcc/opth-gen.awk ${GCC_BINARY_DIR}/gcc/optionlist
-  )
+add_custom_command(OUTPUT
+	${GCC_BINARY_DIR}/gcc/options.h
+	COMMAND
+	${AWK_EXECUTABLE}
+	-f
+	${GCC_SOURCE_DIR}/gcc/opt-functions.awk
+	-f
+	${GCC_SOURCE_DIR}/gcc/opth-gen.awk
+	<
+	optionlist
+	>
+	options.h
+	DEPENDS
+	${GCC_SOURCE_DIR}/gcc/opt-functions.awk
+	${GCC_SOURCE_DIR}/gcc/opth-gen.awk
+	${GCC_BINARY_DIR}/gcc/optionlist)
 
-ADD_CUSTOM_COMMAND(OUTPUT ${GCC_BINARY_DIR}/gcc/options.c
-  COMMAND ${AWK_EXECUTABLE} -f ${GCC_SOURCE_DIR}/gcc/opt-functions.awk -f ${GCC_SOURCE_DIR}/gcc/optc-gen.awk
-                            -v "header_name=config.h system.h coretypes.h tm.h" < optionlist > options.c
-  DEPENDS ${GCC_SOURCE_DIR}/gcc/opt-functions.awk ${GCC_SOURCE_DIR}/gcc/optc-gen.awk ${GCC_BINARY_DIR}/gcc/optionlist
-  )
+add_custom_command(OUTPUT
+	${GCC_BINARY_DIR}/gcc/options.c
+	COMMAND
+	${AWK_EXECUTABLE}
+	-f
+	${GCC_SOURCE_DIR}/gcc/opt-functions.awk
+	-f
+	${GCC_SOURCE_DIR}/gcc/optc-gen.awk
+	-v
+	"header_name=config.h system.h coretypes.h tm.h"
+	<
+	optionlist
+	>
+	options.c
+	DEPENDS
+	${GCC_SOURCE_DIR}/gcc/opt-functions.awk
+	${GCC_SOURCE_DIR}/gcc/optc-gen.awk
+	${GCC_BINARY_DIR}/gcc/optionlist)
 
-ADD_CUSTOM_TARGET(genoptions ALL DEPENDS
-  ${GCC_BINARY_DIR}/gcc/options.h
-  ${GCC_BINARY_DIR}/gcc/options.c
-  )
+add_custom_target(genoptions
+	ALL
+	DEPENDS
+	${GCC_BINARY_DIR}/gcc/options.h
+	${GCC_BINARY_DIR}/gcc/options.c)
 
 #-----------------------------------------------------------------------------
 # Rules to generate insn-modes.h, insn-modes.c, and min-insn-modes.c
 
-ADD_EXECUTABLE(genmodes genmodes.c errors.c)
-ADD_DEPENDENCIES(genmodes genoptions)
-TARGET_LINK_LIBRARIES(genmodes iberty)
-SET_TARGET_PROPERTIES(genmodes PROPERTIES COMPILE_FLAGS -DGENERATOR_FILE)
+add_executable(genmodes genmodes.c errors.c)
+add_dependencies(genmodes genoptions)
+target_link_libraries(genmodes iberty)
+set_target_properties(genmodes
+	PROPERTIES
+	COMPILE_FLAGS
+	-DGENERATOR_FILE)
 
-ADD_CUSTOM_COMMAND(OUTPUT ${GCC_BINARY_DIR}/gcc/insn-modes.h
-  COMMAND genmodes -h > insn-modes.h
-  DEPENDS genmodes
-  )
+add_custom_command(OUTPUT
+	${GCC_BINARY_DIR}/gcc/insn-modes.h
+	COMMAND
+	genmodes
+	-h
+	>
+	insn-modes.h
+	DEPENDS
+	genmodes)
 
-ADD_CUSTOM_COMMAND(OUTPUT ${GCC_BINARY_DIR}/gcc/insn-modes.c
-  COMMAND genmodes > insn-modes.c
-  DEPENDS genmodes
-  )
+add_custom_command(OUTPUT
+	${GCC_BINARY_DIR}/gcc/insn-modes.c
+	COMMAND
+	genmodes
+	>
+	insn-modes.c
+	DEPENDS
+	genmodes)
 
-ADD_CUSTOM_COMMAND(OUTPUT ${GCC_BINARY_DIR}/gcc/min-insn-modes.c
-  COMMAND genmodes -m > min-insn-modes.c
-  DEPENDS genmodes
-  )
+add_custom_command(OUTPUT
+	${GCC_BINARY_DIR}/gcc/min-insn-modes.c
+	COMMAND
+	genmodes
+	-m
+	>
+	min-insn-modes.c
+	DEPENDS
+	genmodes)
 
 #-----------------------------------------------------------------------------
 # Rules to generate genrtl.h and genrtl.c.
 
-ADD_EXECUTABLE(gengenrtl gengenrtl.c errors.c)
-ADD_DEPENDENCIES(gengenrtl genoptions)
-TARGET_LINK_LIBRARIES(gengenrtl iberty)
-SET_TARGET_PROPERTIES(gengenrtl PROPERTIES COMPILE_FLAGS -DGENERATOR_FILE)
+add_executable(gengenrtl gengenrtl.c errors.c)
+add_dependencies(gengenrtl genoptions)
+target_link_libraries(gengenrtl iberty)
+set_target_properties(gengenrtl
+	PROPERTIES
+	COMPILE_FLAGS
+	-DGENERATOR_FILE)
 
-ADD_CUSTOM_COMMAND(
-  OUTPUT ${GCC_BINARY_DIR}/gcc/genrtl.c
-  COMMAND gengenrtl > genrtl.c
-  DEPENDS gengenrtl
-  )
+add_custom_command(OUTPUT
+	${GCC_BINARY_DIR}/gcc/genrtl.c
+	COMMAND
+	gengenrtl
+	>
+	genrtl.c
+	DEPENDS
+	gengenrtl)
 
-ADD_CUSTOM_COMMAND(
-  OUTPUT ${GCC_BINARY_DIR}/gcc/genrtl.h
-  COMMAND gengenrtl -h > genrtl.h
-  DEPENDS gengenrtl
-  )
+add_custom_command(OUTPUT
+	${GCC_BINARY_DIR}/gcc/genrtl.h
+	COMMAND
+	gengenrtl
+	-h
+	>
+	genrtl.h
+	DEPENDS
+	gengenrtl)
 
 #-----------------------------------------------------------------------------
 # Generate gtyp-gen.h.
-SET(GTFILES_C
-  c-lang.c c-tree.h c-decl.c c-common.c c-common.h c-pragma.c
-  c-objc-common.c c-parser.c
-  )
+set(GTFILES_C
+	c-lang.c
+	c-tree.h
+	c-decl.c
+	c-common.c
+	c-common.h
+	c-pragma.c
+	c-objc-common.c
+	c-parser.c)
 
-SET(GTFILES_CXX
-  cp/rtti.c cp/mangle.c cp/name-lookup.h cp/name-lookup.c cp/cp-tree.h
-  cp/decl.h cp/call.c cp/decl.c cp/decl2.c cp/pt.c cp/repo.c
-  cp/semantics.c cp/tree.c cp/parser.c cp/method.c cp/typeck2.c
-  c-common.c c-common.h c-lex.c c-pragma.c cp/class.c
-  cp/cp-objcp-common.c
-  )
+set(GTFILES_CXX
+	cp/rtti.c
+	cp/mangle.c
+	cp/name-lookup.h
+	cp/name-lookup.c
+	cp/cp-tree.h
+	cp/decl.h
+	cp/call.c
+	cp/decl.c
+	cp/decl2.c
+	cp/pt.c
+	cp/repo.c
+	cp/semantics.c
+	cp/tree.c
+	cp/parser.c
+	cp/method.c
+	cp/typeck2.c
+	c-common.c
+	c-common.h
+	c-lex.c
+	c-pragma.c
+	cp/class.c
+	cp/cp-objcp-common.c)
 
-SET(GTFILES
-  # input.h coretypes.h # these files are listed in order below
-  # bitmap.h coverage.c rtl.h optabs.h tree.h function.h libfuncs.h
-  real.h varray.h insn-addr.h hwint.h ipa-reference.h output.h cselib.h
-  basic-block.h cgraph.h c-common.h c-tree.h reload.h alias.c bitmap.c
-  cselib.c cgraph.c ipa-prop.c ipa-cp.c ipa-inline.c dbxout.c
-  dwarf2out.c dwarf2asm.c dojump.c tree-profile.c emit-rtl.c except.c
-  explow.c expr.c function.c except.h gcse.c integrate.c lists.c
-  optabs.c profile.c regclass.c reg-stack.c cfglayout.c sdbout.c
-  stor-layout.c stringpool.c tree.c varasm.c tree-mudflap.c tree-flow.h
-  c-objc-common.c c-common.c c-parser.c tree-ssanames.c tree-eh.c
-  tree-ssa-address.c tree-phinodes.c tree-cfg.c tree-dfa.c
-  tree-ssa-propagate.c tree-iterator.c gimplify.c tree-chrec.h
-  tree-vect-generic.c tree-ssa-operands.h tree-ssa-operands.c
-  tree-profile.c tree-nested.c ipa-reference.c tree-ssa-structalias.h
-  tree-ssa-structalias.c c-pragma.h omp-low.c targhooks.c cgraphunit.c
-  )
+set(GTFILES
+	real.h
+	varray.h
+	insn-addr.h
+	hwint.h
+	ipa-reference.h
+	output.h
+	cselib.h
+	basic-block.h
+	cgraph.h
+	c-common.h
+	c-tree.h
+	reload.h
+	alias.c
+	bitmap.c
+	cselib.c
+	cgraph.c
+	ipa-prop.c
+	ipa-cp.c
+	ipa-inline.c
+	dbxout.c
+	dwarf2out.c
+	dwarf2asm.c
+	dojump.c
+	tree-profile.c
+	emit-rtl.c
+	except.c
+	explow.c
+	expr.c
+	function.c
+	except.h
+	gcse.c
+	integrate.c
+	lists.c
+	optabs.c
+	profile.c
+	regclass.c
+	reg-stack.c
+	cfglayout.c
+	sdbout.c
+	stor-layout.c
+	stringpool.c
+	tree.c
+	varasm.c
+	tree-mudflap.c
+	tree-flow.h
+	c-objc-common.c
+	c-common.c
+	c-parser.c
+	tree-ssanames.c
+	tree-eh.c
+	tree-ssa-address.c
+	tree-phinodes.c
+	tree-cfg.c
+	tree-dfa.c
+	tree-ssa-propagate.c
+	tree-iterator.c
+	gimplify.c
+	tree-chrec.h
+	tree-vect-generic.c
+	tree-ssa-operands.h
+	tree-ssa-operands.c
+	tree-profile.c
+	tree-nested.c
+	ipa-reference.c
+	tree-ssa-structalias.h
+	tree-ssa-structalias.c
+	c-pragma.h
+	omp-low.c
+	targhooks.c
+	cgraphunit.c)	# input.h coretypes.h # these files are listed in order below
+# bitmap.h coverage.c rtl.h optabs.h tree.h function.h libfuncs.h
 
-SET(GTYP_GEN_LANG_FILES)
-SET(GTYP_GEN_LANGS_FOR_LANG_FILES)
-SET(GTYP_GEN_ALL_FILES)
-FOREACH(f
-    ${GCC_SOURCE_DIR}/gcc/input.h
-    ${GCC_SOURCE_DIR}/gcc/coretypes.h
-    ${GCC_SOURCE_DIR}/libcpp/include/line-map.h
-    ${GCC_SOURCE_DIR}/libcpp/include/cpplib.h
-    ${GCC_SOURCE_DIR}/libcpp/include/cpp-id-data.h
-    ${host_xm_file_list}
-    ${tm_file_list}
-    ${GCC_BINARY_DIR}/gcc/options.h
-    ${GCC_SOURCE_DIR}/include/hashtab.h
-    ${GCC_SOURCE_DIR}/include/splay-tree.h
-    ${GCC_SOURCE_DIR}/gcc/bitmap.h
-    ${GCC_SOURCE_DIR}/gcc/coverage.c
-    ${GCC_SOURCE_DIR}/gcc/rtl.h
-    ${GCC_SOURCE_DIR}/gcc/optabs.h
-    ${GCC_SOURCE_DIR}/gcc/tree.h
-    ${GCC_SOURCE_DIR}/gcc/function.h
-    ${GCC_SOURCE_DIR}/gcc/libfuncs.h
-    ${GCC_SOURCE_DIR}/libcpp/include/symtab.h
-    ${GCC_SOURCE_DIR}/gcc/config/${out_file}
-    )
-  SET(GTYP_GEN_ALL_FILES "${GTYP_GEN_ALL_FILES}\"${f}\",\n")
-ENDFOREACH(f)
-FOREACH(f ${GTFILES})
-  SET(GTYP_GEN_ALL_FILES
-    "${GTYP_GEN_ALL_FILES}\"${GCC_SOURCE_DIR}/gcc/${f}\",\n")
-ENDFOREACH(f)
-FOREACH(f ${GTFILES_CXX})
-  SET(GTYP_GEN_ALL_FILES
-    "${GTYP_GEN_ALL_FILES}\"${GCC_SOURCE_DIR}/gcc/${f}\",\n")
-  SET(GTYP_GEN_LANG_FILES
-    "${GTYP_GEN_LANG_FILES}\"${GCC_SOURCE_DIR}/gcc/${f}\",\n")
-  SET(GTYP_GEN_LANGS_FOR_LANG_FILES
-    "${GTYP_GEN_LANGS_FOR_LANG_FILES}\"cp\",\n")
-ENDFOREACH(f)
-FOREACH(f ${GTFILES_C})
-  SET(GTYP_GEN_ALL_FILES
-    "${GTYP_GEN_ALL_FILES}\"${GCC_SOURCE_DIR}/gcc/${f}\",\n")
-  SET(GTYP_GEN_LANG_FILES
-    "${GTYP_GEN_LANG_FILES}\"${GCC_SOURCE_DIR}/gcc/${f}\",\n")
-  SET(GTYP_GEN_LANGS_FOR_LANG_FILES
-    "${GTYP_GEN_LANGS_FOR_LANG_FILES}\"c\",\n")
-ENDFOREACH(f)
-FOREACH(f ${extra_srcs})
-  SET(GTYP_GEN_ALL_FILES "${GTYP_GEN_ALL_FILES}\"${f}\",\n")
-ENDFOREACH(f)
+set(GTYP_GEN_LANG_FILES)
+set(GTYP_GEN_LANGS_FOR_LANG_FILES)
+set(GTYP_GEN_ALL_FILES)
+foreach(f
+	${GCC_SOURCE_DIR}/gcc/input.h
+	${GCC_SOURCE_DIR}/gcc/coretypes.h
+	${GCC_SOURCE_DIR}/libcpp/include/line-map.h
+	${GCC_SOURCE_DIR}/libcpp/include/cpplib.h
+	${GCC_SOURCE_DIR}/libcpp/include/cpp-id-data.h
+	${host_xm_file_list}
+	${tm_file_list}
+	${GCC_BINARY_DIR}/gcc/options.h
+	${GCC_SOURCE_DIR}/include/hashtab.h
+	${GCC_SOURCE_DIR}/include/splay-tree.h
+	${GCC_SOURCE_DIR}/gcc/bitmap.h
+	${GCC_SOURCE_DIR}/gcc/coverage.c
+	${GCC_SOURCE_DIR}/gcc/rtl.h
+	${GCC_SOURCE_DIR}/gcc/optabs.h
+	${GCC_SOURCE_DIR}/gcc/tree.h
+	${GCC_SOURCE_DIR}/gcc/function.h
+	${GCC_SOURCE_DIR}/gcc/libfuncs.h
+	${GCC_SOURCE_DIR}/libcpp/include/symtab.h
+	${GCC_SOURCE_DIR}/gcc/config/${out_file})
+	set(GTYP_GEN_ALL_FILES "${GTYP_GEN_ALL_FILES}\"${f}\",\n")
+endforeach()
+foreach(f ${GTFILES})
+	set(GTYP_GEN_ALL_FILES
+		"${GTYP_GEN_ALL_FILES}\"${GCC_SOURCE_DIR}/gcc/${f}\",\n")
+endforeach()
+foreach(f ${GTFILES_CXX})
+	set(GTYP_GEN_ALL_FILES
+		"${GTYP_GEN_ALL_FILES}\"${GCC_SOURCE_DIR}/gcc/${f}\",\n")
+	set(GTYP_GEN_LANG_FILES
+		"${GTYP_GEN_LANG_FILES}\"${GCC_SOURCE_DIR}/gcc/${f}\",\n")
+	set(GTYP_GEN_LANGS_FOR_LANG_FILES
+		"${GTYP_GEN_LANGS_FOR_LANG_FILES}\"cp\",\n")
+endforeach()
+foreach(f ${GTFILES_C})
+	set(GTYP_GEN_ALL_FILES
+		"${GTYP_GEN_ALL_FILES}\"${GCC_SOURCE_DIR}/gcc/${f}\",\n")
+	set(GTYP_GEN_LANG_FILES
+		"${GTYP_GEN_LANG_FILES}\"${GCC_SOURCE_DIR}/gcc/${f}\",\n")
+	set(GTYP_GEN_LANGS_FOR_LANG_FILES
+		"${GTYP_GEN_LANGS_FOR_LANG_FILES}\"c\",\n")
+endforeach()
+foreach(f ${extra_srcs})
+	set(GTYP_GEN_ALL_FILES "${GTYP_GEN_ALL_FILES}\"${f}\",\n")
+endforeach()
 
-CONFIGURE_FILE(${GCCCONFIG_SOURCE_DIR}/gtyp-gen.h.in
-               ${GCC_BINARY_DIR}/gcc/gtyp-gen.h @ONLY IMMEDIATE)
+configure_file(${GCCCONFIG_SOURCE_DIR}/gtyp-gen.h.in
+	${GCC_BINARY_DIR}/gcc/gtyp-gen.h
+	@ONLY
+	IMMEDIATE)
 
 #-----------------------------------------------------------------------------
 # Rules to generate gtype-desc.h and gtype-desc.c.
 
-ADD_EXECUTABLE(gengtype
-  gengtype.c gengtype-lex.c gengtype-yacc.c errors.c
-  )
-ADD_DEPENDENCIES(gengtype genoptions)
-TARGET_LINK_LIBRARIES(gengtype iberty)
-SET_TARGET_PROPERTIES(gengtype PROPERTIES
-  COMPILE_FLAGS "-DGENERATOR_FILE -DYY_NO_UNISTD_H")
+add_executable(gengtype
+	gengtype.c
+	gengtype-lex.c
+	gengtype-yacc.c
+	errors.c)
+add_dependencies(gengtype genoptions)
+target_link_libraries(gengtype iberty)
+set_target_properties(gengtype
+	PROPERTIES
+	COMPILE_FLAGS
+	"-DGENERATOR_FILE -DYY_NO_UNISTD_H")
 
-ADD_CUSTOM_COMMAND(
-  OUTPUT ${GCC_BINARY_DIR}/gcc/gtype-desc.c
-         ${GCC_BINARY_DIR}/gcc/gtype-desc.h
-  COMMAND gengtype
-  DEPENDS gengtype
-  )
+add_custom_command(OUTPUT
+	${GCC_BINARY_DIR}/gcc/gtype-desc.c
+	${GCC_BINARY_DIR}/gcc/gtype-desc.h
+	COMMAND
+	gengtype
+	DEPENDS
+	gengtype)
 
 #-----------------------------------------------------------------------------
 # Rules to generate tree-check.h.
 
-ADD_EXECUTABLE(gencheck gencheck.c)
-ADD_DEPENDENCIES(gencheck genoptions)
-TARGET_LINK_LIBRARIES(gencheck iberty)
-SET_TARGET_PROPERTIES(gencheck PROPERTIES COMPILE_FLAGS -DGENERATOR_FILE)
+add_executable(gencheck gencheck.c)
+add_dependencies(gencheck genoptions)
+target_link_libraries(gencheck iberty)
+set_target_properties(gencheck
+	PROPERTIES
+	COMPILE_FLAGS
+	-DGENERATOR_FILE)
 
-ADD_CUSTOM_COMMAND(
-  OUTPUT ${GCC_BINARY_DIR}/gcc/tree-check.h
-  COMMAND gencheck > tree-check.h
-  DEPENDS gencheck
-  )
+add_custom_command(OUTPUT
+	${GCC_BINARY_DIR}/gcc/tree-check.h
+	COMMAND
+	gencheck
+	>
+	tree-check.h
+	DEPENDS
+	gencheck)
 
 #-----------------------------------------------------------------------------
 # Sources used in several generator executables.
 
-ADD_LIBRARY(gen
-  rtl.c read-rtl.c ggc-none.c vec.c
-  gensupport.c print-rtl.c errors.c
-
-  ${GCC_BINARY_DIR}/gcc/min-insn-modes.c
-  ${GCC_BINARY_DIR}/gcc/insn-modes.h
-  ${GCC_BINARY_DIR}/gcc/tree-check.h
-  ${GCC_BINARY_DIR}/gcc/gtype-desc.h
-  )
-ADD_DEPENDENCIES(gen genoptions)
-TARGET_LINK_LIBRARIES(gen iberty)
-SET_TARGET_PROPERTIES(gen PROPERTIES COMPILE_FLAGS -DGENERATOR_FILE)
+add_library(gen
+	rtl.c
+	read-rtl.c
+	ggc-none.c
+	vec.c
+	gensupport.c
+	print-rtl.c
+	errors.c
+	${GCC_BINARY_DIR}/gcc/min-insn-modes.c
+	${GCC_BINARY_DIR}/gcc/insn-modes.h
+	${GCC_BINARY_DIR}/gcc/tree-check.h
+	${GCC_BINARY_DIR}/gcc/gtype-desc.h)
+add_dependencies(gen genoptions)
+target_link_libraries(gen iberty)
+set_target_properties(gen PROPERTIES COMPILE_FLAGS -DGENERATOR_FILE)
 
 #-----------------------------------------------------------------------------
 # Rules to generate insn-constants.h.
 
-ADD_EXECUTABLE(genconstants genconstants.c)
-TARGET_LINK_LIBRARIES(genconstants gen)
-SET_TARGET_PROPERTIES(genconstants PROPERTIES COMPILE_FLAGS -DGENERATOR_FILE)
+add_executable(genconstants genconstants.c)
+target_link_libraries(genconstants gen)
+set_target_properties(genconstants
+	PROPERTIES
+	COMPILE_FLAGS
+	-DGENERATOR_FILE)
 
-ADD_CUSTOM_COMMAND(
-  OUTPUT ${GCC_BINARY_DIR}/gcc/insn-constants.h
-  COMMAND genconstants ${MD_FILE} > insn-constants.h
-  DEPENDS genconstants ${MD_FILE}
-  )
+add_custom_command(OUTPUT
+	${GCC_BINARY_DIR}/gcc/insn-constants.h
+	COMMAND
+	genconstants
+	${MD_FILE}
+	>
+	insn-constants.h
+	DEPENDS
+	genconstants
+	${MD_FILE})
 
 #-----------------------------------------------------------------------------
 # Rules to generate tm-preds.h, tm-constrs.h, and insn-preds.c.
 
-ADD_EXECUTABLE(genpreds genpreds.c)
-TARGET_LINK_LIBRARIES(genpreds gen)
-SET_TARGET_PROPERTIES(genpreds PROPERTIES COMPILE_FLAGS -DGENERATOR_FILE)
+add_executable(genpreds genpreds.c)
+target_link_libraries(genpreds gen)
+set_target_properties(genpreds
+	PROPERTIES
+	COMPILE_FLAGS
+	-DGENERATOR_FILE)
 
-ADD_CUSTOM_COMMAND(
-  OUTPUT ${GCC_BINARY_DIR}/gcc/tm-preds.h
-  COMMAND genpreds -h ${MD_FILE} > tm-preds.h
-  DEPENDS genpreds ${MD_FILE}
-  )
+add_custom_command(OUTPUT
+	${GCC_BINARY_DIR}/gcc/tm-preds.h
+	COMMAND
+	genpreds
+	-h
+	${MD_FILE}
+	>
+	tm-preds.h
+	DEPENDS
+	genpreds
+	${MD_FILE})
 
-ADD_CUSTOM_COMMAND(
-  OUTPUT ${GCC_BINARY_DIR}/gcc/tm-constrs.h
-  COMMAND genpreds -c ${MD_FILE} > tm-constrs.h
-  DEPENDS genpreds ${MD_FILE}
-  )
+add_custom_command(OUTPUT
+	${GCC_BINARY_DIR}/gcc/tm-constrs.h
+	COMMAND
+	genpreds
+	-c
+	${MD_FILE}
+	>
+	tm-constrs.h
+	DEPENDS
+	genpreds
+	${MD_FILE})
 
-ADD_CUSTOM_COMMAND(
-  OUTPUT ${GCC_BINARY_DIR}/gcc/insn-preds.c
-  COMMAND genpreds ${MD_FILE} > insn-preds.c
-  DEPENDS genpreds ${MD_FILE}
-  )
+add_custom_command(OUTPUT
+	${GCC_BINARY_DIR}/gcc/insn-preds.c
+	COMMAND
+	genpreds
+	${MD_FILE}
+	>
+	insn-preds.c
+	DEPENDS
+	genpreds
+	${MD_FILE})
 
 #-----------------------------------------------------------------------------
 # Rules to generate gencondmd.c.
 
-ADD_EXECUTABLE(genconditions genconditions.c)
-TARGET_LINK_LIBRARIES(genconditions gen)
-SET_TARGET_PROPERTIES(genconditions PROPERTIES COMPILE_FLAGS -DGENERATOR_FILE)
+add_executable(genconditions genconditions.c)
+target_link_libraries(genconditions gen)
+set_target_properties(genconditions
+	PROPERTIES
+	COMPILE_FLAGS
+	-DGENERATOR_FILE)
 
-ADD_CUSTOM_COMMAND(
-  OUTPUT ${GCC_BINARY_DIR}/gcc/gencondmd.c
-  COMMAND genconditions ${MD_FILE} > gencondmd.c
-  DEPENDS genconditions ${MD_FILE}
-  )
+add_custom_command(OUTPUT
+	${GCC_BINARY_DIR}/gcc/gencondmd.c
+	COMMAND
+	genconditions
+	${MD_FILE}
+	>
+	gencondmd.c
+	DEPENDS
+	genconditions
+	${MD_FILE})
 
 #-----------------------------------------------------------------------------
 # Rules to generate insn-conditions.md.
 
-SET(MD_COND ${GCC_BINARY_DIR}/gcc/insn-conditions.md)
+set(MD_COND ${GCC_BINARY_DIR}/gcc/insn-conditions.md)
 
-ADD_EXECUTABLE(gencondmd
-  ${GCC_BINARY_DIR}/gcc/gencondmd.c
-  ${GCC_BINARY_DIR}/gcc/insn-constants.h
-  ${GCC_BINARY_DIR}/gcc/tm-preds.h
-  ${GCC_BINARY_DIR}/gcc/tm-constrs.h
-  )
-TARGET_LINK_LIBRARIES(gencondmd gen)
-SET_TARGET_PROPERTIES(gencondmd PROPERTIES COMPILE_FLAGS -DGENERATOR_FILE)
+add_executable(gencondmd
+	${GCC_BINARY_DIR}/gcc/gencondmd.c
+	${GCC_BINARY_DIR}/gcc/insn-constants.h
+	${GCC_BINARY_DIR}/gcc/tm-preds.h
+	${GCC_BINARY_DIR}/gcc/tm-constrs.h)
+target_link_libraries(gencondmd gen)
+set_target_properties(gencondmd
+	PROPERTIES
+	COMPILE_FLAGS
+	-DGENERATOR_FILE)
 
-ADD_CUSTOM_COMMAND(
-  OUTPUT ${MD_COND}
-  COMMAND gencondmd > ${MD_COND}
-  DEPENDS gencondmd
-  )
+add_custom_command(OUTPUT
+	${MD_COND}
+	COMMAND
+	gencondmd
+	>
+	${MD_COND}
+	DEPENDS
+	gencondmd)
 
 #-----------------------------------------------------------------------------
 # Rules to generate insn-config.h, insn-codes.h, insn-attr.h, and insn-flags.h.
 
-FOREACH(tgt config codes attr flags)
-  ADD_EXECUTABLE(gen${tgt} gen${tgt}.c)
-  TARGET_LINK_LIBRARIES(gen${tgt} gen)
-  SET_TARGET_PROPERTIES(gen${tgt} PROPERTIES COMPILE_FLAGS -DGENERATOR_FILE)
+foreach(tgt config codes attr flags)
+	add_executable(gen${tgt} gen${tgt}.c)
+	target_link_libraries(gen${tgt} gen)
+	set_target_properties(gen${tgt}
+		PROPERTIES
+		COMPILE_FLAGS
+		-DGENERATOR_FILE)
 
-  ADD_CUSTOM_COMMAND(
-    OUTPUT ${GCC_BINARY_DIR}/gcc/insn-${tgt}.h
-    COMMAND gen${tgt} ${MD_FILE} ${MD_COND} > insn-${tgt}.h
-    DEPENDS gen${tgt} ${MD_FILE} ${MD_COND}
-    )
-ENDFOREACH(tgt)
+	add_custom_command(OUTPUT
+		${GCC_BINARY_DIR}/gcc/insn-${tgt}.h
+		COMMAND
+		gen${tgt}
+		${MD_FILE}
+		${MD_COND}
+		>
+		insn-${tgt}.h
+		DEPENDS
+		gen${tgt}
+		${MD_FILE}
+		${MD_COND})
+endforeach()
 
 #-----------------------------------------------------------------------------
 # Rules to generate insn-emit.c, insn-extract.c, insn-opinit.c,
 # insn-peep.c, insn-output.c, insn-recog.c, insn-attrtab.c, and
 # insn-automata.c.
 
-SET(genautomata_EXTRA_LIBS m)
-IF(WIN32)
-  IF(NOT MINGW)
-    SET(genautomata_EXTRA_LIBS)
-  ENDIF(NOT MINGW)
-ENDIF(WIN32)
-FOREACH(tgt emit extract opinit peep output recog attrtab automata)
-  ADD_EXECUTABLE(gen${tgt} gen${tgt}.c)
-  TARGET_LINK_LIBRARIES(gen${tgt} gen ${gen${tgt}_EXTRA_LIBS})
-  SET_TARGET_PROPERTIES(gen${tgt} PROPERTIES COMPILE_FLAGS -DGENERATOR_FILE)
+set(genautomata_EXTRA_LIBS m)
+if(WIN32)
+	if(NOT MINGW)
+		set(genautomata_EXTRA_LIBS)
+	endif()
+endif()
+foreach(tgt emit extract opinit peep output recog attrtab automata)
+	add_executable(gen${tgt} gen${tgt}.c)
+	target_link_libraries(gen${tgt} gen ${gen${tgt}_EXTRA_LIBS})
+	set_target_properties(gen${tgt}
+		PROPERTIES
+		COMPILE_FLAGS
+		-DGENERATOR_FILE)
 
-  ADD_CUSTOM_COMMAND(
-    OUTPUT ${GCC_BINARY_DIR}/gcc/insn-${tgt}.c
-    COMMAND gen${tgt} ${MD_FILE} ${MD_COND} > insn-${tgt}.c
-    DEPENDS gen${tgt} ${MD_FILE} ${MD_COND}
-    )
-ENDFOREACH(tgt)
+	add_custom_command(OUTPUT
+		${GCC_BINARY_DIR}/gcc/insn-${tgt}.c
+		COMMAND
+		gen${tgt}
+		${MD_FILE}
+		${MD_COND}
+		>
+		insn-${tgt}.c
+		DEPENDS
+		gen${tgt}
+		${MD_FILE}
+		${MD_COND})
+endforeach()
 
 #-----------------------------------------------------------------------------
 # Rules to generate gcov-iov.h.
 
-ADD_EXECUTABLE(gcov_iov gcov-iov.c)
-SET_TARGET_PROPERTIES(gcov_iov PROPERTIES COMPILE_FLAGS -DGENERATOR_FILE)
+add_executable(gcov_iov gcov-iov.c)
+set_target_properties(gcov_iov
+	PROPERTIES
+	COMPILE_FLAGS
+	-DGENERATOR_FILE)
 
-ADD_CUSTOM_COMMAND(
-  OUTPUT ${GCC_BINARY_DIR}/gcc/gcov-iov.h
-  COMMAND gcov_iov '4.2.1' '' > gcov-iov.h
-  DEPENDS gcov_iov
-  )
+add_custom_command(OUTPUT
+	${GCC_BINARY_DIR}/gcc/gcov-iov.h
+	COMMAND
+	gcov_iov
+	'4.2.1'
+	''
+	>
+	gcov-iov.h
+	DEPENDS
+	gcov_iov)
 
 #-----------------------------------------------------------------------------
 # Special flags for some source files.
 
-SET_SOURCE_FILES_PROPERTIES(toplev.c
-  PROPERTIES COMPILE_FLAGS "-DTARGET_NAME=${target}")
+set_source_files_properties(toplev.c
+	PROPERTIES
+	COMPILE_FLAGS
+	"-DTARGET_NAME=${target}")
 
 #-----------------------------------------------------------------------------
 # Compiler backend library.
 
 
-PATH64_SET_MULTIARCH_SOURCES(backend_sources COMMON
-                     alias.c              alloc-pool.c       backend-print-rtl.c             backend-rtl.c
-               backend-vec.c              bb-reorder.c                  bitmap.c                 bt-load.c
-                  builtins.c             caller-save.c                   calls.c                     cfg.c
-                   cfganal.c                cfgbuild.c              cfgcleanup.c               cfgexpand.c
-                  cfghooks.c               cfglayout.c                 cfgloop.c             cfgloopanal.c
-              cfgloopmanip.c                  cfgrtl.c                  cgraph.c              cgraphunit.c
-                   combine.c                conflict.c                 convert.c                coverage.c
-                       cse.c                  cselib.c                  dbxout.c                     ddg.c
-                     debug.c                 df-core.c             df-problems.c                 df-scan.c
-                       dfp.c              diagnostic.c                  dojump.c               dominance.c
-                   domwalk.c               dwarf2asm.c               dwarf2out.c                emit-rtl.c
-                 et-forest.c                  except.c                  explow.c                  expmed.c
-                      expr.c                   final.c                    flow.c              fold-const.c
-                  function.c                    gcse.c                  genrtl.c              ggc-common.c
-                  ggc-page.c              gimple-low.c                gimplify.c                  global.c
-                     graph.c             haifa-sched.c                   hooks.c                   ifcvt.c
-                 integrate.c                    intl.c                  ipa-cp.c              ipa-inline.c
-                  ipa-prop.c          ipa-pure-const.c           ipa-reference.c         ipa-type-escape.c
-                 ipa-utils.c                     ipa.c                    jump.c             lambda-code.c
-                lambda-mat.c            lambda-trans.c               langhooks.c                     lcm.c
-                     lists.c             local-alloc.c             loop-doloop.c               loop-init.c
-            loop-invariant.c                 loop-iv.c             loop-unroll.c           loop-unswitch.c
-            mode-switching.c            modulo-sched.c                 omp-low.c                  optabs.c
-               opts-common.c                    opts.c                  params.c                  passes.c
-               pointer-set.c         postreload-gcse.c              postreload.c                 predict.c
-              pretty-print.c              print-tree.c                 profile.c                    real.c
-                     recog.c               reg-stack.c                regclass.c                 regmove.c
-                 regrename.c                  reload.c                 reload1.c                   reorg.c
-                  resource.c               rtl-error.c           rtl-factoring.c                 rtlanal.c
-                  rtlhooks.c                 sbitmap.c              sched-deps.c               sched-ebb.c
-                 sched-rgn.c               sched-vis.c                  sdbout.c                     see.c
-              simplify-rtx.c                   sreal.c                    stmt.c             stor-layout.c
-                stringpool.c            struct-equiv.c               targhooks.c                 timevar.c
-                    toplev.c                  tracer.c                tree-cfg.c         tree-cfgcleanup.c
-              tree-complex.c                tree-dfa.c               tree-dump.c                 tree-eh.c
-               tree-gimple.c            tree-if-conv.c             tree-inline.c           tree-into-ssa.c
-             tree-iterator.c        tree-loop-linear.c             tree-nested.c          tree-nomudflap.c
-                  tree-nrv.c        tree-object-size.c           tree-optimize.c          tree-outof-ssa.c
-             tree-phinodes.c       tree-pretty-print.c            tree-profile.c                tree-sra.c
-          tree-ssa-address.c          tree-ssa-alias.c            tree-ssa-ccp.c           tree-ssa-copy.c
-       tree-ssa-copyrename.c            tree-ssa-dce.c            tree-ssa-dom.c            tree-ssa-dse.c
-         tree-ssa-forwprop.c           tree-ssa-live.c        tree-ssa-loop-ch.c        tree-ssa-loop-im.c
-     tree-ssa-loop-ivcanon.c    tree-ssa-loop-ivopts.c     tree-ssa-loop-manip.c     tree-ssa-loop-niter.c
-    tree-ssa-loop-prefetch.c  tree-ssa-loop-unswitch.c           tree-ssa-loop.c      tree-ssa-math-opts.c
-         tree-ssa-operands.c         tree-ssa-phiopt.c            tree-ssa-pre.c      tree-ssa-propagate.c
-          tree-ssa-reassoc.c           tree-ssa-sink.c    tree-ssa-structalias.c     tree-ssa-threadedge.c
-     tree-ssa-threadupdate.c        tree-ssa-uncprop.c                tree-ssa.c           tree-ssanames.c
-               tree-stdarg.c           tree-tailcall.c       tree-vect-analyze.c       tree-vect-generic.c
-        tree-vect-patterns.c     tree-vect-transform.c         tree-vectorizer.c                 tree-vn.c
-                  tree-vrp.c                    tree.c              value-prof.c            var-tracking.c
-                    varasm.c                  varray.c                 version.c               vmsdbgout.c
-                       web.c                xcoffout.c
+path64_set_multiarch_sources(backend_sources
+	COMMON
+	alias.c
+	alloc-pool.c
+	backend-print-rtl.c
+	backend-rtl.c
+	backend-vec.c
+	bb-reorder.c
+	bitmap.c
+	bt-load.c
+	builtins.c
+	caller-save.c
+	calls.c
+	cfg.c
+	cfganal.c
+	cfgbuild.c
+	cfgcleanup.c
+	cfgexpand.c
+	cfghooks.c
+	cfglayout.c
+	cfgloop.c
+	cfgloopanal.c
+	cfgloopmanip.c
+	cfgrtl.c
+	cgraph.c
+	cgraphunit.c
+	combine.c
+	conflict.c
+	convert.c
+	coverage.c
+	cse.c
+	cselib.c
+	dbxout.c
+	ddg.c
+	debug.c
+	df-core.c
+	df-problems.c
+	df-scan.c
+	dfp.c
+	diagnostic.c
+	dojump.c
+	dominance.c
+	domwalk.c
+	dwarf2asm.c
+	dwarf2out.c
+	emit-rtl.c
+	et-forest.c
+	except.c
+	explow.c
+	expmed.c
+	expr.c
+	final.c
+	flow.c
+	fold-const.c
+	function.c
+	gcse.c
+	genrtl.c
+	ggc-common.c
+	ggc-page.c
+	gimple-low.c
+	gimplify.c
+	global.c
+	graph.c
+	haifa-sched.c
+	hooks.c
+	ifcvt.c
+	integrate.c
+	intl.c
+	ipa-cp.c
+	ipa-inline.c
+	ipa-prop.c
+	ipa-pure-const.c
+	ipa-reference.c
+	ipa-type-escape.c
+	ipa-utils.c
+	ipa.c
+	jump.c
+	lambda-code.c
+	lambda-mat.c
+	lambda-trans.c
+	langhooks.c
+	lcm.c
+	lists.c
+	local-alloc.c
+	loop-doloop.c
+	loop-init.c
+	loop-invariant.c
+	loop-iv.c
+	loop-unroll.c
+	loop-unswitch.c
+	mode-switching.c
+	modulo-sched.c
+	omp-low.c
+	optabs.c
+	opts-common.c
+	opts.c
+	params.c
+	passes.c
+	pointer-set.c
+	postreload-gcse.c
+	postreload.c
+	predict.c
+	pretty-print.c
+	print-tree.c
+	profile.c
+	real.c
+	recog.c
+	reg-stack.c
+	regclass.c
+	regmove.c
+	regrename.c
+	reload.c
+	reload1.c
+	reorg.c
+	resource.c
+	rtl-error.c
+	rtl-factoring.c
+	rtlanal.c
+	rtlhooks.c
+	sbitmap.c
+	sched-deps.c
+	sched-ebb.c
+	sched-rgn.c
+	sched-vis.c
+	sdbout.c
+	see.c
+	simplify-rtx.c
+	sreal.c
+	stmt.c
+	stor-layout.c
+	stringpool.c
+	struct-equiv.c
+	targhooks.c
+	timevar.c
+	toplev.c
+	tracer.c
+	tree-cfg.c
+	tree-cfgcleanup.c
+	tree-complex.c
+	tree-dfa.c
+	tree-dump.c
+	tree-eh.c
+	tree-gimple.c
+	tree-if-conv.c
+	tree-inline.c
+	tree-into-ssa.c
+	tree-iterator.c
+	tree-loop-linear.c
+	tree-nested.c
+	tree-nomudflap.c
+	tree-nrv.c
+	tree-object-size.c
+	tree-optimize.c
+	tree-outof-ssa.c
+	tree-phinodes.c
+	tree-pretty-print.c
+	tree-profile.c
+	tree-sra.c
+	tree-ssa-address.c
+	tree-ssa-alias.c
+	tree-ssa-ccp.c
+	tree-ssa-copy.c
+	tree-ssa-copyrename.c
+	tree-ssa-dce.c
+	tree-ssa-dom.c
+	tree-ssa-dse.c
+	tree-ssa-forwprop.c
+	tree-ssa-live.c
+	tree-ssa-loop-ch.c
+	tree-ssa-loop-im.c
+	tree-ssa-loop-ivcanon.c
+	tree-ssa-loop-ivopts.c
+	tree-ssa-loop-manip.c
+	tree-ssa-loop-niter.c
+	tree-ssa-loop-prefetch.c
+	tree-ssa-loop-unswitch.c
+	tree-ssa-loop.c
+	tree-ssa-math-opts.c
+	tree-ssa-operands.c
+	tree-ssa-phiopt.c
+	tree-ssa-pre.c
+	tree-ssa-propagate.c
+	tree-ssa-reassoc.c
+	tree-ssa-sink.c
+	tree-ssa-structalias.c
+	tree-ssa-threadedge.c
+	tree-ssa-threadupdate.c
+	tree-ssa-uncprop.c
+	tree-ssa.c
+	tree-ssanames.c
+	tree-stdarg.c
+	tree-tailcall.c
+	tree-vect-analyze.c
+	tree-vect-generic.c
+	tree-vect-patterns.c
+	tree-vect-transform.c
+	tree-vectorizer.c
+	tree-vn.c
+	tree-vrp.c
+	tree.c
+	value-prof.c
+	var-tracking.c
+	varasm.c
+	varray.c
+	version.c
+	vmsdbgout.c
+	web.c
+	xcoffout.c
+
+	${GCC_BINARY_DIR}/gcc/options.c
+	${GCC_SOURCE_DIR}/gcc/config/${out_file}
+	${extra_srcs}
+	${host_hook_srcs}
+	${c_target_srcs}
+	${cxx_target_srcs}
+	${GCC_BINARY_DIR}/gcc/gtype-desc.c
+	${GCC_BINARY_DIR}/gcc/insn-attrtab.c
+	${GCC_BINARY_DIR}/gcc/insn-emit.c
+	${GCC_BINARY_DIR}/gcc/insn-modes.c
+	${GCC_BINARY_DIR}/gcc/insn-extract.c
+	${GCC_BINARY_DIR}/gcc/insn-opinit.c
+	${GCC_BINARY_DIR}/gcc/insn-output.c
+	${GCC_BINARY_DIR}/gcc/insn-peep.c
+	${GCC_BINARY_DIR}/gcc/insn-recog.c
+	${GCC_BINARY_DIR}/gcc/insn-preds.c
+	${GCC_BINARY_DIR}/gcc/insn-automata.c
+	${GCC_BINARY_DIR}/gcc/insn-flags.h
+	${GCC_BINARY_DIR}/gcc/insn-config.h
+	${GCC_BINARY_DIR}/gcc/insn-codes.h
+	${GCC_BINARY_DIR}/gcc/insn-attr.h
+	${GCC_BINARY_DIR}/gcc/genrtl.h
+	${GCC_BINARY_DIR}/gcc/gcov-iov.h
+	# Seen in CMakeLists.txt: 227 files listed for libbackend.
+
+	# Files that are missing in list above
+	double-int.c
+	tree-chrec.c
+	tree-data-ref.c
+	tree-scalar-evolution.c)
+path64_add_multiarch_library(backend STATIC backend_sources)
 
 
-   ${GCC_BINARY_DIR}/gcc/options.c           ${GCC_SOURCE_DIR}/gcc/config/${out_file}
-   ${extra_srcs}                             ${host_hook_srcs}
-   ${c_target_srcs}                          ${cxx_target_srcs}
-   ${GCC_BINARY_DIR}/gcc/gtype-desc.c        ${GCC_BINARY_DIR}/gcc/insn-attrtab.c
-   ${GCC_BINARY_DIR}/gcc/insn-emit.c         ${GCC_BINARY_DIR}/gcc/insn-modes.c
-   ${GCC_BINARY_DIR}/gcc/insn-extract.c      ${GCC_BINARY_DIR}/gcc/insn-opinit.c
-   ${GCC_BINARY_DIR}/gcc/insn-output.c       ${GCC_BINARY_DIR}/gcc/insn-peep.c
-   ${GCC_BINARY_DIR}/gcc/insn-recog.c        ${GCC_BINARY_DIR}/gcc/insn-preds.c
-   ${GCC_BINARY_DIR}/gcc/insn-automata.c     ${GCC_BINARY_DIR}/gcc/insn-flags.h
-   ${GCC_BINARY_DIR}/gcc/insn-config.h       ${GCC_BINARY_DIR}/gcc/insn-codes.h
-   ${GCC_BINARY_DIR}/gcc/insn-attr.h         ${GCC_BINARY_DIR}/gcc/genrtl.h
-   ${GCC_BINARY_DIR}/gcc/gcov-iov.h
-  # Seen in CMakeLists.txt: 227 files listed for libbackend.
-
-  # Files that are missing in list above
-  double-int.c
-  tree-chrec.c
-  tree-data-ref.c
-  tree-scalar-evolution.c
-)
-PATH64_ADD_MULTIARCH_LIBRARY(backend STATIC backend_sources)
+configure_file(${GCC_SOURCE_DIR}/gcc/path64_prefix.h.in
+	${GCC_BINARY_DIR}/gcc/path64_prefix.h
+	@ONLY
+	IMMEDIATE)
 
 
-CONFIGURE_FILE(${GCC_SOURCE_DIR}/gcc/path64_prefix.h.in
-               ${GCC_BINARY_DIR}/gcc/path64_prefix.h @ONLY IMMEDIATE)
+path64_set_multiarch_sources(cc142_sources
+	COMMON
+	c-lang.c
+	c-typeck.c
+	c-decl.c
+	c-parser.c
+	c-convert.c
+	c-objc-common.c
+	stub-objc.c
+	attribs.c
+	c-errors.c
+	c-lex.c
+	c-pragma.c
+	c-aux-info.c
+	c-common.c
+	c-opts.c
+	c-format.c
+	c-semantics.c
+	c-incpath.c
+	cppdefault.c
+	c-ppoutput.c
+	c-cppbuiltin.c
+	prefix.c
+	c-dump.c
+	c-pch.c
+	c-gimplify.c
+	tree-mudflap.c
+	c-pretty-print.c
+	c-omp.c
+	main.c
+	dummy-checksum.c)
 
+path64_add_multiarch_executable(cc142 cc142_sources)
 
-PATH64_SET_MULTIARCH_SOURCES(cc142_sources COMMON
-               c-lang.c
-               c-typeck.c
-               c-decl.c
-               c-parser.c
-               c-convert.c
-               c-objc-common.c
-               stub-objc.c
-               attribs.c
-               c-errors.c
-               c-lex.c
-               c-pragma.c
-               c-aux-info.c
-               c-common.c
-               c-opts.c
-               c-format.c
-               c-semantics.c
-               c-incpath.c
-               cppdefault.c
-               c-ppoutput.c
-               c-cppbuiltin.c
-               prefix.c
-               c-dump.c
-               c-pch.c
-               c-gimplify.c
-               tree-mudflap.c
-               c-pretty-print.c
-               c-omp.c
-               main.c
-
-               dummy-checksum.c
-               )
-
-PATH64_ADD_MULTIARCH_EXECUTABLE(cc142 cc142_sources)
-
-PATH64_MULTIARCH_LINK_MULTIARCH_LIBRARIES(cc142 backend)
-PATH64_MULTIARCH_LINK_LIBRARIES(cc142 cpp decnumber iberty )
-path64_multiarch_link_multiarch_libraries( cc142 spin)
+path64_multiarch_link_multiarch_libraries(cc142 backend)
+path64_multiarch_link_libraries(cc142 cpp decnumber iberty)
+path64_multiarch_link_multiarch_libraries(cc142 spin)
 path64_install_multiarch(cc142)
-path64_add_dependencies_from_multiarch( compiler-stage cc142 )
+path64_add_dependencies_from_multiarch(compiler-stage cc142)
 
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    PATH64_MULTIARCH_LINK_LIBRARIES(cc142 winlib)
-ENDIF()
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+	path64_multiarch_link_libraries(cc142 winlib)
+endif()
 
 
 ## changed pending verification

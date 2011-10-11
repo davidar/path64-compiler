@@ -1,19 +1,26 @@
-INCLUDE_DIRECTORIES(BEFORE
-  ${GCC_SOURCE_DIR}/include
-  ${GCC_SOURCE_DIR}/libcpp/include
-  ${GCC_BINARY_DIR}/libcpp
-  )
+include_directories(BEFORE
+	${GCC_SOURCE_DIR}/include
+	${GCC_SOURCE_DIR}/libcpp/include
+	${GCC_BINARY_DIR}/libcpp)
 
-CONFIGURE_FILE(${GCC_SOURCE_DIR}/libcpp/localedir.h.in
-		    ${GCC_BINARY_DIR}/libcpp/localedir.h)
+configure_file(${GCC_SOURCE_DIR}/libcpp/localedir.h.in
+	${GCC_BINARY_DIR}/libcpp/localedir.h)
 
-SET(cpp_SRCS
-        charset.c   directives.c       errors.c         expr.c
-          files.c  identifiers.c         init.c          lex.c
-       line-map.c        macro.c       mkdeps.c          pch.c
-                              symtab.c  traditional.c
-   # source file count: 14
-  )
+set(cpp_SRCS
+	charset.c
+	directives.c
+	errors.c
+	expr.c
+	files.c
+	identifiers.c
+	init.c
+	lex.c
+	line-map.c
+	macro.c
+	mkdeps.c
+	pch.c
+	symtab.c
+	traditional.c)	# source file count: 14
 
 # Use the compatibility dirent interface if necessary.
 # disabled for self-bootstrap
