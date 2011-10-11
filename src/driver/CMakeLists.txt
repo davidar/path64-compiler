@@ -339,12 +339,19 @@ add_custom_command(
         DEPENDS table ${CMAKE_CURRENT_BINARY_DIR}/OPTIONS.P
         )
 
+# Generate the version strings	
+if(WIN32)
+	file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}" BUILD_ROOT)
+	string(REPLACE "\\" "\\\\" BUILD_ROOT "${BUILD_ROOT}")
+else()
+	set(BUILD_ROOT "${CMAKE_CURRENT_BINARY_DIR}")
+endif()
 
-add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/version_hg.c
-        COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/gen_version.${SHELL_EXT} > ${CMAKE_CURRENT_BINARY_DIR}/version_hg.c
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/gen_version.${SHELL_EXT}
-        )
+site_name(BUILD_HOST)
+mark_as_advanced(BUILD_HOST)
+set(BUILD_USER $ENV{USER})
+set(BUILD_DATE $ENV{DATE})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version_hg.c.in ${CMAKE_CURRENT_BINARY_DIR}/version_hg.c ESCAPE_QUOTES @ONLY)
 
 add_custom_target(driver_gen_sources
                   DEPENDS
