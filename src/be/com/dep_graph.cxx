@@ -2737,7 +2737,7 @@ INT ARRAY_DIRECTED_GRAPH16::Fission_Dep_Update_R(WN *in_loop,
       } else
       while (e) {
         EINDEX16 next_e = _e[e].Get_Next_Out_Edge();
-        UINT level = MIN(Level(e),depth);
+        UINT8 level = MIN(Level(e),depth);
         VINDEX16 v2 = _e[e].Get_Sink();
         WN *wn2 = Get_Wn(v2);
         if (LWN_Get_Parent(wn2) != parent) {  // not the same copy
