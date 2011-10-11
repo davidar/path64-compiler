@@ -48,6 +48,7 @@ if ("${result}" STREQUAL "0")
 
     FOREACH(libdir ${LIBS})
 	STRING(REPLACE "-L" "" stripped_dir ${libdir})
+	get_filename_component(stripped_dir "${stripped_dir}" ABSOLUTE)
 	list(APPEND stripped_dirs_list ${stripped_dir})
     ENDFOREACH()
 
