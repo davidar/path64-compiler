@@ -184,7 +184,7 @@ ARRAY_DIRECTED_GRAPH16 *sdg)
   } else {
   
     stmt_e = sdg->Add_Edge(sdg->Get_Vertex(stmt1),
-                sdg->Get_Vertex(stmt2), stmt_level);
+                sdg->Get_Vertex(stmt2), UINT8(stmt_level));
     if (stmt_e==0) {
       sdg->Delete_Vertex(source_vertex);
       sdg->Delete_Vertex(sink_vertex);
@@ -1246,7 +1246,7 @@ static BOOL Generate_Pragma_Dependence_For_Statement_Dependence_Graph(
     // put in edges between pragmas and statements before/after them
     VINDEX16 v=sdg->Get_Vertex(wn);
     VINDEX16 v1;
-    UINT level = Do_Loop_Depth(parent_loop)+1;
+    UINT8 level = Do_Loop_Depth(parent_loop)+1;
 #if 0
 // do not put in edges between pragmas and stmt before them
     WN* before=wn;
