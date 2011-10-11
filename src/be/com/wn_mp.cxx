@@ -183,7 +183,7 @@ inline void WN_set_offsetx ( WN *wn, WN_OFFSET ofst )
   }
 }
 
-inline TYPE_ID Promote_Type(TYPE_ID mtype)
+static inline TYPE_ID Promote_Type(TYPE_ID mtype)
 {
   switch (mtype) {
     case MTYPE_I1 : case MTYPE_I2: return(MTYPE_I4);
