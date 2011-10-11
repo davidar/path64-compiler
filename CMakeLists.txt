@@ -278,8 +278,9 @@ option(PATH64_ENABLE_CXX "Enable C++ support" ON)
 
 
 # Optional path to libdwarf
-option(PATH64_LIBDWARF_PATH "Optional path to libdwarf library")
-
+if(NOT PATH64_LIBDWARF_PATH)
+	set(PATH64_LIBDWARF_PATH NOTFOUND CACHE PATH "Optional path to libdwarf library")
+endif()
 
 set(NAMEPREFIX
 	"path"
