@@ -453,7 +453,7 @@ public:
   // constructors
   LOOPINFO(MEM_POOL* m) { memset(this, 0, sizeof(LOOPINFO)); _mem_pool = m; }
 
-  LOOPINFO(MEM_POOL* m, INT32 cd_idx);
+  LOOPINFO(MEM_POOL* m, mINT16 cd_idx);
 
   MEM_POOL* Mem_Pool() const     { return _mem_pool; }
   void Set_Mem_Pool(MEM_POOL* m) { _mem_pool = m; }

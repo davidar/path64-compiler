@@ -166,7 +166,7 @@ Access_vector_is_too_messy(ACCESS_VECTOR* av)
 //====================================================================
 // loopinfo constructor
 //====================================================================
-LOOPINFO::LOOPINFO(MEM_POOL* m, INT16 cd_idx) 
+LOOPINFO::LOOPINFO(MEM_POOL* m, mINT16 cd_idx) 
   : _nest_level(0),
     _flags(0),
     _mem_pool(m),
