@@ -37,6 +37,10 @@ if (GXX_RUNTIME_OUTPUT AND GXX_RUNTIME_RESULT)
 	get_filename_component(stripped_dir "${stripped_dir}" ABSOLUTE)
 	list(APPEND stripped_dirs_list ${stripped_dir})
     ENDFOREACH()
+    
+    # Since we keep the last directory we find the file in, reverse the
+    # order of the search path.
+    list(REVERSE stripped_dirs_list)
 
     FOREACH(stripped_dir ${stripped_dirs_list})
 	IF(EXISTS "${stripped_dir}/libsupc++.a")
