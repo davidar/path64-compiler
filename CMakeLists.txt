@@ -282,9 +282,9 @@ set(NAMEPREFIX
 	STRING
 	"Default name excutable prefix [path]")
 if(NAMEPREFIX)
-	message(STATUS "Executables will be prefixed with ${NAMEPREFIX}")
+	message(STATUS "Executables will be prefixed with '${NAMEPREFIX}'")
 else()
-	message(FATAL_ERROR "The executable name prefix must not be empty.")
+	message(FATAL_ERROR "The executable name prefix NAMEPREFIX must not be empty.")
 endif()
 
 
