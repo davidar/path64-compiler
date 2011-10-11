@@ -28,5 +28,5 @@ set(cpp_SRCS
 #   LIST(APPEND cpp_SRCS dirent.c)
 # ENDIF(NOT HAVE_DIRENT_H_COMPILED)
 
-ADD_LIBRARY(cpp ${cpp_SRCS})
-TARGET_LINK_LIBRARIES(cpp iberty)
+add_library(cpp ${cpp_SRCS})
+target_link_libraries(cpp iberty)

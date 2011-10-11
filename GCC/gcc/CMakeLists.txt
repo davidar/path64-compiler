@@ -15,7 +15,7 @@ add_definitions(-DIN_GCC -DHAVE_CONFIG_H)
 include_regular_expression("^([^ri]|i[^n]|in[^s]|ins[^n]|insn[^-]|r[^t]|rt[^l]|rtl[^.])")
 
 if(PATH64_ENABLE_CXX)
-	subdirs(cp)
+	add_subdirectory(cp)
 endif()
 
 #-----------------------------------------------------------------------------
