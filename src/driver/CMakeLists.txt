@@ -370,8 +370,7 @@ else()
 		${CMAKE_CURRENT_SOURCE_DIR}
 		OPTIONS
 		${driver_defs}
-		-DPSC_PRODNAME=
-		'"Compiler"'
+		-DPSC_PRODNAME='"Compiler"'
 		-DKEY
 		-DLITTLE_ENDIAN_HOST
 		-DHOST_IA32
