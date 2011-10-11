@@ -53,6 +53,15 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR ${CMAKE_SYSTEM_NAME} MATCHES "Linux
 ENDIF()
 ADD_SUBDIRECTORY(libfi)
 
+# Check to see if -Wl,-x aka -Wl,--discard-all is supported - it isn't on gold
+include(CheckCCompilerFlag)
+check_c_compiler_flag("-Wl,-x" LINKER_SUPPORTS_DISCARD_ALL)
+if(LINKER_SUPPORTS_DISCARD_ALL)
+    set(LINK_FLAG_DISCARD_ALL "-Wl,-x")
+else()
+    set(LINK_FLAG_DISCARD_ALL)
+endif()
+
 # All the math stuff seems to be built from libmpath
 # libmv == vector math functions
 ADD_SUBDIRECTORY(libm)

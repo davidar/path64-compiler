@@ -87,7 +87,7 @@ path64_set_multitarget_property_(mv SOVERSION 1)
 
 if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
     path64_set_multitarget_property_(mv LINK_FLAGS
-            "-Wl,-x -Wl,--version-script=${libmv_SOURCE_DIR}/libmv.vs ${BOOTSTRAP_HACK_FLAG} -nodefaultlibs")
+            "${LINK_FLAG_DISCARD_ALL} -Wl,--version-script=${libmv_SOURCE_DIR}/libmv.vs ${BOOTSTRAP_HACK_FLAG} -nodefaultlibs")
 else()
     path64_set_multitarget_property_(mv LINK_FLAGS "${BOOTSTRAP_HACK_FLAG} -nodefaultlibs")
 endif()
