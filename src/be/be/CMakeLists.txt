@@ -159,13 +159,6 @@ path64_install_multiarch(be-exec)
 
 
 # ipl -> be symlinks
-
-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	set(LINK_COPY copy)
-else()
-	set(LINK_COPY create_symlink)
-endif()
-
 set(ipl_symlink_deps)
 
 foreach(arch ${PATH64_ENABLE_ARCHES})
@@ -174,17 +167,14 @@ foreach(arch ${PATH64_ENABLE_ARCHES})
 	add_custom_command(OUTPUT
 		${stage_link}
 		COMMAND
-		${CMAKE_COMMAND}
-		-E
-		${LINK_COPY}
+		${SYMLINK_COMMAND}
 		be${CMAKE_EXECUTABLE_SUFFIX}
 		${stage_link}
 		WORKING_DIRECTORY
 		${Path64_BINARY_DIR}/lib/${arch})
 	list(APPEND ipl_symlink_deps ${stage_link})
 
-	install(CODE
-		"execute_process(COMMAND \"${CMAKE_COMMAND}\" -E ${LINK_COPY} \"be${CMAKE_EXECUTABLE_SUFFIX}\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/${PSC_FULL_VERSION}/${arch}/ipl${CMAKE_EXECUTABLE_SUFFIX}\")")
+	symlink_at_install("be${CMAKE_EXECUTABLE_SUFFIX}" "lib/${PSC_FULL_VERSION}/${arch}/ipl${CMAKE_EXECUTABLE_SUFFIX}")
 
 endforeach()
 

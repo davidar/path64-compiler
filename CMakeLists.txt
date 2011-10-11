@@ -18,12 +18,6 @@ endif()
 # Search for various include files and functions
 include(${Path64_SOURCE_DIR}/cmake/Modules/ConfigureChecks.cmake)
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	set(LINK_COPY copy_if_different)
-else()
-	set(LINK_COPY create_symlink)
-endif()
-
 # Force the build_type=debug flags to sane values overriding users choices
 set(CMAKE_C_FLAGS_DEBUG
 	"-O0 -g -D_DEBUG -DIs_True_On=1"
@@ -409,12 +403,19 @@ if(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Windows")
 endif()
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	set(SYMLINK_COMMAND ${CMAKE_COMMAND} -E copy_if_different)
+	SET(SYMLINK_COMMAND_FOR_INSTALL "\"${CMAKE_COMMAND}\" -E copy_if_different")
 	set(PATH64_AUXILARY_LD_FLAGS '"-FIXME"')
 	# ADD_DEFINITIONS(-DPSC_FULL_VERSION="${PSC_FULL_VERSION}")
 else()
 	set(SHELL_EXT sh)
 	set(SYMLINK_COMMAND ${CMAKE_COMMAND} -E create_symlink)
+	SET(SYMLINK_COMMAND_FOR_INSTALL "\"${CMAKE_COMMAND}\" -E create_symlink")
 endif()
+
+function(symlink_at_install _src _dest)
+	install(CODE
+			"execute_process(COMMAND ${SYMLINK_COMMAND_FOR_INSTALL} \"${_src}\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_dest}\")")
+endfunction()
 
 # build runtime search paths
 include(${Path64_SOURCE_DIR}/cmake/Modules/GCCRuntimeDirs.cmake)

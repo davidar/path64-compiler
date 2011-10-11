@@ -91,15 +91,11 @@ include_directories("../../libcsup/include"
 add_custom_command(OUTPUT
 	${Path64_BINARY_DIR}/bin/pathf90
 	COMMAND
-	${CMAKE_COMMAND}
-	-E
-	${LINK_COPY}
+	${SYMLINK_COMMAND}
 	pathcc
 	${Path64_BINARY_DIR}/bin/pathf90
 	COMMAND
-	${CMAKE_COMMAND}
-	-E
-	${LINK_COPY}
+	${SYMLINK_COMMAND}
 	pathcc
 	${Path64_BINARY_DIR}/bin/pathf95
 	DEPENDS

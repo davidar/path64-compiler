@@ -527,9 +527,7 @@ else()
 			# Paths in symbolic links should be relative. Otherwise bootstrap will not work
 			# TODO does this work with LINK_COPY on windows?
 			COMMAND
-			${CMAKE_COMMAND}
-			-E
-			${LINK_COPY}
+			${SYMLINK_COMMAND}
 			pathcc
 			${Path64_BINARY_DIR}/bin/pathCC)
 
@@ -541,26 +539,18 @@ else()
 		add_dependencies(compiler-stage stageit-driver)
 
 
-		install(CODE
-			"execute_process(COMMAND \"${CMAKE_COMMAND}\" -E ${LINK_COPY} \"pathcc${CMAKE_EXECUTABLE_SUFFIX}\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/pathCC${CMAKE_EXECUTABLE_SUFFIX}\")")
-		install(CODE
-			"execute_process(COMMAND \"${CMAKE_COMMAND}\" -E ${LINK_COPY} \"pathCC${CMAKE_EXECUTABLE_SUFFIX}\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/pathCC-${PSC_FULL_VERSION}${CMAKE_EXECUTABLE_SUFFIX}\")")
+		symlink_at_install("pathcc${CMAKE_EXECUTABLE_SUFFIX}" "bin/pathCC${CMAKE_EXECUTABLE_SUFFIX}")
+		symlink_at_install("pathCC${CMAKE_EXECUTABLE_SUFFIX}" "bin/pathCC-${PSC_FULL_VERSION}${CMAKE_EXECUTABLE_SUFFIX}")
 	endif()
 
 endif()
 
 if(PATH64_ENABLE_FORTRAN)
-	install(CODE
-		"execute_process(COMMAND \"${CMAKE_COMMAND}\" -E ${LINK_COPY} \"pathcc${CMAKE_EXECUTABLE_SUFFIX}\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/pathf95${CMAKE_EXECUTABLE_SUFFIX}\")")
-	install(CODE
-		"execute_process(COMMAND \"${CMAKE_COMMAND}\" -E ${LINK_COPY} \"pathcc${CMAKE_EXECUTABLE_SUFFIX}\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/pathf90${CMAKE_EXECUTABLE_SUFFIX}\")")
+	symlink_at_install("pathcc${CMAKE_EXECUTABLE_SUFFIX}" "bin/pathf95${CMAKE_EXECUTABLE_SUFFIX}")
+	symlink_at_install("pathcc${CMAKE_EXECUTABLE_SUFFIX}" "bin/pathf90${CMAKE_EXECUTABLE_SUFFIX}")
 endif()
-install(CODE
-	"execute_process(COMMAND \"${CMAKE_COMMAND}\" -E ${LINK_COPY} \"pathcc${CMAKE_EXECUTABLE_SUFFIX}\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/pathcc-${PSC_FULL_VERSION}${CMAKE_EXECUTABLE_SUFFIX}\")")
-
+symlink_at_install("pathCC${CMAKE_EXECUTABLE_SUFFIX}" "bin/pathcc-${PSC_FULL_VERSION}${CMAKE_EXECUTABLE_SUFFIX}")
 if(PATH64_ENABLE_FORTRAN)
-	install(CODE
-		"execute_process(COMMAND \"${CMAKE_COMMAND}\" -E ${LINK_COPY} \"pathf95${CMAKE_EXECUTABLE_SUFFIX}\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/pathf95-${PSC_FULL_VERSION}${CMAKE_EXECUTABLE_SUFFIX}\")")
-	install(CODE
-		"execute_process(COMMAND \"${CMAKE_COMMAND}\" -E ${LINK_COPY} \"pathf90${CMAKE_EXECUTABLE_SUFFIX}\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/pathf90-${PSC_FULL_VERSION}${CMAKE_EXECUTABLE_SUFFIX}\")")
+	symlink_at_install("pathf95${CMAKE_EXECUTABLE_SUFFIX}" "bin/pathf95-${PSC_FULL_VERSION}${CMAKE_EXECUTABLE_SUFFIX}")
+	symlink_at_install("pathf90${CMAKE_EXECUTABLE_SUFFIX}" "bin/pathf90-${PSC_FULL_VERSION}${CMAKE_EXECUTABLE_SUFFIX}")
 endif()

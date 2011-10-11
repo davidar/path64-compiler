@@ -171,9 +171,7 @@ endforeach()
 #	done
 foreach(H ${SYS_DIRS})
 	execute_process(COMMAND
-		${CMAKE_COMMAND}
-		-E
-		${LINK_COPY}
+		${SYMLINK_COMMAND}
 		include/sys/${H}
 		${PATHSCALE_INCLUDE_DIR}/sys/${H})
 endforeach()

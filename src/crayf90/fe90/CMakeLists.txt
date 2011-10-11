@@ -75,8 +75,7 @@ install(FILES
 	DESTINATION
 	${PATH64_LIB_PATH})
 install(FILES cf95.msgs DESTINATION ${PATH64_LIB_PATH})
-install(CODE
-	"execute_process(COMMAND \"${CMAKE_COMMAND}\" -E ${LINK_COPY} \"cf95.msgs\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/${PSC_FULL_VERSION}/pathf95.msgs\")")
+symlink_at_install("cf95.msgs" "lib/${PSC_FULL_VERSION}/pathf95.msgs")
 
 add_custom_target(generate_cf95_cat DEPENDS cf95.cat)
 

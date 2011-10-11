@@ -35,8 +35,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	path64_add_multiarch_multiarch_dependencies(whirl2c-exec be-static)
 	path64_install_multiarch(whirl2c-exec)
 	foreach(arch ${PATH64_ENABLE_ARCHES})
-		install(CODE
-			"execute_process(COMMAND \"${CMAKE_COMMAND}\" -E ${LINK_COPY} \"be\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/${PSC_FULL_VERSION}/${arch}/whirl2c_be\")")
+		symlink_at_install("be${CMAKE_EXECUTABLE_SUFFIX}" "lib/${PSC_FULL_VERSION}/${arch}/whirl2c_be${CMAKE_EXECUTABLE_SUFFIX}")
 	endforeach()
 endif()
 
