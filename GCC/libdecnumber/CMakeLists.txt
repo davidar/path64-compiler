@@ -1,6 +1,5 @@
-file(READ ${GCC_SOURCE_DIR}/ungenerated/common/gstdint.h GSTDINT_RAW)
-file(WRITE ${GCC_BINARY_DIR}/libdecnumber/gstdint.h ${GSTDINT_RAW})
-file(WRITE ${GCC_BINARY_DIR}/gcc/gstdint.h ${GSTDINT_RAW})
+configure_file("${GCC_SOURCE_DIR}/ungenerated/common/gstdint.h" "${GCC_BINARY_DIR}/libdecnumber/gstdint.h" COPY_ONLY)
+configure_file("${GCC_SOURCE_DIR}/ungenerated/common/gstdint.h" "${GCC_BINARY_DIR}/gcc/gstdint.h" COPY_ONLY)
 
 include_directories(BEFORE
 	${GCC_SOURCE_DIR}/include
