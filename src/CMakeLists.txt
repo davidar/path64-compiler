@@ -12,8 +12,7 @@ add_custom_target(be-all)
 add_dependencies(compiler-stage be-all)
 
 #Hack for Window building
-if((${CMAKE_SYSTEM_NAME} MATCHES "Windows" ))
-else()
+if(NOT (${CMAKE_SYSTEM_NAME} MATCHES "Windows"))
 	add_subdirectory(csu)
 endif()
 

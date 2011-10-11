@@ -345,7 +345,7 @@ if(NOT HAVE_PID_T)
 endif()
 
 set(GCC_UNIX_TESTS 1)
-if(WIN32)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	if(NOT CYGWIN)
 		set(GCC_UNIX_TESTS 0)
 	endif()

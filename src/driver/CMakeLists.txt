@@ -400,7 +400,7 @@ add_custom_command(OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/OPTIONS.P)
 
 # Generate the version strings
-if(WIN32)
+if(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Windows")
 	file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}" BUILD_ROOT)
 	string(REPLACE "\\" "\\\\" BUILD_ROOT "${BUILD_ROOT}")
 else()

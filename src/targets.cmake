@@ -517,7 +517,7 @@ function(path64_add_library_for_target name target type src_base_path)
 				string(LENGTH "${oname}" str_len)
 				math(EXPR str_len "${str_len} - 1")
 				string(SUBSTRING "${oname}" 1 ${str_len} oname)
-			elseif(WIN32 AND oname MATCHES "^.:")
+			elseif(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Windows" AND oname MATCHES "^.:")
 				file(RELATIVE_PATH oname "${CMAKE_SOURCE_DIR}" "${oname}")
 			endif()
 

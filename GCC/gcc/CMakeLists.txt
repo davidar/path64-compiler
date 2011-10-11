@@ -153,7 +153,7 @@ foreach(f ${extra_options})
 endforeach()
 
 # Find an awk tool.
-if(WIN32 AND NOT CYGWIN)
+if(${CMAKE_HOST_SYSTEM_NAME} MATCHES "Windows" AND NOT CYGWIN)
 	set(AWK_EXECUTABLE "${GCC_SOURCE_DIR}/config_cmake/nawk.exe")
 else()
 	# Prefer GNU awk at any location over the native awk if possible.
@@ -656,7 +656,7 @@ endforeach()
 # insn-automata.c.
 
 set(genautomata_EXTRA_LIBS m)
-if(WIN32)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	if(NOT MINGW)
 		set(genautomata_EXTRA_LIBS)
 	else()
