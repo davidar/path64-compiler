@@ -1,8 +1,5 @@
 # Looking for gcc runtime search path
 SET(SOURCE_FILE "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/GetGccRuntimeDir/rt.cc")
-
-MESSAGE(STATUS "Checking for gcc runtime search path")
-file(REMOVE_RECURSE ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/GetGccRuntimeDir)
 FILE(WRITE "${SOURCE_FILE}" "#include <iostream>
 int main(void)
 {
@@ -10,34 +7,23 @@ int main(void)
         return 0;
 }
 ")
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/GetGccRuntimeDir/CMakeLists.txt"
-    "cmake_minimum_required(VERSION 2.8.1)
-project(GetGccRuntimeDir CXX)
 
-TRY_RUN(RUN_RES COMP_RES
-    \${CMAKE_BINARY_DIR} \"${SOURCE_FILE}\"
-    CMAKE_FLAGS
-	\"-DLINK_LIBRARIES:STRING=-v\"
-    COMPILE_OUTPUT_VARIABLE COMP_OUT
-    RUN_OUTPUT_VARIABLE RUN_OUT)
-FILE(WRITE \"\${CMAKE_CURRENT_BINARY_DIR}/result.cmake\"
-    \"set(GCCRTDATA \\\"\${COMP_OUT}\\\")\\n\")
-")
+MESSAGE(STATUS "Checking for gcc runtime search path")
 
-execute_process(
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/GetGccRuntimeDir
-    COMMAND env CXX=g++ ${CMAKE_COMMAND} . -G ${CMAKE_GENERATOR}
-    OUTPUT_VARIABLE output
-    ERROR_VARIABLE error
-    RESULT_VARIABLE result
-)
-
-message(STATUS "execute output")
-message(STATUS "${output}")
-
-include(${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/GetGccRuntimeDir/result.cmake OPTIONAL)
-
-if ("${result}" STREQUAL "0")
+if(CMAKE_COMPILER_IS_GNUCXX)
+	set(TEST_CXX_COMPILER ${CMAKE_CXX_COMPILER})
+else()
+	set(TEST_CXX_COMPILER g++)
+endif()
+try_compile(GXX_RUNTIME_RESULT
+      ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}
+      ${SOURCE_FILE}
+      CMAKE_FLAGS -DCMAKE_EXE_LINKER_FLAGS:STRING=-v -DCMAKE_CXX_COMPILER=${TEST_CXX_COMPILER}
+      OUTPUT_VARIABLE GXX_RUNTIME_OUTPUT)
+message(STATUS "GXX_RUNTIME_RESULT ${GXX_RUNTIME_RESULT}")
+message(STATUS "GXX_RUNTIME_OUTPUT ${GXX_RUNTIME_OUTPUT}")
+if (GXX_RUNTIME_OUTPUT AND GXX_RUNTIME_RESULT)
+	set(GCCRTDATA "${GXX_RUNTIME_OUTPUT}")
     STRING(REGEX MATCHALL "collect2.*$"
 		    COLLECT2_COMMAND "${GCCRTDATA}")
     FILE(APPEND ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeOutput.log
