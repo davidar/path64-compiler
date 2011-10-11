@@ -263,10 +263,11 @@ else()
 endif()
 
 
-string(REGEX MATCH "^[^-]+" targ_arch ${PSC_TARGET})
-path64_canonical_arch(targ_arch ${targ_arch})
-path64_get_host_target(host_arch)
-if(NOT ${host_arch} STREQUAL ${targ_arch})
+string(REGEX MATCH "^[^-]+" targ ${PSC_TARGET})
+path64_canonical_arch(targ ${targ})
+path64_get_host_arch(host_arch)
+path64_get_target_arch(targ_arch "${targ}")
+if(NOT "${host_arch}" STREQUAL "${targ_arch}")
     list(APPEND driver_defs -DPATH64_CROSS)
 endif()
 

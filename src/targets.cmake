@@ -214,6 +214,12 @@ function(path64_get_target_bits res_var targ)
 endfunction()
 
 
+# Returns target arch
+function(path64_get_target_arch res_var targ)
+   set(${res_var} ${_PATH64_TARGET_ARCH_${targ}} PARENT_SCOPE)
+endfunction()
+
+
 # Returns architecture for host system
 function(path64_get_host_arch res_var)
     path64_get_host_target(targ)
