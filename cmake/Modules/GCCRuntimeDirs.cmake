@@ -2,14 +2,7 @@
 
 # Call cmake with -DGCC_RUNTIME_CMAKE_DEBUG=ON to see verbose output.
 
-SET(SOURCE_FILE "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/GetGccRuntimeDir/rt.cc")
-FILE(WRITE "${SOURCE_FILE}" "#include <iostream>
-int main(void)
-{
-        std::cout << \"\";
-        return 0;
-}
-")
+string(REPLACE "GCCRuntimeDirs.cmake" "rt.cc" SOURCE_FILE ${CMAKE_CURRENT_LIST_FILE})
 
 MESSAGE(STATUS "Checking for gcc runtime search path")
 
