@@ -48,7 +48,7 @@ if ("${result}" STREQUAL "0")
 
     FOREACH(libdir ${LIBS})
 	STRING(REPLACE "-L" "" stripped_dir ${libdir})
-	SET(stripped_dirs_list ${stripped_dirs_list} ${stripped_dir})
+	list(APPEND stripped_dirs_list ${stripped_dir})
     ENDFOREACH()
 
     FOREACH(stripped_dir ${stripped_dirs_list})
