@@ -84,10 +84,10 @@ endif()
 
 
 foreach(arch ${PATH64_ENABLE_ARCHES})
-    install(CODE "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E create_symlink \"${CMAKE_INSTALL_PREFIX}/${PATH64_LIB_PATH}/${arch}/ir_b2a\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/ir_b2a-${arch}\")")
-    install(CODE "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E create_symlink \"${CMAKE_INSTALL_PREFIX}/${PATH64_LIB_PATH}/${arch}/ir_size\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/ir_size-${arch}\")")
-    install(CODE "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E create_symlink \"${CMAKE_INSTALL_PREFIX}/bin/ir_b2a-${arch}\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/ir_sel-${arch}\")")
-    install(CODE "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E create_symlink \"${CMAKE_INSTALL_PREFIX}/bin/ir_b2a-${arch}\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/ir_all-${arch}\")")
+    install(CODE "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E ${LINK_COPY} \"${CMAKE_INSTALL_PREFIX}/${PATH64_LIB_PATH}/${arch}/ir_b2a\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/ir_b2a-${arch}\")")
+    install(CODE "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E ${LINK_COPY} \"${CMAKE_INSTALL_PREFIX}/${PATH64_LIB_PATH}/${arch}/ir_size\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/ir_size-${arch}\")")
+    install(CODE "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E ${LINK_COPY} \"${CMAKE_INSTALL_PREFIX}/bin/ir_b2a-${arch}\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/ir_sel-${arch}\")")
+    install(CODE "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E ${LINK_COPY} \"${CMAKE_INSTALL_PREFIX}/bin/ir_b2a-${arch}\" \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/ir_all-${arch}\")")
 endforeach()
 
 

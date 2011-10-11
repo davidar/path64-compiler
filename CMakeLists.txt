@@ -17,6 +17,12 @@ ENDIF()
 # Search for various include files and functions
 include(${Path64_SOURCE_DIR}/cmake/Modules/ConfigureChecks.cmake)
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    set(LINK_COPY copy_if_different)
+else()
+    set(LINK_COPY create_symlink)
+endif()
+
 # Force the build_type=debug flags to sane values overriding users choices
 SET(CMAKE_C_FLAGS_DEBUG  "-O0 -g -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
 SET(CMAKE_CXX_FLAGS_DEBUG  "-Wno-deprecated -O0 -g -D_DEBUG -DIs_True_On=1" CACHE STRING "Flags used by the compiler during debug builds." FORCE)
@@ -331,12 +337,12 @@ ENDIF()
 
 IF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     SET(SHELL_EXT cmd)
-    SET(SYMLINK_COMMAND ${CMAKE_COMMAND} -E copy) 
+    SET(SYMLINK_COMMAND ${CMAKE_COMMAND} -E copy_if_different) 
     SET(PATH64_AUXILARY_LD_FLAGS '"-FIXME"')
     # ADD_DEFINITIONS(-DPSC_FULL_VERSION="${PSC_FULL_VERSION}")
 ELSE()
     SET(SHELL_EXT sh)
-    SET(SYMLINK_COMMAND ln -s)
+    SET(SYMLINK_COMMAND ${CMAKE_COMMAND} -E create_symlink)
 ENDIF()
 # build runtime search paths
 include(${Path64_SOURCE_DIR}/cmake/Modules/GCCRuntimeDirs.cmake)

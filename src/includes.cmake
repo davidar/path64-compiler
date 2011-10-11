@@ -182,7 +182,7 @@ ENDFOREACH(H)
 #	    fi; \
 #	done
 FOREACH(H ${SYS_DIRS})
-    EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E create_symlink include/sys/${H}
+    EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E ${LINK_COPY} include/sys/${H}
                     ${PATHSCALE_INCLUDE_DIR}/sys/${H}
                     )
 ENDFOREACH(H)
