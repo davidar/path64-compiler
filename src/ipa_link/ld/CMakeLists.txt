@@ -71,18 +71,12 @@ set_property(SOURCE
 	ldmain.c
 	PROPERTY
 	COMPILE_DEFINITIONS
-	DEFAULT_EMULATION=
-	"elf_${arch}"
-	;SCRIPTDIR=
-	"${INSTALL_DIR}/${PSC_TARGET}/lib"
-	;BINDIR=
-	"${INSTALL_DIR}/bin"
-	;TOOLBINDIR=
-	"${INSTALL_DIR}/${PSC_TARGET}/bin"
-	;TARGET=
-	"${PSC_TARGET}"
-	;TARGET_SYSTEM_ROOT=
-	"")
+	DEFAULT_EMULATION="elf_${arch}"
+	SCRIPTDIR="${INSTALL_DIR}/${PSC_TARGET}/lib"
+	BINDIR="${INSTALL_DIR}/bin"
+	TOOLBINDIR="${INSTALL_DIR}/${PSC_TARGET}/bin"
+	TARGET="${PSC_TARGET}"
+	TARGET_SYSTEM_ROOT="")
 
 # I don't know if this is needed to pull in libiberty
 foreach(f
