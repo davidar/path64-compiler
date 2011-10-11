@@ -40,7 +40,10 @@ SET(CMAKE_Fortran_FLAGS_RELEASE  "-O2 -DNDEBUG ${SSE_FLAGS}" CACHE STRING "Flags
 
 
 OPTION(PATH64_ENABLE_GNU_FRONTEND "Use GNU C/C++ front-end" ON)
-OPTION(PATH64_ENABLE_IPA "Enable IPA" ON)
+if(NOT WIN32)
+	# IPA not yet ported to windows.
+	OPTION(PATH64_ENABLE_IPA "Enable IPA" ON)
+endif()
 
 
 # Define user option whether to build the Fortran compiler.
@@ -63,7 +66,11 @@ ELSE()
 ENDIF()
 
 # Define user option whether to build OpenMP
-OPTION(PATH64_ENABLE_OPENMP "Build OpenMP" ON)
+# TODO : Threading and other things need to be ported
+IF(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+	OPTION(PATH64_ENABLE_OPENMP "Build OpenMP" ON)
+endif()
+
 IF(PATH64_ENABLE_OPENMP)
 	MESSAGE(STATUS "OpenMP build enabled")
 ELSE()
@@ -183,7 +190,10 @@ FOREACH(targ ${PATH64_ENABLE_TARGETS})
 ENDFOREACH()
 
 # Do we build with huge pages support
-OPTION(PATH64_ENABLE_HUGEPAGES "Enabling supported huge pages" OFF)
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+	OPTION(PATH64_ENABLE_HUGEPAGES "Enabling supported huge pages" OFF)
+ENDIF()
+
 IF(PATH64_ENABLE_HUGEPAGES)
 	IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 		MESSAGE(STATUS "Building with huge pages support.")
@@ -214,7 +224,10 @@ ENDIF()
 
 
 # Are we using the PathScale runtime
-OPTION(PATH64_ENABLE_PSCRUNTIME "Using the PathScale c and c++ runtime" OFF)
+if(NOT WIN32)
+	# Not yet ported to Windows
+	OPTION(PATH64_ENABLE_PSCRUNTIME "Using the PathScale c and c++ runtime" OFF)
+endif()
 IF(PATH64_ENABLE_PSCRUNTIME)
 	ADD_DEFINITIONS(-DPATH64_ENABLE_PSCRUNTIME)
 	MESSAGE(STATUS "PathScale runtime enabled")
