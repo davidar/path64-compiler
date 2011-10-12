@@ -404,6 +404,9 @@ if(PATH64_LIBDWARF_PATH)
 		"-L ${PATH64_LIBDWARF_PATH}")
 endif()
 path64_multiarch_link_libraries(cg dwarf elfutil elf)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+	path64_multiarch_link_libraries(cg winlib iberty)
+endif()
 
 path64_add_multiarch_dependencies(cg
 	generate_preg_list

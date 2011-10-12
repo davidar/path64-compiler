@@ -141,5 +141,7 @@ path64_set_multiarch_property(be-com
 path64_multiarch_link_multiarch_libraries(be-com targinfo comutil)
 path64_multiarch_link_libraries(be-com erdesc)
 path64_add_multiarch_multiarch_dependencies(be-com generate_topcode)
-
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+	path64_multiarch_link_libraries(be-com winlib iberty)
+endif()
 

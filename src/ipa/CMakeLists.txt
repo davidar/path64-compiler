@@ -196,6 +196,10 @@ path64_set_multiarch_property(inline
 path64_multiarch_link_libraries(inline)
 path64_multiarch_link_multiarch_libraries(inline comutil be-static)
 path64_multiarch_link_libraries(inline elfutil elf)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+	path64_multiarch_link_libraries(inline winlib iberty)
+endif()
+
 path64_set_multiarch_property(inline
 	COMPILE_FLAGS
 	"-I${CMAKE_CURRENT_SOURCE_DIR}/../common/com/@ARCH@")

@@ -41,6 +41,10 @@ path64_set_multiarch_property(comutil
 	COMPILE_FLAGS
 	"-I${CMAKE_CURRENT_SOURCE_DIR}/../com/@ARCH@ -fPIC")
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+	path64_multiarch_link_libraries(comutil winlib iberty)
+endif()
+
 # Building comutil for host architecture (used when building fortran)
 path64_get_host_arch(host_arch)
 path64_add_library_for_arch(comutil-host
