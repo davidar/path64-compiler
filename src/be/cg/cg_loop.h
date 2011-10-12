@@ -554,7 +554,7 @@ BB* CG_LOOP_Append_BB_To_Prolog(BB *loop_prolog, BB *loop_head);
 
 void CG_LOOP_Coalesce_Backedges(LOOP_DESCR *loop);
 
-TN *CG_LOOP_unroll_names_get(TN *tn, UINT8 unrolling);
+TN *CG_LOOP_unroll_names_get(TN *tn, UINT16 unrolling);
 extern INT Branch_Target_Operand(OP *br_op);
 
 inline UINT32 CG_LOOP_Prefetch_Stride(OP *pref)
