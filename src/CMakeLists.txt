@@ -72,10 +72,12 @@ else()
 	set(LINK_FLAG_DISCARD_ALL)
 endif()
 
-# All the math stuff seems to be built from libmpath
-# libmv == vector math functions
-add_subdirectory(libm)
-add_subdirectory(libmpath)
+if(PATH64_ENABLE_MATHLIBS)
+	# All the math stuff seems to be built from libmpath
+	# libmv == vector math functions
+	add_subdirectory(libm)
+	add_subdirectory(libmpath)
+endif()
 
 #Hack for Window building
 if(NOT WIN32)
