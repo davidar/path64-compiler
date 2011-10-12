@@ -1,3 +1,5 @@
+/*	$NetBSD: ar.h,v 1.5 2003/08/07 09:44:09 agc Exp $	*/
+
 /*-
  * Copyright (c) 1991, 1993
  *	The Regents of the University of California.  All rights reserved.
@@ -35,15 +37,10 @@
  * SUCH DAMAGE.
  *
  *	@(#)ar.h	8.2 (Berkeley) 1/21/94
- *
- * $FreeBSD: src/include/ar.h,v 1.3.2.1 2011/09/23 00:51:37 kensmith Exp $
  */
 
 #ifndef _AR_H_
 #define	_AR_H_
-
-/* removed for use on windows */
-/* #include <sys/cdefs.h> */
 
 /* Pre-4BSD archives had these magic numbers in them. */
 #define	OARMAG1	0177555
@@ -63,6 +60,6 @@ struct ar_hdr {
 	char ar_size[10];		/* size in bytes */
 #define	ARFMAG	"`\n"
 	char ar_fmag[2];		/* consistency check */
-} __packed;
+};
 
 #endif /* !_AR_H_ */
